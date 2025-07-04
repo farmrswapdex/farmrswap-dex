@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useConnectModal } from '@rainbow-me/rainbowkit';
+import { ConnectButton } from '@rainbow-me/rainbowkit';
 
 const NavBar = () => {
     const [darkMode, setDarkMode] = useState(false);
@@ -16,22 +17,22 @@ const NavBar = () => {
             <div className="flex items-center gap-3">
                 {/* Placeholder for RabbitSwap logo */}
                 <Link to="/" className="flex items-center gap-1">
-                    <span className="w-12 h-12 rounded-full bg-blue-200 flex items-center justify-center">
+                    <span className="w-12 h-12 rounded-full flex items-center justify-center">
                         {/* Replace with SVG for real logo */}
                         <span className="text-3xl">🍅</span>
                     </span>
-                    <span className="text-2xl font-bold text-blue-400">FarmrSwap</span>
+                    <span className="text-2xl font-bold text-teal-950">FarmrSwap</span>
                 </Link>
             </div>
             {/* Navigation */}
             <nav className="flex gap-10 text-lg font-medium text-gray-700">
-                <Link to="/swap" className="font-bold text-black flex items-center gap-1">SWAP</Link>
+                <Link to="/swap" className="font-bold text-black flex items-center gap-1 hover:text-red-400">SWAP</Link>
                 {/* <Link to="/pool" className="flex items-center gap-1">POOL</Link> */}
-                <Link to="/farms" className="flex items-center gap-1">FARM</Link>
+                <Link to="/farms" className="flex items-center gap-1 hover:text-red-400">FARM</Link>
             </nav>
             {/* Connect Button and Theme Toggle */}
             <div className="flex items-center gap-4">
-                <button onClick={openConnectModal} className="bg-blue-200 hover:bg-blue-300 transition px-8 py-2 rounded-full text-lg font-medium text-black shadow-none">Connect</button>
+                <button onClick={openConnectModal} className="transition px-8 py-2 rounded-full text-lg font-medium text-black shadow-none"><ConnectButton /></button>
                 <button
                     onClick={handleToggle}
                     className="w-10 h-10 flex items-center justify-center rounded-full border border-gray-200 bg-white hover:bg-gray-100 transition"

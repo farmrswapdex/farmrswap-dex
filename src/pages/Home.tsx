@@ -21,7 +21,7 @@ const Home = () => {
                 <div className="flex-1 flex flex-col items-center md:items-end justify-center z-10">
                     <h1 className="text-5xl md:text-6xl font-extrabold text-[#2d3e3e] drop-shadow-lg text-right tracking-wide" style={{ fontFamily: 'Fredoka One, sans-serif' }}>
                         SWAP.<br />
-                        FARM. WIN.
+                        STAKE AND EARN. WIN.
                     </h1>
                 </div>
             </div>

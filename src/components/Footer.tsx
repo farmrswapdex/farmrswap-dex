@@ -1,3 +1,5 @@
+import { Twitter, Github } from "lucide-react";
+
 const Footer = () => {
     return (
         <footer className="w-full bg-[#1a2340] py-12 px-4 flex flex-col items-center">
@@ -12,35 +14,34 @@ const Footer = () => {
                         <span className="text-3xl font-bold text-[#b3b9d8]">FarmrSwap</span>
                     </div>
                     <div className="flex gap-4 text-[#8b92b7] text-3xl">
-                        <span className="hover:text-white cursor-pointer">🕹️</span>
-                        <span className="hover:text-white cursor-pointer">🐦</span>
+                        <span className="hover:text-white cursor-pointer"><Github /></span>
+                        <span className="hover:text-white cursor-pointer"><Twitter /></span>
                     </div>
                     <span className="text-[#6c7393] text-sm mt-4">© {new Date().getFullYear()} FarmrSwap Team</span>
                 </div>
                 {/* Right: Columns */}
                 <div className="flex flex-1 justify-between flex-wrap gap-8">
                     <div className="min-w-[120px]">
-                        <div className="font-bold text-[#b3b9d8] mb-3">App</div>
+                        <div className="font-bold text-[#b3b9d8] mb-3">Trade</div>
                         <ul className="space-y-1 text-[#b3b9d8]">
                             <li className="hover:text-white cursor-pointer">Swap</li>
                             <li className="hover:text-white cursor-pointer">Liquidity & Pools</li>
+                            <li className="hover:text-white cursor-pointer">Charts</li>
+                        </ul>
+                    </div>
+                    <div className="min-w-[120px]">
+                        <div className="font-bold text-[#b3b9d8] mb-3">Earn</div>
+                        <ul className="space-y-1 text-[#b3b9d8]">
                             <li className="hover:text-white cursor-pointer">Farms</li>
+                            <li className="hover:text-white cursor-pointer">Staking</li>
+                            <li className="hover:text-white cursor-pointer">Launchpad</li>
                         </ul>
                     </div>
                     <div className="min-w-[120px]">
                         <div className="font-bold text-[#b3b9d8] mb-3">Community</div>
                         <ul className="space-y-1 text-[#b3b9d8]">
-                            <li className="hover:text-white cursor-pointer">Twitter</li>
-                        </ul>
-                    </div>
-                    <div className="min-w-[120px]">
-                        <div className="font-bold text-[#b3b9d8] mb-3">Participate</div>
-                        <ul className="space-y-1 text-[#b3b9d8]">
-                            <li className="hover:text-white cursor-pointer">Vote</li>
-                            <li className="hover:text-white cursor-pointer">Apply for Collab</li>
-                            <li className="hover:text-white cursor-pointer">Apply for Token Listing</li>
-                            <li className="hover:text-white cursor-pointer">Apply for Farm</li>
-                            <li className="hover:text-white cursor-pointer">Bug Bounty</li>
+                            <li className="hover:text-white cursor-pointer">X</li>
+                            <li className="hover:text-white cursor-pointer">Docs</li>
                         </ul>
                     </div>
                 </div>
