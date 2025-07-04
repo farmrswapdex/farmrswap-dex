@@ -12,7 +12,7 @@ const NavBar = () => {
     };
 
     return (
-        <header className="w-full bg-[#fafafa] flex items-center justify-between px-8 py-4 shadow-none">
+        <header className="w-full flex items-center justify-between px-8 py-4 shadow-none">
             {/* Logo and Brand */}
             <div className="flex items-center gap-3">
                 {/* Placeholder for RabbitSwap logo */}
@@ -21,14 +21,14 @@ const NavBar = () => {
                         {/* Replace with SVG for real logo */}
                         <span className="text-3xl">🍅</span>
                     </span>
-                    <span className="text-2xl font-bold text-teal-950">FarmrSwap</span>
+                    <span className="text-2xl font-bold text-white">FarmrSwap</span>
                 </Link>
             </div>
             {/* Navigation */}
-            <nav className="flex gap-10 text-lg font-medium text-gray-700">
-                <Link to="/swap" className="font-bold text-black flex items-center gap-1 hover:text-red-400">SWAP</Link>
+            <nav className="flex gap-24 text-lg font-medium text-gray-700">
+                <Link to="/swap" className="font-bold text-[#b3b9d8] flex items-center gap-1 hover:text-red-400">SWAP</Link>
                 {/* <Link to="/pool" className="flex items-center gap-1">POOL</Link> */}
-                <Link to="/farms" className="flex items-center gap-1 hover:text-red-400">FARM</Link>
+                <Link to="/farms" className="flex items-center text-[#b3b9d8] gap-1 hover:text-red-400">FARM</Link>
             </nav>
             {/* Connect Button and Theme Toggle */}
             <div className="flex items-center gap-4">

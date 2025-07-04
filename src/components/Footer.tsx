@@ -14,8 +14,17 @@ const Footer = () => {
                         <span className="text-3xl font-bold text-[#b3b9d8]">FarmrSwap</span>
                     </div>
                     <div className="flex gap-4 text-[#8b92b7] text-3xl">
-                        <span className="hover:text-white cursor-pointer"><Github /></span>
-                        <span className="hover:text-white cursor-pointer"><Twitter /></span>
+                        <span className="hover:text-white cursor-pointer">
+                            <a href="https://github.com/farmrswap" target="_blank" rel="noopener noreferrer" className="hover:text-white cursor-pointer">
+                                <Github />
+                            </a>
+                        </span>
+                        <span className="hover:text-white cursor-pointer">
+                            <a href="https://x.com/farmrswap" target="_blank" rel="noopener noreferrer" className="hover:text-white cursor-pointer">
+                                <Twitter />
+                            </a>
+                        </span>
+
                     </div>
                     <span className="text-[#6c7393] text-sm mt-4">© {new Date().getFullYear()} FarmrSwap Team</span>
                 </div>
@@ -40,7 +49,6 @@ const Footer = () => {
                     <div className="min-w-[120px]">
                         <div className="font-bold text-[#b3b9d8] mb-3">Community</div>
                         <ul className="space-y-1 text-[#b3b9d8]">
-                            <li className="hover:text-white cursor-pointer">X</li>
                             <li className="hover:text-white cursor-pointer">Docs</li>
                         </ul>
                     </div>
