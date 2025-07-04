@@ -1,4 +1,8 @@
+import { useConnectModal } from "@rainbow-me/rainbowkit";
+
 const SwapForm = () => {
+    const { openConnectModal } = useConnectModal();
+
     return (
         <div className="w-full max-w-md bg-white/60 rounded-3xl shadow-lg p-8 flex flex-col items-center">
             {/* Tabs */}
@@ -47,7 +51,7 @@ const SwapForm = () => {
                 </div>
             </div>
             {/* Connect Wallet Button */}
-            <button className="w-full mt-8 py-4 rounded-full bg-blue-200 text-xl font-bold text-black shadow-md hover:bg-blue-300 transition">
+            <button onClick={openConnectModal} className="w-full mt-8 py-4 rounded-full bg-blue-200 text-xl font-bold text-black shadow-md hover:bg-blue-300 transition">
                 Connect Wallet
             </button>
         </div>
