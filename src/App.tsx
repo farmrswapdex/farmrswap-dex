@@ -1,15 +1,15 @@
 import { getDefaultConfig, RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import "@rainbow-me/rainbowkit/styles.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { WagmiProvider } from "wagmi";
 import { monadTestnet } from "wagmi/chains";
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import './App.css';
 import Farms from './pages/Farms';
 import Home from './pages/Home';
 import NotFound from './pages/NotFound';
-import Swap from './pages/Swap';
 import Pools from "./pages/Pools";
+import Swap from './pages/Swap';
 
 const config = getDefaultConfig({
   appName: "FarmrSwap",
@@ -17,7 +17,14 @@ const config = getDefaultConfig({
   chains: [monadTestnet],
 });
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 30_000, // 30 seconds for DeFi data
+      refetchOnWindowFocus: true,
+    }
+  }
+});
 
 function App() {
   return (

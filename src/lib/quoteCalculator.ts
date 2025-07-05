@@ -1,4 +1,3 @@
-import { TOKENS } from './constants';
 
 interface QuoteParams {
     fromToken: string;
