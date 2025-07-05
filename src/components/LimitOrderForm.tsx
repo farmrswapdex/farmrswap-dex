@@ -1,5 +1,4 @@
 import { useConnectModal } from "@rainbow-me/rainbowkit";
-import { Settings } from 'lucide-react';
 import { useState } from 'react';
 import { useAccount } from 'wagmi';
 import { TOKENS } from '../lib/constants';
@@ -23,6 +22,8 @@ const LimitOrderForm = () => {
     const [fromAmount, setFromAmount] = useState('');
     const [limitPrice, setLimitPrice] = useState('');
     const [toAmount, setToAmount] = useState('');
+
+    console.log(setToAmount)
 
     const handleFromAmountChange = (value: string) => {
         setFromAmount(value);
