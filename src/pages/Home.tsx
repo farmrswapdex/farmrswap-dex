@@ -15,7 +15,7 @@ const Home = () => {
                 </div>
 
                 <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                    <div className="absolute left-1/3 top-10 text-5xl rotate-[-10deg] opacity-80  blur-sm animate-pulse">🍅</div>
+                    <div className="absolute left-1/3 top-10 text-5xl rotate-[-10deg] opacity-80 blur-sm animate-pulse">🍅</div>
                     <div className="absolute right-20 top-0 text-4xl rotate-[15deg] opacity-80 blur-sm animate-pulse">🍅</div>
                     <div className="absolute right-40 bottom-32 text-6xl rotate-[-5deg] opacity-80 blur-sm animate-pulse">🍅</div>
                     <div className="absolute left-1/2 bottom-10 text-5xl rotate-[8deg] opacity-80 blur-sm animate-pulse">🍅</div>
@@ -34,25 +34,26 @@ const Home = () => {
             {/* Get Started Section */}
             <div className="flex flex-col items-center justify-center w-full py-8">
                 <Link to="/swap">
-                    <button className="bg-blue-600 hover:bg-blue-500 text-white font-semibold py-4 px-16 rounded-full text-lg mb-4 transition">Get started</button>
+                    <button className="bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 px-10 rounded-md text-lg mb-4 transition">Get started</button>
                 </Link>
             </div>
             {/* Features Section */}
-            <div className="flex flex-col md:flex-row items-stretch justify-center gap-6 w-full px-8 pb-12">
-                {/* Swap Tokens Card */}
-                <div className="bg-[#22314a] rounded-2xl shadow-md flex-1 p-6 flex flex-col justify-between min-w-[250px]">
-                    <h3 className="text-xl font-bold text-white mb-2">Swap Tokens</h3>
-                    <p className="text-[#b0c4d4] mb-4">Buy, sell, and explore tokens on FarmrSwap.</p>
+            <div className="w-full px-8 pb-12 flex flex-col items-center">
+                <div className="flex flex-col md:flex-row gap-6 w-full max-w-3xl justify-center">
+                    <div className="bg-[#22314a] rounded-2xl shadow-md flex-1 p-6 flex flex-col justify-between min-w-[250px]">
+                        <h3 className="text-xl font-bold text-white mb-2">Swap Tokens</h3>
+                        <p className="text-[#b0c4d4] mb-4">Buy, sell, and explore tokens on FarmrSwap.</p>
+                    </div>
+                    <div className="bg-[#22314a] rounded-2xl shadow-md flex-1 p-6 flex flex-col justify-between min-w-[250px]">
+                        <h3 className="text-xl font-bold text-white mb-2">Stake</h3>
+                        <p className="text-[#b0c4d4] mb-4">Stake your tokens to earn a share of trading fees from all DEX trades.</p>
+                    </div>
                 </div>
-                {/* Stake Card */}
-                <div className="bg-[#22314a] rounded-2xl shadow-md flex-1 p-6 flex flex-col justify-between min-w-[250px]">
-                    <h3 className="text-xl font-bold text-white mb-2">Stake</h3>
-                    <p className="text-[#b0c4d4] mb-4">Stake your tokens to earn a share of trading fees from all DEX trades.</p>
-                </div>
-                {/* Earn Card */}
-                <div className="bg-[#22314a] rounded-2xl shadow-md flex-1 p-6 flex flex-col justify-between min-w-[250px]">
-                    <h3 className="text-xl font-bold text-white mb-2">Earn</h3>
-                    <p className="text-[#b0c4d4] mb-4">Provide liquidity to pools and earn swap fees on FarmrSwap.</p>
+                <div className="flex justify-center w-full max-w-3xl mt-6">
+                    <div className="bg-[#22314a] rounded-2xl shadow-md w-full p-6 flex flex-col justify-between min-w-[250px]">
+                        <h3 className="text-xl font-bold text-white mb-2">Earn</h3>
+                        <p className="text-[#b0c4d4] mb-4">Provide liquidity to pools and earn swap fees on FarmrSwap.</p>
+                    </div>
                 </div>
             </div>
             <Footer />

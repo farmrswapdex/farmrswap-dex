@@ -1,7 +1,10 @@
+import NavBar from "../components/NavBar"
 
 const Farms = () => {
     return (
-        <div>Farms</div>
+        <div>
+            <NavBar />
+        </div>
     )
 }
 

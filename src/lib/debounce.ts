@@ -1,6 +1,6 @@
-const debounce = (fn: (...args: unknown[]) => void, timeout = 300) => {
+const debounce = <T extends (...args: any[]) => void>(fn: T, timeout = 300) => {
     let timer: NodeJS.Timeout;
-    return (...args: unknown[]) => {
+    return (...args: Parameters<T>) => {
         clearTimeout(timer);
         timer = setTimeout(() => { fn.apply(this, args); }, timeout)
     };

@@ -9,6 +9,7 @@ import Farms from './pages/Farms';
 import Home from './pages/Home';
 import NotFound from './pages/NotFound';
 import Swap from './pages/Swap';
+import Pools from "./pages/Pools";
 
 const config = getDefaultConfig({
   appName: "FarmrSwap",
@@ -29,6 +30,7 @@ function App() {
                 <Route path="/" element={<Home />} />
                 <Route path="/swap" element={<Swap />} />
                 <Route path="/farms" element={<Farms />} />
+                <Route path="/pools" element={<Pools />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </BrowserRouter>
