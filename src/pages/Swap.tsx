@@ -21,7 +21,7 @@ const Swap = () => {
                         Swap Tokens
                     </h1>
                     <p className="text-xl text-[#2d3e3e] mt-4 text-center">
-                        Exchange your tokens quickly and efficiently.
+                        Exchange your tokens.
                     </p>
                 </div>
             </div>
