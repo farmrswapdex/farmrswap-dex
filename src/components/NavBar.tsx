@@ -34,7 +34,7 @@ const NavBar = () => {
             </button>
             {/* Navigation */}
             <nav className="hidden md:flex gap-24 text-lg font-medium text-gray-700">
-                <Link to="/swap" className="font-bold text-[#b3b9d8] flex items-center gap-1 hover:text-red-400">TRADE</Link>
+                {/* <Link to="/swap" className="font-bold text-[#b3b9d8] flex items-center gap-1 hover:text-red-400">TRADE</Link> */}
                 <Link to="/pools" className="flex text-[#b3b9d8] items-center gap-1 hover:text-red-400">POOL</Link>
                 <Link to="/farms" className="flex items-center text-[#b3b9d8] gap-1 hover:text-red-400">FARM</Link>
             </nav>

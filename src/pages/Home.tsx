@@ -1,78 +1,91 @@
-import Footer from "../components/Footer"
-import NavBar from "../components/NavBar"
-import { Link } from "react-router-dom"
+import { Link } from "react-router-dom";
+import Footer from "../components/Footer";
+import NavBar from "../components/NavBar";
 
 const Home = () => {
     return (
-        <div className="w-full min-h-screen bg-[#a7d8f5] flex flex-col justify-between overflow-hidden">
+        <div className="w-full min-h-screen bg-gradient-to-br from-[#a7d8f5] to-[#d1e8f7] flex flex-col justify-between overflow-hidden">
             <NavBar />
-            {/* Hero Section - FarmrSwap Style */}
-            <div className="flex flex-col md:flex-row items-center justify-between w-full px-8 pt-20 pb-8 flex-1 relative">
-                {/* Tomato Farmer (left) */}
-                <div className="flex-1 flex flex-col items-center md:items-start z-10 animate-fade-in-left">
-                    <span className="text-[10rem] md:text-[14rem] transform hover:scale-110 transition-transform duration-300">🍅</span>
-                    {/* You can replace the emoji with an SVG for a real mascot */}
-                </div>
 
+            {/* Hero Section */}
+            <div className="relative flex flex-col items-center justify-center text-center px-4 pt-24 pb-16 flex-1">
                 {/* Floating Tomatoes */}
                 <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                    <div className="absolute left-1/3 top-10 text-5xl rotate-[-10deg] opacity-80 blur-sm animate-float-1">🍅</div>
-                    <div className="absolute right-20 top-0 text-4xl rotate-[15deg] opacity-80 blur-sm animate-float-2">🍅</div>
-                    <div className="absolute right-40 bottom-32 text-6xl rotate-[-5deg] opacity-80 blur-sm animate-float-3">🍅</div>
-                    <div className="absolute left-1/2 bottom-10 text-5xl rotate-[8deg] opacity-80 blur-sm animate-float-4">🍅</div>
-                    <div className="absolute left-1/5 bottom-10 text-5xl rotate-[6deg] opacity-80 blur-sm animate-float-5">🍅</div>
+                    <div className="absolute left-1/3 top-10 text-5xl rotate-[-10deg] opacity-80 blur-sm animate-pulse">🍅</div>
+                    <div className="absolute right-20 top-0 text-4xl rotate-[15deg] opacity-80 blur-sm animate-pulse">🍅</div>
+                    <div className="absolute right-40 bottom-32 text-6xl rotate-[-5deg] opacity-80 blur-sm animate-pulse">🍅</div>
+                    <div className="absolute left-1/2 bottom-10 text-5xl rotate-[8deg] opacity-80 blur-sm animate-pulse">🍅</div>
+                    <div className="absolute left-1/5 bottom-10 text-5xl rotate-[6deg] opacity-80 blur-sm animate-pulse">🍅</div>
                 </div>
-
-                {/* Slogan (right) */}
-                <div className="flex-1 flex flex-col items-center md:items-end justify-center z-10 animate-fade-in-right">
-                    <h1 className="text-5xl md:text-6xl font-extrabold text-[#2d3e3e] drop-shadow-lg text-right tracking-wide" style={{ fontFamily: 'Fredoka One, sans-serif' }}>
-                        SWAP.<br />
-                        STAKE AND EARN.<br />
-                        WIN.
+                <div className="bg-white/30 backdrop-blur-lg rounded-3xl p-8 md:p-12 shadow-lg animate-fade-in-up border border-white/20 z-10">
+                    <h1 className="text-5xl md:text-7xl font-extrabold text-[#2d3e3e] drop-shadow-lg tracking-tight" style={{ fontFamily: 'Fredoka One, sans-serif' }}>
+                        The Future of Farming is Here.
                     </h1>
-                    <p className="text-xl md:text-2xl text-[#2d3e3e] mt-4 text-right max-w-md">
-                        Your hub for seamless token swaps, staking, and rewarding liquidity provision.
+                    <p className="text-xl md:text-2xl text-[#2d3e3e] mt-6 max-w-2xl mx-auto">
+                        Swap, stake, and earn with FarmrSwap – the most rewarding DeFi experience.
                     </p>
+                    <Link to="/swap">
+                        <button className="mt-8 bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 px-10 rounded-full text-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl shadow-lg">
+                            Launch App
+                        </button>
+                    </Link>
                 </div>
             </div>
-            {/* Get Started Section */}
-            <div className="flex flex-col items-center justify-center w-full py-8 animate-fade-in-up">
-                <Link to="/swap">
-                    <button className="bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 px-10 rounded-md text-lg mb-4 transition-all duration-300 transform hover:scale-105 hover:shadow-lg">
-                        Get started
-                    </button>
-                </Link>
-            </div>
-            {/* Features Section */}
-            <div className="w-full px-8 pb-12 flex flex-col items-center">
-                <h2 className="text-4xl font-bold text-[#2d3e3e] mb-10 animate-fade-in">Why FarmrSwap?</h2>
-                <div className="flex flex-col md:flex-row gap-6 w-full max-w-5xl justify-center">
-                    <div className="bg-[#22314a] rounded-2xl shadow-md flex-1 p-6 flex flex-col justify-between min-w-[250px] transform hover:scale-105 transition-transform duration-300 animate-fade-in-up delay-100">
-                        <h3 className="text-xl font-bold text-white mb-2">Swap Tokens Instantly</h3>
-                        <p className="text-[#b0c4d4] mb-4">
-                            Effortlessly exchange any token with minimal fees and fast transactions.
-                        </p>
-                        <Link to="/swap" className="text-blue-400 hover:text-blue-300 transition-colors">Learn More &rarr;</Link>
-                    </div>
-                    <div className="bg-[#22314a] rounded-2xl shadow-md flex-1 p-6 flex flex-col justify-between min-w-[250px] transform hover:scale-105 transition-transform duration-300 animate-fade-in-up delay-200">
-                        <h3 className="text-xl font-bold text-white mb-2">Stake & Earn Passive Income</h3>
-                        <p className="text-[#b0c4d4] mb-4">
-                            Maximize your holdings with attractive APYs.
-                        </p>
-                        <Link to="/farms" className="text-blue-400 hover:text-blue-300 transition-colors">Start Staking &rarr;</Link>
-                    </div>
-                    <div className="bg-[#22314a] rounded-2xl shadow-md flex-1 p-6 flex flex-col justify-between min-w-[250px] transform hover:scale-105 transition-transform duration-300 animate-fade-in-up delay-300">
-                        <h3 className="text-xl font-bold text-white mb-2">Provide Liquidity & Get Rewarded</h3>
-                        <p className="text-[#b0c4d4] mb-4">
-                            Become a liquidity provider and earn swap fees on every trade that utilizes your provided assets.
-                        </p>
-                        <Link to="/pools" className="text-blue-400 hover:text-blue-300 transition-colors">Add Liquidity &rarr;</Link>
+
+            {/* Sliding Cards Section */}
+            <div className="w-full py-12 flex flex-col items-center bg-white/20 backdrop-blur-sm">
+                <h2 className="text-4xl font-bold text-[#2d3e3e] mb-10">Why You'll Love FarmrSwap</h2>
+                <div className="w-full max-w-7xl mx-auto overflow-hidden relative">
+                    <div className="flex animate-slide">
+                        {/* Duplicate the cards for a seamless loop */}
+                        {[...Array(2)].map((_, i) => (
+                            <div key={i} className="flex-shrink-0 flex justify-around w-full">
+                                <FeatureCard
+                                    title="Instant Swaps"
+                                    description="Exchange tokens in a flash with our optimized routing."
+                                    link="/swap"
+                                    emoji="🔄"
+                                />
+                                <FeatureCard
+                                    title="Lucrative Farms"
+                                    description="Stake your assets and watch your harvest grow with high APYs."
+                                    link="/farms"
+                                    emoji="🌾"
+                                />
+                                <FeatureCard
+                                    title="Deep Liquidity"
+                                    description="Provide liquidity to earn fees and support the ecosystem."
+                                    link="/pools"
+                                    emoji="💧"
+                                />
+                                <FeatureCard
+                                    title="Secure & Reliable"
+                                    description="Audited contracts and a commitment to your security."
+                                    link="#"
+                                    emoji="🛡️"
+                                />
+                            </div>
+                        ))}
                     </div>
                 </div>
             </div>
+
             <Footer />
         </div>
-    )
-}
+    );
+};
 
-export default Home
+const FeatureCard = ({ title, description, link, emoji }: { title: string, description: string, link: string, emoji: string }) => (
+    <div className="bg-white/50 backdrop-blur-lg rounded-2xl shadow-md p-6 mx-4 w-64 h-72 flex flex-col justify-between transform hover:scale-105 transition-transform duration-300 border border-white/30">
+        <div>
+            <span className="text-5xl">{emoji}</span>
+            <h3 className="text-2xl font-bold text-[#22314a] mt-4 mb-2">{title}</h3>
+            <p className="text-[#3e526a]">{description}</p>
+        </div>
+        <Link to={link} className="text-blue-500 hover:text-blue-400 font-semibold transition-colors">
+            Learn More &rarr;
+        </Link>
+    </div>
+);
+
+export default Home;
