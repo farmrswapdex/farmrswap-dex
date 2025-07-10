@@ -17,7 +17,7 @@ const LimitOrderForm = () => {
     const { openConnectModal } = useConnectModal();
     const { isConnected } = useAccount();
 
-    const [fromToken, setFromToken] = useState<Token | null>(TOKENS.VIC);
+    const [fromToken, setFromToken] = useState<Token | null>(TOKENS.BLOCKX);
     const [toToken, setToToken] = useState<Token | null>(null);
     const [fromAmount, setFromAmount] = useState('');
     const [limitPrice, setLimitPrice] = useState('');

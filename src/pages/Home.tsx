@@ -43,25 +43,21 @@ const Home = () => {
                                 <FeatureCard
                                     title="Instant Swaps"
                                     description="Exchange tokens in a flash with our optimized routing."
-                                    link="/swap"
                                     emoji="🔄"
                                 />
                                 <FeatureCard
                                     title="Lucrative Farms"
                                     description="Stake your assets and watch your harvest grow with high APYs."
-                                    link="/farms"
                                     emoji="🌾"
                                 />
                                 <FeatureCard
                                     title="Deep Liquidity"
                                     description="Provide liquidity to earn fees and support the ecosystem."
-                                    link="/pools"
                                     emoji="💧"
                                 />
                                 <FeatureCard
                                     title="Secure & Reliable"
                                     description="Audited contracts and a commitment to your security."
-                                    link="#"
                                     emoji="🛡️"
                                 />
                             </div>
@@ -75,16 +71,13 @@ const Home = () => {
     );
 };
 
-const FeatureCard = ({ title, description, link, emoji }: { title: string, description: string, link: string, emoji: string }) => (
-    <div className="bg-white/50 backdrop-blur-lg rounded-2xl shadow-md p-6 mx-4 w-64 h-72 flex flex-col justify-between transform hover:scale-105 transition-transform duration-300 border border-white/30">
+const FeatureCard = ({ title, description, emoji }: { title: string, description: string, emoji: string }) => (
+    <div className="bg-white/50 backdrop-blur-lg rounded-2xl shadow-md p-6 mx-4 w-64 h-56 flex flex-col justify-between transform hover:scale-105 transition-transform duration-300 border border-white/30">
         <div>
             <span className="text-5xl">{emoji}</span>
             <h3 className="text-2xl font-bold text-[#22314a] mt-4 mb-2">{title}</h3>
             <p className="text-[#3e526a]">{description}</p>
         </div>
-        <Link to={link} className="text-blue-500 hover:text-blue-400 font-semibold transition-colors">
-            Learn More &rarr;
-        </Link>
     </div>
 );
 

@@ -3,7 +3,7 @@ import "@rainbow-me/rainbowkit/styles.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { WagmiProvider } from "wagmi";
-import { monadTestnet } from "wagmi/chains";
+import { sepolia } from "wagmi/chains";
 import './App.css';
 import Farms from './pages/Farms';
 import Home from './pages/Home';
@@ -14,7 +14,7 @@ import Swap from './pages/Swap';
 const config = getDefaultConfig({
   appName: "FarmrSwap",
   projectId: "8X1df9Wbcqj6A7LWG71Ra5yLYj-1eL7y",
-  chains: [monadTestnet],
+  chains: [sepolia],
 });
 
 const queryClient = new QueryClient({
