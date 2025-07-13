@@ -35,7 +35,6 @@ const Footer = () => {
                         <ul className="space-y-1 text-[#b3b9d8]">
                             <li className="hover:text-white cursor-pointer">Swap</li>
                             <li className="hover:text-white cursor-pointer">Pools</li>
-                            <li className="hover:text-white cursor-pointer">Charts</li>
                         </ul>
                     </div>
                     <div className="min-w-[120px]">
@@ -43,7 +42,6 @@ const Footer = () => {
                         <ul className="space-y-1 text-[#b3b9d8]">
                             <li className="hover:text-white cursor-pointer">Farms</li>
                             <li className="hover:text-white cursor-pointer">Staking</li>
-                            <li className="hover:text-white cursor-pointer">Launchpad</li>
                         </ul>
                     </div>
                     <div className="min-w-[120px]">
