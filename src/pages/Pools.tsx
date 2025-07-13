@@ -1,10 +1,7 @@
-import { useConnectModal } from '@rainbow-me/rainbowkit';
+import { EyeOff, Inbox } from "lucide-react";
 import Footer from "../components/Footer";
 
-import { EyeOff, Inbox } from "lucide-react";
-
 const Pools = () => {
-    const { openConnectModal } = useConnectModal();
     return (
         <div className="w-full min-h-screen bg-[#a7d8f5] flex flex-col justify-between">
             {/* Header Section */}
@@ -20,13 +17,14 @@ const Pools = () => {
                         + New Position
                     </button>
                 </div>
-                <div className="flex items-center gap-2 mb-8">
+                {/* Positions Row */}
+                <div className="flex items-center justify-between w-full mb-8">
+                    <div className="text-xl text-[#2d3e3e] font-medium">Your positions (0)</div>
                     <span className="text-blue-500 text-lg cursor-pointer flex items-center gap-1 hover:underline select-none">
                         <EyeOff />
                         Hide closed positions
                     </span>
                 </div>
-                <div className="text-xl text-[#2d3e3e] font-medium mb-4">Your positions (0)</div>
             </div>
 
             {/* Empty State Card */}
@@ -36,12 +34,6 @@ const Pools = () => {
                         <Inbox size={50} />
                     </div>
                     <div className="text-lg text-[#2d3e3e] mb-2 text-center">Your active liquidity positions will appear here.</div>
-                    <button
-                        className="mt-6 bg-blue-200 hover:bg-blue-300 text-[#2d3e3e] font-semibold px-8 py-3 rounded-full shadow transition text-lg"
-                        onClick={openConnectModal}
-                    >
-                        Connect Wallet
-                    </button>
                 </div>
             </div>
             <Footer />

@@ -1,7 +1,12 @@
 import Footer from "../components/Footer";
 import { Wallet, ArrowRight } from "lucide-react";
+import { useAccount, useConnect } from 'wagmi';
+import { useConnectModal } from '@rainbow-me/rainbowkit';
 
 const Bridge = () => {
+    const { isConnected } = useAccount();
+    const { openConnectModal } = useConnectModal();
+
     return (
         <div className="w-full min-h-screen bg-[#a7d8f5] flex flex-col justify-between">
             <div className="flex flex-col items-center justify-center flex-1 w-full px-4 pt-20 pb-8">
@@ -62,10 +67,16 @@ const Bridge = () => {
                         </div>
                     </div>
 
-                    {/* Connect Wallet Button */}
-                    <button className="w-full mt-2 bg-blue-200 hover:bg-blue-300 text-[#2d3e3e] font-bold text-xl py-4 rounded-full shadow transition disabled:opacity-60" disabled>
-                        Connect Wallet
-                    </button>
+                    {/* CTA Button */}
+                    {isConnected ? (
+                        <button className="w-full mt-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xl py-4 rounded-full shadow transition" onClick={() => {/* bridge logic here */ }}>
+                            Bridge
+                        </button>
+                    ) : (
+                        <button className="w-full mt-2 bg-blue-200 hover:bg-blue-300 text-[#2d3e3e] font-bold text-xl py-4 rounded-full shadow transition" onClick={openConnectModal}>
+                            Connect Wallet
+                        </button>
+                    )}
                 </div>
             </div>
             <Footer />
