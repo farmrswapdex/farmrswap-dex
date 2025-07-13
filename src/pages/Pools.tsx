@@ -1,7 +1,7 @@
-import Footer from "../components/Footer"
 import { useConnectModal } from '@rainbow-me/rainbowkit';
+import Footer from "../components/Footer";
 
-import { Eye, EyeOff, Inbox } from "lucide-react";
+import { EyeOff, Inbox } from "lucide-react";
 
 const Pools = () => {
     const { openConnectModal } = useConnectModal();

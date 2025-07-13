@@ -6,13 +6,12 @@ import { WagmiProvider } from "wagmi";
 import { sepolia } from "wagmi/chains";
 import './App.css';
 import Layout from './components/Layout';
+import Bridge from "./pages/Bridge";
+import Explore from "./pages/Explore";
 import Farms from './pages/Farms';
-import Home from './pages/Home';
 import NotFound from './pages/NotFound';
 import Pools from "./pages/Pools";
 import Swap from './pages/Swap';
-import Bridge from "./pages/Bridge";
-import Explore from "./pages/Explore";
 
 const config = getDefaultConfig({
   appName: "FarmrSwap",
