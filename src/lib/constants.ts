@@ -28,9 +28,9 @@ export const TOKENS = {
         logoURI: 'https://assets.coingecko.com/coins/images/6319/small/USD_Coin_icon.png',
         color: '#2775CA'
     },
-    BLOCKX: {
-        symbol: 'BLOCKX',
-        name: 'BLOCKX Token',
+    BLOCX: {
+        symbol: 'BLOCX',
+        name: 'BLOCX Token',
         address: '0x0000000000000000000000000000000000000000', // Placeholder address
         decimals: 18,
         logoURI: 'https://via.placeholder.com/32/FFD700/000000?text=B',

@@ -21,7 +21,7 @@ const SwapForm = () => {
     const { openConnectModal } = useConnectModal();
     const { isConnected } = useAccount();
 
-    const [fromToken, setFromToken] = useState<Token | null>(TOKENS.BLOCKX);
+    const [fromToken, setFromToken] = useState<Token | null>(TOKENS.BLOCX);
     const [toToken, setToToken] = useState<Token | null>(null);
     const [fromAmount, setFromAmount] = useState('');
     const [toAmount, setToAmount] = useState('');

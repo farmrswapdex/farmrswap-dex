@@ -36,7 +36,7 @@ const Bridge = () => {
                             <span className="text-[#b0c4d4] text-sm mb-1">To</span>
                             <div className="flex items-center gap-2 bg-[#f6f6f6] rounded-full px-4 py-2 w-full">
                                 <span className="w-6 h-6 rounded-full flex items-center justify-center bg-black"><img src="https://cryptologos.cc/logos/viction-vic-logo.png" alt="Viction" className="w-5 h-5" /></span>
-                                <span className="font-semibold text-[#2d3e3e] text-base">BLOCKX</span>
+                                <span className="font-semibold text-[#2d3e3e] text-base">BLOCX</span>
                             </div>
                         </div>
                     </div>
