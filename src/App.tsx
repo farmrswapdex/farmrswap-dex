@@ -5,11 +5,14 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { WagmiProvider } from "wagmi";
 import { sepolia } from "wagmi/chains";
 import './App.css';
+import Layout from './components/Layout';
 import Farms from './pages/Farms';
 import Home from './pages/Home';
 import NotFound from './pages/NotFound';
 import Pools from "./pages/Pools";
 import Swap from './pages/Swap';
+import Bridge from "./pages/Bridge";
+import Explore from "./pages/Explore";
 
 const config = getDefaultConfig({
   appName: "FarmrSwap",
@@ -34,11 +37,14 @@ function App() {
           <RainbowKitProvider>
             <BrowserRouter>
               <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/swap" element={<Swap />} />
-                <Route path="/farms" element={<Farms />} />
-                <Route path="/pools" element={<Pools />} />
-                <Route path="*" element={<NotFound />} />
+                <Route element={<Layout />}>
+                  <Route path="/" element={<Swap />} />
+                  <Route path="/farms" element={<Farms />} />
+                  <Route path="/pools" element={<Pools />} />
+                  <Route path="/explore" element={<Explore />} />
+                  <Route path="/bridge" element={<Bridge />} />
+                  <Route path="*" element={<NotFound />} />
+                </Route>
               </Routes>
             </BrowserRouter>
           </RainbowKitProvider>

@@ -1,11 +1,9 @@
 import Footer from "../components/Footer"
-import NavBar from "../components/NavBar"
 import FarmForm from "../components/FarmForm"
 
 const Farms = () => {
     return (
         <div className="w-full min-h-screen bg-[#a7d8f5] flex flex-col justify-between">
-            <NavBar />
             {/* Hero Section - Farms Style */}
             <div className="flex flex-col md:flex-row items-center justify-center w-full px-8 pt-20 pb-8 flex-1 relative">
                 {/* Floating Tomatoes */}

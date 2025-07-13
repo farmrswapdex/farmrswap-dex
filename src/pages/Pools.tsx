@@ -1,45 +1,47 @@
 import Footer from "../components/Footer"
-import NavBar from "../components/NavBar"
-import AddLiquidityForm from "../components/AddLiquidityForm"
-import RemoveLiquidity from "../components/RemoveLiquidity"
+import { useConnectModal } from '@rainbow-me/rainbowkit';
+
+import { Eye, EyeOff, Inbox } from "lucide-react";
 
 const Pools = () => {
+    const { openConnectModal } = useConnectModal();
     return (
         <div className="w-full min-h-screen bg-[#a7d8f5] flex flex-col justify-between">
-            <NavBar />
-            {/* Hero Section - Pools Style */}
-            <div className="flex flex-col md:flex-row items-center justify-center w-full px-8 pt-20 pb-8 flex-1 relative">
-                {/* Floating Tomatoes */}
-                <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                    <div className="absolute left-1/3 top-10 text-5xl rotate-[-10deg] opacity-80 blur-sm animate-pulse">🍅</div>
-                    <div className="absolute right-20 top-0 text-4xl rotate-[15deg] opacity-80 blur-sm animate-pulse">🍅</div>
-                    <div className="absolute right-40 bottom-32 text-6xl rotate-[-5deg] opacity-80 blur-sm animate-pulse">🍅</div>
-                    <div className="absolute left-1/2 bottom-10 text-5xl rotate-[8deg] opacity-80 blur-sm animate-pulse">🍅</div>
-                    <div className="absolute left-1/5 bottom-10 text-5xl rotate-[6deg] opacity-80 blur-sm animate-pulse">🍅</div>
+            {/* Header Section */}
+            <div className="flex flex-col w-full max-w-4xl mx-auto pt-16 pb-8 px-4">
+                <div className="flex items-center justify-between mb-6">
+                    <div className="flex items-center gap-3">
+                        <h1 className="text-4xl md:text-5xl font-extrabold text-[#2d3e3e] tracking-wide" style={{ fontFamily: 'Fredoka One, sans-serif' }}>
+                            Positions
+                        </h1>
+                        <span className="ml-2 bg-[#f6f6f6] text-[#2d3e3e] text-xs font-semibold px-3 py-1 rounded-full shadow border border-gray-200 select-none">V1</span>
+                    </div>
+                    <button className="bg-blue-200 hover:bg-blue-300 text-[#2d3e3e] font-semibold px-6 py-2 rounded-full shadow transition text-lg">
+                        + New Position
+                    </button>
                 </div>
-                <div className="flex-1 flex flex-col items-center justify-center z-10">
-                    <h1 className="text-5xl md:text-6xl font-extrabold text-[#2d3e3e] drop-shadow-lg text-center tracking-wide" style={{ fontFamily: 'Fredoka One, sans-serif' }}>
-                        Liquidity Pools
-                    </h1>
-                    <p className="text-xl text-[#2d3e3e] mt-4 text-center">
-                        Provide liquidity to earn trading fees and rewards.
-                    </p>
+                <div className="flex items-center gap-2 mb-8">
+                    <span className="text-blue-500 text-lg cursor-pointer flex items-center gap-1 hover:underline select-none">
+                        <EyeOff />
+                        Hide closed positions
+                    </span>
                 </div>
+                <div className="text-xl text-[#2d3e3e] font-medium mb-4">Your positions (0)</div>
             </div>
 
-            {/* Pool Management Section */}
-            <div className="flex flex-col items-center justify-center w-full py-8">
-                <div className="flex flex-col md:flex-row gap-6 w-full max-w-3xl justify-center">
-                    <div className="bg-[#f6f6f6] rounded-2xl shadow-md flex-1 p-6 flex flex-col justify-between min-w-[250px]">
-                        <h3 className="text-xl font-bold text-black mb-2">Add Liquidity</h3>
-                        <p className="text-[#b0c4d4] mb-4">Supply tokens to a pool to earn trading fees.</p>
-                        <AddLiquidityForm />
+            {/* Empty State Card */}
+            <div className="flex-1 flex flex-col items-center justify-center px-4">
+                <div className="w-full max-w-2xl bg-[#f6f6f6] rounded-2xl shadow-md flex flex-col items-center justify-center p-12 min-h-[260px]">
+                    <div className="mb-6">
+                        <Inbox size={50} />
                     </div>
-                    <div className="bg-[#f6f6f6] rounded-2xl shadow-md flex-1 p-6 flex flex-col justify-between min-w-[250px]">
-                        <h3 className="text-xl font-bold text-black mb-2">Remove Liquidity</h3>
-                        <p className="text-[#b0c4d4] mb-4">Withdraw your tokens and accumulated fees from a pool.</p>
-                        <RemoveLiquidity />
-                    </div>
+                    <div className="text-lg text-[#2d3e3e] mb-2 text-center">Your active liquidity positions will appear here.</div>
+                    <button
+                        className="mt-6 bg-blue-200 hover:bg-blue-300 text-[#2d3e3e] font-semibold px-8 py-3 rounded-full shadow transition text-lg"
+                        onClick={openConnectModal}
+                    >
+                        Connect Wallet
+                    </button>
                 </div>
             </div>
             <Footer />

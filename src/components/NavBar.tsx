@@ -9,7 +9,7 @@ const NavBar = () => {
     const { openConnectModal } = useConnectModal();
 
     return (
-        <header className="w-full flex items-center justify-between px-4 md:px-8 py-4 shadow-none relative z-20">
+        <header className="w-full flex items-center justify-between px-4 md:px-8 py-4 shadow-none relative z-20 bg-[#a7d8f5]">
             {/* Logo and Brand */}
             <div className="flex items-center gap-3">
                 <Link to="/" className="flex items-center gap-1">
@@ -21,9 +21,11 @@ const NavBar = () => {
             {/* Desktop Navigation and Search */}
             <div className="hidden md:flex flex-1 items-center justify-between ml-8 mr-4">
                 <nav className="flex gap-12 text-lg font-medium text-gray-700">
-                    <Link to="/swap" className="font-bold text-slate-600 flex items-center gap-1 hover:text-red-400">Trade</Link>
-                    <Link to="/farms" className="flex text-slate-600 items-center gap-1 hover:text-red-400">Farms</Link>
+                    {/* <Link to="/swap" className="font-bold text-slate-600 flex items-center gap-1 hover:text-red-400">Trade</Link> */}
                     <Link to="/pools" className="flex text-slate-600 items-center gap-1 hover:text-red-400">Pool</Link>
+                    <Link to="/explore" className="flex text-slate-600 items-center gap-1 hover:text-red-400">Explore</Link>
+                    <Link to="/bridge" className="flex text-slate-600 items-center gap-1 hover:text-red-400">Bridge</Link>
+                    {/* <Link to="/farms" className="flex text-slate-600 items-center gap-1 hover:text-red-400">Farms</Link> */}
                 </nav>
                 <button
                     onClick={() => setIsSearchModalOpen(true)}
