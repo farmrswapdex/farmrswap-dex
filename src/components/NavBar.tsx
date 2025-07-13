@@ -1,6 +1,6 @@
 import { ConnectButton, useConnectModal } from '@rainbow-me/rainbowkit';
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import SearchModal from './SearchModal';
 
 const NavBar = () => {
@@ -22,9 +22,9 @@ const NavBar = () => {
             <div className="hidden md:flex flex-1 items-center justify-between ml-8 mr-4">
                 <nav className="flex gap-12 text-lg font-medium text-gray-700">
                     {/* <Link to="/swap" className="font-bold text-slate-600 flex items-center gap-1 hover:text-red-400">Trade</Link> */}
-                    <Link to="/pools" className="flex text-slate-600 items-center gap-1 hover:text-red-400">Pool</Link>
-                    <Link to="/explore" className="flex text-slate-600 items-center gap-1 hover:text-red-400">Explore</Link>
-                    <Link to="/bridge" className="flex text-slate-600 items-center gap-1 hover:text-red-400">Bridge</Link>
+                    <NavLink to="/pools" className={({ isActive }) => `flex text-slate-600 items-center gap-1 hover:text-red-400 ${isActive ? 'p-2 font-bold rounded-lg bg-black bg-opacity-5' : ''}`}>Pool</NavLink>
+                    <NavLink to="/explore" className={({ isActive }) => `flex text-slate-600 items-center gap-1 hover:text-red-400 ${isActive ? 'p-2 font-bold rounded-lg bg-black bg-opacity-5' : ''}`}>Explore</NavLink>
+                    <NavLink to="/bridge" className={({ isActive }) => `flex text-slate-600 items-center gap-1 hover:text-red-400 ${isActive ? 'p-2 font-bold rounded-lg bg-black bg-opacity-5' : ''}`}>Bridge</NavLink>
                     {/* <Link to="/farms" className="flex text-slate-600 items-center gap-1 hover:text-red-400">Farms</Link> */}
                 </nav>
                 <button
@@ -62,9 +62,9 @@ const NavBar = () => {
             {/* Mobile menu */}
             {menuOpen && (
                 <nav className="absolute top-full left-0 w-full bg-[#232c48] flex flex-col items-center gap-4 py-6 md:hidden shadow-2xl animate-fade-in z-30">
-                    <Link to="/swap" className="font-bold text-[#b3b9d8] flex items-center gap-1 hover:text-red-400 text-lg" onClick={() => setMenuOpen(false)}>TRADE</Link>
-                    <Link to="/pool" className="flex text-[#b3b9d8] items-center gap-1 hover:text-red-400 text-lg" onClick={() => setMenuOpen(false)}>POOL</Link>
-                    <Link to="/farms" className="flex items-center text-[#b3b9d8] gap-1 hover:text-red-400 text-lg" onClick={() => setMenuOpen(false)}>FARM</Link>
+                    <NavLink to="/swap" className={({ isActive }) => `font-bold text-lg flex items-center gap-1 hover:text-red-400 ${isActive ? 'text-red-400' : 'text-[#b3b9d8]'}`} onClick={() => setMenuOpen(false)}>TRADE</NavLink>
+                    <NavLink to="/pools" className={({ isActive }) => `text-lg flex items-center gap-1 hover:text-red-400 ${isActive ? 'text-red-400' : 'text-[#b3b9d8]'}`} onClick={() => setMenuOpen(false)}>POOL</NavLink>
+                    <NavLink to="/farms" className={({ isActive }) => `text-lg flex items-center gap-1 hover:text-red-400 ${isActive ? 'text-red-400' : 'text-[#b3b9d8]'}`} onClick={() => setMenuOpen(false)}>FARM</NavLink>
                 </nav>
             )}
             <SearchModal isOpen={isSearchModalOpen} onClose={() => setIsSearchModalOpen(false)} />
