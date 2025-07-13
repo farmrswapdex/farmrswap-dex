@@ -1,7 +1,7 @@
-import Footer from "../components/Footer";
-import { Wallet, ArrowRight } from "lucide-react";
-import { useAccount, useConnect } from 'wagmi';
 import { useConnectModal } from '@rainbow-me/rainbowkit';
+import { ArrowRight, Wallet } from "lucide-react";
+import { useAccount } from 'wagmi';
+import Footer from "../components/Footer";
 
 const Bridge = () => {
     const { isConnected } = useAccount();
