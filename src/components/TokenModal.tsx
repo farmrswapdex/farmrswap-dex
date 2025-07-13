@@ -32,7 +32,7 @@ const TokenModal = ({ isOpen, onClose, onTokenSelect }: TokenModalProps) => {
     };
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center" onClick={onClose}>
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center rounded-3xl" onClick={onClose}>
             <div className="bg-white rounded-2xl shadow-lg w-full max-w-md mx-4" onClick={(e) => e.stopPropagation()}>
                 <div className="p-4 border-b border-gray-200">
                     <input
