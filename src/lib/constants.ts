@@ -10,6 +10,9 @@ const feeToSpacing = {
 // forge inspect UniswapV3Pool bytecode| xargs cast keccak
 const poolCodeHash = "0x9dc805423bd1664a6a73b31955de538c338bac1f5c61beb8f4635be5032076a2";
 
+export const farmrSwapLogo = "https://res.cloudinary.com/dma1c8i6n/image/upload/f_auto,q_auto/farmr_coin_j5gfsd"
+
+
 // Token definitions for Monad testnet
 export const TOKENS = {
     WETH: {
@@ -33,7 +36,7 @@ export const TOKENS = {
         name: 'BLOCX Token',
         address: '0x0000000000000000000000000000000000000000', // Placeholder address
         decimals: 18,
-        logoURI: 'https://via.placeholder.com/32/FFD700/000000?text=B',
+        logoURI: 'https://res.cloudinary.com/dma1c8i6n/image/upload/f_auto,q_auto/blocxcoin_nhozz7',
         color: '#FFD700'
     },
     TOMATO: {
