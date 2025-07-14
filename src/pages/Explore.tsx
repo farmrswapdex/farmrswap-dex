@@ -1,5 +1,4 @@
-import Footer from "../components/Footer";
-import { BarChart2, ExternalLink, Search, LineChart } from "lucide-react";
+import { BarChart2, ExternalLink, LineChart, Search } from "lucide-react";
 import { TOKEN_LIST } from "../lib/constants";
 
 const Explore = () => {
@@ -134,7 +133,6 @@ const Explore = () => {
                     </table>
                 </div>
             </div>
-            <Footer />
         </div>
     );
 };

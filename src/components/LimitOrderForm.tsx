@@ -17,10 +17,11 @@ interface LimitOrderFormProps {
     toAmount: string;
     handleFromAmountChange: (value: string) => void;
     handleLimitPriceChange: (value: string) => void;
-    handleTokenSelect: (token: Token, isFromToken: boolean) => void;
+    onFromTokenSelectClick: () => void;
+    onToTokenSelectClick: () => void;
 }
 
-const LimitOrderForm: React.FC<LimitOrderFormProps> = ({
+const LimitOrderForm = ({
     fromToken,
     toToken,
     fromAmount,
@@ -28,8 +29,9 @@ const LimitOrderForm: React.FC<LimitOrderFormProps> = ({
     toAmount,
     handleFromAmountChange,
     handleLimitPriceChange,
-    handleTokenSelect
-}) => {
+    onFromTokenSelectClick,
+    onToTokenSelectClick,
+}: LimitOrderFormProps) => {
     return (
         <div className="w-full bg-[#f6f6f6] rounded-2xl p-0 flex flex-col gap-0">
             {/* Sell Section */}
@@ -45,7 +47,7 @@ const LimitOrderForm: React.FC<LimitOrderFormProps> = ({
                     />
                     <TokenSelector
                         selectedToken={fromToken}
-                        onTokenSelect={(token) => handleTokenSelect(token, true)}
+                        onClick={onFromTokenSelectClick}
                     />
                 </div>
                 <span className="text-right text-sm text-gray-400 pr-2">~$0.00</span>
@@ -80,7 +82,7 @@ const LimitOrderForm: React.FC<LimitOrderFormProps> = ({
                     />
                     <TokenSelector
                         selectedToken={toToken}
-                        onTokenSelect={(token) => handleTokenSelect(token, false)}
+                        onClick={onToTokenSelectClick}
                     />
                 </div>
                 <span className="text-right text-sm text-gray-400 pr-2">~$0.00</span>

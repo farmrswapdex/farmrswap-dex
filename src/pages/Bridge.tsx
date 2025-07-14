@@ -1,7 +1,6 @@
 import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { ArrowRight, Wallet } from "lucide-react";
 import { useAccount } from 'wagmi';
-import Footer from "../components/Footer";
 
 const Bridge = () => {
     const { isConnected } = useAccount();
@@ -79,7 +78,6 @@ const Bridge = () => {
                     )}
                 </div>
             </div>
-            <Footer />
         </div>
     );
 };

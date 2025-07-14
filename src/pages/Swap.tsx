@@ -1,4 +1,3 @@
-import Footer from "../components/Footer"
 import SwapForm from '../components/SwapForm';
 
 const Swap = () => {
@@ -24,7 +23,6 @@ const Swap = () => {
                     </div>
                 </div>
             </div>
-            <Footer />
         </div>
     );
 };

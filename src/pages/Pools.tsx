@@ -1,5 +1,4 @@
 import { EyeOff, Inbox } from "lucide-react";
-import Footer from "../components/Footer";
 
 const Pools = () => {
     return (
@@ -36,7 +35,6 @@ const Pools = () => {
                     <div className="text-lg text-[#2d3e3e] mb-2 text-center">Your active liquidity positions will appear here.</div>
                 </div>
             </div>
-            <Footer />
         </div>
     )
 }

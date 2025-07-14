@@ -1,4 +1,3 @@
-import Footer from "../components/Footer"
 import FarmForm from "../components/FarmForm"
 
 const Farms = () => {
@@ -34,7 +33,6 @@ const Farms = () => {
                     </div>
                 </div>
             </div>
-            <Footer />
         </div>
     )
 }

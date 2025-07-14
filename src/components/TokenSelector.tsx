@@ -1,6 +1,3 @@
-import { useState } from 'react';
-import TokenModal from './TokenModal';
-
 interface Token {
     symbol: string;
     name: string;
@@ -12,22 +9,15 @@ interface Token {
 
 interface TokenSelectorProps {
     selectedToken: Token | null;
-    onTokenSelect: (token: Token) => void;
+    onClick: () => void;
     disabled?: boolean;
 }
 
-const TokenSelector = ({ selectedToken, onTokenSelect, disabled = false }: TokenSelectorProps) => {
-    const [isModalOpen, setIsModalOpen] = useState(false);
-
-    const handleTokenSelect = (token: Token) => {
-        onTokenSelect(token);
-        setIsModalOpen(false);
-    };
-
+const TokenSelector = ({ selectedToken, onClick, disabled = false }: TokenSelectorProps) => {
     return (
         <div className="relative">
             <button
-                onClick={() => !disabled && setIsModalOpen(true)}
+                onClick={() => !disabled && onClick()}
                 disabled={disabled}
                 className={`flex items-center bg-white rounded-full px-4 py-2 gap-2 shadow-md font-semibold text-black border border-gray-200 transition-all duration-200 ${
                     disabled
@@ -72,14 +62,8 @@ const TokenSelector = ({ selectedToken, onTokenSelect, disabled = false }: Token
                     <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
                 </svg>
             </button>
-
-            <TokenModal
-                isOpen={isModalOpen}
-                onClose={() => setIsModalOpen(false)}
-                onTokenSelect={handleTokenSelect}
-            />
         </div>
     );
 };
 
-export default TokenSelector; 
+export default TokenSelector;
