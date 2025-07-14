@@ -33,6 +33,7 @@ const SwapForm = () => {
     const [quote, setQuote] = useState<any>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [isFlipped, setIsFlipped] = useState(false);
+    const [amountsSwapped, setAmountsSwapped] = useState(false);
 
     // Limit-order-specific state
     const [limitPrice, setLimitPrice] = useState('');
@@ -96,6 +97,7 @@ const SwapForm = () => {
         setFromAmount(parsed);
         if (activeTab === 'swap') {
             setIsFlipped(false);
+            setAmountsSwapped(false);
         }
     };
 
@@ -104,6 +106,7 @@ const SwapForm = () => {
         setToAmount(parsed);
         if (activeTab === 'swap') {
             setIsFlipped(true);
+            setAmountsSwapped(false);
         }
     };
 
@@ -112,25 +115,40 @@ const SwapForm = () => {
     };
 
     const handleTokenSelect = (token: Token, isFromToken: boolean) => {
+        setAmountsSwapped(false); 
         if (isFromToken) {
-            setFromToken(token);
             if (toToken?.symbol === token.symbol) {
-                setToToken(fromToken);
-            }
-        } else {
-            setToToken(token);
-            if (fromToken?.symbol === token.symbol) {
+                const currentFromToken = fromToken;
                 setFromToken(toToken);
+                setToToken(currentFromToken);
+            } else {
+                setFromToken(token);
+            }
+        } else { 
+            if (fromToken?.symbol === token.symbol) {
+                const currentToToken = toToken;
+                setToToken(fromToken);
+                setFromToken(currentToToken);
+            } else {
+                setToToken(token);
             }
         }
     };
 
     const handleSwapTokens = () => {
         if (fromToken && toToken) {
-            setFromToken(toToken);
-            setToToken(fromToken);
-            setFromAmount(toAmount);
-            setToAmount(fromAmount);
+            const newFromToken = toToken;
+            const newToToken = fromToken;
+            const newFromAmount = toAmount;
+            const newToAmount = fromAmount;
+
+            setFromToken(newFromToken);
+            setToToken(newToToken);
+            setFromAmount(newFromAmount);
+            setToAmount(newToAmount);
+            
+            setAmountsSwapped(true);
+
             if (activeTab === 'swap') {
                 setIsFlipped(false);
             }
@@ -239,7 +257,8 @@ const SwapForm = () => {
                             <div className="flex items-center justify-center -my-2">
                                 <button
                                     onClick={handleSwapTokens}
-                                    className="bg-white rounded-full p-2 shadow-md flex items-center justify-center hover:bg-gray-50 transition-colors border border-gray-200 z-10"
+                                    disabled={amountsSwapped || !fromToken || !toToken}
+                                    className="bg-white rounded-full p-2 shadow-md flex items-center justify-center hover:bg-gray-50 transition-colors border border-gray-200 z-10 disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
                                     <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
