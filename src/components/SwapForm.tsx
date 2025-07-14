@@ -8,6 +8,7 @@ import { calculateQuote, formatNumber, parseAmount } from '../lib/quoteCalculato
 import LimitOrderForm from './LimitOrderForm';
 import TokenModal from "./TokenModal";
 import TokenSelector from './TokenSelector';
+import { ArrowDown } from "lucide-react";
 
 interface Token {
     symbol: string;
@@ -280,9 +281,7 @@ const SwapForm = () => {
                                             disabled={amountsSwapped || !fromToken || !toToken}
                                             className="bg-white rounded-full p-2 shadow-md flex items-center justify-center hover:bg-gray-50 transition-colors border border-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
                                         >
-                                            <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
-                                            </svg>
+                                            <ArrowDown className="w-5 h-5 text-gray-400" />
                                         </button>
                                     </div>
                                 </div>
