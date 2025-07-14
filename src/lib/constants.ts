@@ -44,7 +44,7 @@ export const TOKENS = {
         name: 'Tomato Token',
         address: '0x0000000000000000000000000000000000000001', // Placeholder address
         decimals: 18,
-        logoURI: 'https://via.placeholder.com/32/FF6347/000000?text=🍅',
+        logoURI: 'https://placehold.co/32/FF6347/000000?text=T',
         color: '#FF6347'
     }
 };
