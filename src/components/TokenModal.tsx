@@ -49,7 +49,7 @@ const TokenModal = ({ isOpen, onClose, onTokenSelect }: TokenModalProps) => {
                         <button
                             key={token.address}
                             onClick={() => handleTokenClick(token)}
-                            className="w-full px-4 py-3 flex items-center gap-3 hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-b-0"
+                            className="w-full px-4 py-3 flex items-center gap-3 hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-b-0 rounded-full"
                         >
                             <span
                                 className="w-8 h-8 rounded-full flex items-center justify-center"
