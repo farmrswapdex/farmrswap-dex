@@ -42,6 +42,19 @@ const SwapForm = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectingFor, setSelectingFor] = useState<'from' | 'to' | null>(null);
 
+    // Handle body scroll when modal is open
+    useEffect(() => {
+        if (isModalOpen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'auto';
+        }
+        // Cleanup on unmount
+        return () => {
+            document.body.style.overflow = 'auto';
+        };
+    }, [isModalOpen]);
+
     // Calculate estimated toAmount for limit order
     useEffect(() => {
         if (activeTab === 'limit' && fromAmount && limitPrice) {
