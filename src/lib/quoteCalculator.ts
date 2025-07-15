@@ -23,8 +23,8 @@ export const calculateQuote = async ({ fromToken, toToken, amount }: QuoteParams
     const mockRates: { [key: string]: number } = {
         'WETH': 2000, // $2000 per ETH
         'USDC': 1,    // $1 per USDC
-        'VIC': 0.5,   // $0.5 per VIC
-        'TOMATO': 0.1 // $0.1 per TOMATO
+        'BLOCX': 0.5,   // $0.5 per BLOCX
+        'FARMR': 0.1 // $0.1 per FARMR
     };
 
     const fromRate = mockRates[fromToken] || 1;

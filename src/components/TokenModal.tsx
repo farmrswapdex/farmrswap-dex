@@ -55,25 +55,11 @@ const TokenModal = ({ isOpen, onClose, onTokenSelect }: TokenModalProps) => {
                                 className="w-8 h-8 rounded-full flex items-center justify-center"
                                 style={{ backgroundColor: token.color }}
                             >
-                                {token.symbol === 'VIC' ? (
-                                    <span className="block w-6 h-6 bg-yellow-400 rounded-full"></span>
-                                ) : token.symbol === 'TOMATO' ? (
-                                    <span className="text-sm">🍅</span>
-                                ) : (
+                                {(
                                     <img
                                         src={token.logoURI}
                                         alt={token.symbol}
                                         className="w-6 h-6 rounded-full"
-                                        onError={(e) => {
-                                            const target = e.target as HTMLImageElement;
-                                            target.style.display = 'none';
-                                            const parent = target.parentElement;
-                                            if (parent) {
-                                                const textSpan = document.createElement('span');
-                                                textSpan.innerText = token.symbol.charAt(0);
-                                                parent.appendChild(textSpan);
-                                            }
-                                        }}
                                     />
                                 )}
                             </span>

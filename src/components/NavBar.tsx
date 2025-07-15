@@ -1,4 +1,3 @@
-import { farmrSwapLogo } from '../lib/constants';
 import { ConnectButton, useConnectModal } from '@rainbow-me/rainbowkit';
 import { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
@@ -14,7 +13,7 @@ const NavBar = () => {
             {/* Logo and Brand */}
             <div className="flex items-center gap-3">
                 <Link to="/" className="flex items-center gap-1">
-                    <img src={farmrSwapLogo} alt="FarmrSwap Logo" className="w-12 h-12 rounded-full" />
+                    <img src="farmrpng.png" alt="FarmrSwap Logo" className="w-12 h-12 rounded-full" />
                 </Link>
             </div>
             {/* Desktop Navigation and Search */}

@@ -1,5 +1,5 @@
 import { useConnectModal } from "@rainbow-me/rainbowkit";
-import { Settings } from 'lucide-react';
+import { ArrowDown, Settings } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useAccount } from 'wagmi';
 import { TOKENS } from '../lib/constants';
@@ -8,7 +8,6 @@ import { calculateQuote, formatNumber, parseAmount } from '../lib/quoteCalculato
 import LimitOrderForm from './LimitOrderForm';
 import TokenModal from "./TokenModal";
 import TokenSelector from './TokenSelector';
-import { ArrowDown } from "lucide-react";
 
 interface Token {
     symbol: string;
@@ -25,7 +24,7 @@ const SwapForm = () => {
 
     // Common state for both forms
     const [fromToken, setFromToken] = useState<Token | null>(TOKENS.BLOCX);
-    const [toToken, setToToken] = useState<Token | null>(null);
+    const [toToken, setToToken] = useState<Token | null>(TOKENS.FARMR);
     const [fromAmount, setFromAmount] = useState('');
     const [toAmount, setToAmount] = useState('');
     const [activeTab, setActiveTab] = useState<'swap' | 'limit'>('swap');

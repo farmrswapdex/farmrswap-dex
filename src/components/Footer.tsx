@@ -1,4 +1,3 @@
-import { farmrSwapLogo } from '../lib/constants';
 import { Github, Twitter } from "lucide-react";
 
 const Footer = () => {
@@ -8,7 +7,7 @@ const Footer = () => {
                 {/* Left: Logo, Brand, Socials */}
                 <div className="flex flex-col gap-6 min-w-[220px]">
                     <div className="flex items-center gap-4">
-                        <img src={farmrSwapLogo} alt="FarmrSwap Logo" className="w-16 h-16 rounded-full" />
+                        <img src="farmrpng.png" alt="FarmrSwap Logo" className="w-16 h-16 rounded-full" />
                         <span className="text-3xl font-bold text-[#b3b9d8]">FarmrSwap</span>
                     </div>
                     <div className="flex gap-4 text-[#8b92b7] text-3xl">

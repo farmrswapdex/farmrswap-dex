@@ -10,7 +10,7 @@ const feeToSpacing = {
 // forge inspect UniswapV3Pool bytecode| xargs cast keccak
 const poolCodeHash = "0x9dc805423bd1664a6a73b31955de538c338bac1f5c61beb8f4635be5032076a2";
 
-export const farmrSwapLogo = "https://res.cloudinary.com/dma1c8i6n/image/upload/f_auto,q_auto/farmr_coin_j5gfsd"
+export const farmrSwapLogo = ""
 
 
 // Token definitions for Monad testnet
@@ -37,14 +37,14 @@ export const TOKENS = {
         address: '0x0000000000000000000000000000000000000000', // Placeholder address
         decimals: 18,
         logoURI: 'https://res.cloudinary.com/dma1c8i6n/image/upload/f_auto,q_auto/blocxcoin_nhozz7',
-        color: '#FFD700'
+        color: '#121214'
     },
-    TOMATO: {
-        symbol: 'TOMATO',
-        name: 'Tomato Token',
+    FARMR: {
+        symbol: 'FARMR',
+        name: 'FARMR Token',
         address: '0x0000000000000000000000000000000000000001', // Placeholder address
         decimals: 18,
-        logoURI: 'https://placehold.co/32/FF6347/000000?text=T',
+        logoURI: 'https://res.cloudinary.com/dma1c8i6n/image/upload/f_auto,q_auto/farmr_coin_j5gfsd',
         color: '#FF6347'
     }
 };
