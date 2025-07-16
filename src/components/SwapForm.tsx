@@ -1,3 +1,4 @@
+import * as Tabs from '@radix-ui/react-tabs';
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { ArrowDown, Settings } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -228,27 +229,31 @@ const SwapForm = () => {
     return (
         <>
             <div className="flex flex-col items-center w-full">
-                <div className="w-max flex flex-col">
+                <Tabs.Root
+                    value={activeTab}
+                    onValueChange={(value) => setActiveTab(value as 'swap' | 'limit')}
+                    className="w-max flex flex-col"
+                >
                     <div className="bg-[#f6f6f6] backdrop-blur-sm rounded-md shadow-lg p-0 flex flex-col items-center">
-                        <div className="flex items-center gap-6 mb-2 w-full px-8 pt-8">
-                            <span
-                                className={`text-3xl font-bold cursor-pointer transition-colors ${activeTab === 'swap' ? 'text-black' : 'text-gray-300 hover:text-black'}`}
-                                onClick={() => setActiveTab('swap')}
+                        <Tabs.List className="flex items-center gap-6 mb-2 w-full px-8 pt-8">
+                            <Tabs.Trigger
+                                value="swap"
+                                className="text-3xl font-bold cursor-pointer transition-colors data-[state=active]:text-black data-[state=inactive]:text-gray-300 hover:text-black focus:outline-none"
                             >
                                 Swap
-                            </span>
-                            <span
-                                className={`text-3xl font-bold cursor-pointer transition-colors ${activeTab === 'limit' ? 'text-black' : 'text-gray-300 hover:text-black'}`}
-                                onClick={() => setActiveTab('limit')}
+                            </Tabs.Trigger>
+                            <Tabs.Trigger
+                                value="limit"
+                                className="text-3xl font-bold cursor-pointer transition-colors data-[state=active]:text-black data-[state=inactive]:text-gray-300 hover:text-black focus:outline-none"
                             >
                                 Limit
-                            </span>
+                            </Tabs.Trigger>
                             <span className="ml-auto text-2xl text-gray-400 cursor-pointer hover:text-gray-600 transition-colors">
                                 <Settings />
                             </span>
-                        </div>
+                        </Tabs.List>
 
-                        {activeTab === 'swap' ? (
+                        <Tabs.Content value="swap">
                             <div className="w-full p-4 flex flex-col gap-2">
                                 <div className="relative">
                                     <div className="flex flex-col gap-2">
@@ -317,7 +322,8 @@ const SwapForm = () => {
                                     </div>
                                 )}
                             </div>
-                        ) : (
+                        </Tabs.Content>
+                        <Tabs.Content value="limit">
                             <LimitOrderForm
                                 fromToken={fromToken}
                                 toToken={toToken}
@@ -329,7 +335,7 @@ const SwapForm = () => {
                                 onFromTokenSelectClick={() => openModal('from')}
                                 onToTokenSelectClick={() => openModal('to')}
                             />
-                        )}
+                        </Tabs.Content>
                     </div>
 
                     <button
@@ -342,7 +348,7 @@ const SwapForm = () => {
                     >
                         {getButtonText()}
                     </button>
-                </div>
+                </Tabs.Root>
             </div>
             <TokenModal
                 isOpen={isModalOpen}
