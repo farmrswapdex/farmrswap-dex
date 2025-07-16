@@ -2,7 +2,10 @@ import * as Tabs from '@radix-ui/react-tabs';
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { ArrowDown, Settings } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { useAccount } from 'wagmi';
+import { toast } from 'react-hot-toast';
+import { useAccount, useWriteContract } from 'wagmi';
+import { parseUnits } from 'viem';
+import { RouterContract } from '../lib/config';
 import { TOKENS } from '../lib/constants';
 import debounce from '../lib/debounce';
 import { calculateQuote, formatNumber, parseAmount } from '../lib/quoteCalculator';
@@ -21,7 +24,8 @@ interface Token {
 
 const SwapForm = () => {
     const { openConnectModal } = useConnectModal();
-    const { isConnected } = useAccount();
+    const { address, isConnected } = useAccount();
+    const { writeContractAsync, error } = useWriteContract();
 
     // Common state for both forms
     const [fromToken, setFromToken] = useState<Token | null>(TOKENS.BLOCX);
@@ -106,6 +110,12 @@ const SwapForm = () => {
         }
     }, [quote, isFlipped]);
 
+    useEffect(() => {
+        if (error) {
+            toast.error(error.name);
+        }
+    }, [error])
+
     const handleFromAmountChange = (value: string) => {
         const parsed = parseAmount(value, fromToken?.decimals || 18);
         setFromAmount(parsed);
@@ -169,8 +179,36 @@ const SwapForm = () => {
         }
     };
 
-    const handleSwap = () => {
-        console.log('Swapping:', { fromToken, toToken, fromAmount, toAmount, quote });
+    const handleSwap = async () => {
+        if (!fromToken || !toToken || !fromAmount || !quote || !address) {
+            return;
+        }
+
+        const amountIn = parseUnits(fromAmount, fromToken.decimals);
+        // Slippage of 0.5%
+        const amountOutMin = parseUnits(
+            (parseFloat(quote.outputAmount) * 0.995).toFixed(toToken.decimals),
+            toToken.decimals
+        );
+
+        const promise = writeContractAsync({
+            address: RouterContract.address,
+            abi: RouterContract.abi,
+            functionName: 'swapExactTokensForTokens',
+            args: [
+                amountIn,
+                amountOutMin,
+                [fromToken.address as `0x${string}`, toToken.address as `0x${string}`],
+                address,
+                BigInt(Math.floor(Date.now() / 1000) + 60 * 20), // 20 minute deadline
+            ],
+        });
+
+        toast.promise(promise, {
+            loading: 'Submitting transaction...',
+            success: 'Swap successful!',
+            error: 'Swap failed.',
+        });
     };
 
     const handlePlaceLimitOrder = () => {

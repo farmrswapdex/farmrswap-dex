@@ -7,13 +7,7 @@ const feeToSpacing = {
     500: 10
 }
 
-// forge inspect UniswapV3Pool bytecode| xargs cast keccak
-const poolCodeHash = "0x9dc805423bd1664a6a73b31955de538c338bac1f5c61beb8f4635be5032076a2";
-
-export const farmrSwapLogo = ""
-
-
-// Token definitions for Monad testnet
+// Token definitions for Sepolia testnet
 export const TOKENS = {
     WETH: {
         symbol: 'WETH',
@@ -51,4 +45,4 @@ export const TOKENS = {
 
 export const TOKEN_LIST = Object.values(TOKENS);
 
-export { uint256Max, feeToSpacing, poolCodeHash };
+export { feeToSpacing, uint256Max };
