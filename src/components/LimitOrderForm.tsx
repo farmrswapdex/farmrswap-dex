@@ -36,7 +36,7 @@ const LimitOrderForm = ({
     return (
         <Form.Root className="w-full bg-[#f6f6f6] rounded-2xl p-0 flex flex-col gap-0">
             {/* Sell Section */}
-            <Form.Field name="fromAmount" className="flex flex-col gap-1 border-b border-gray-200 px-6 py-4">
+            <Form.Field name="fromAmount" className="flex flex-col gap-1 border-b border-gray-200 px-6 py-3 pb-2">
                 <Form.Label className="text-lg font-semibold text-gray-700 mb-1">Sell</Form.Label>
                 <div className="flex items-center gap-2">
                     <Form.Control asChild>
