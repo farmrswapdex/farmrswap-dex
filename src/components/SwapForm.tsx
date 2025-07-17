@@ -272,7 +272,7 @@ const SwapForm = () => {
                     onValueChange={(value) => setActiveTab(value as 'swap' | 'limit')}
                     className="w-max flex flex-col"
                 >
-                    <div className="backdrop-blur-lg rounded-md shadow-lg p-0 flex flex-col items-center w-[950px]">
+                    <div className="backdrop-blur-lg rounded-md shadow-lg p-0 flex flex-col items-center w-[700px]">
                         <Tabs.List className="flex items-center gap-6 mb-2 w-full px-8 pt-8">
                             <Tabs.Trigger
                                 value="swap"
