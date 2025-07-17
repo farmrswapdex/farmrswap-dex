@@ -272,7 +272,7 @@ const SwapForm = () => {
                     onValueChange={(value) => setActiveTab(value as 'swap' | 'limit')}
                     className="w-max flex flex-col"
                 >
-                    <div className="bg-[#f6f6f6] backdrop-blur-sm rounded-md shadow-lg p-0 flex flex-col items-center">
+                    <div className="backdrop-blur-lg rounded-md shadow-lg p-0 flex flex-col items-center w-[950px]">
                         <Tabs.List className="flex items-center gap-6 mb-2 w-full px-8 pt-8">
                             <Tabs.Trigger
                                 value="swap"
@@ -294,7 +294,7 @@ const SwapForm = () => {
                         <Tabs.Content value="swap">
                             <div className="w-full p-4 flex flex-col gap-2">
                                 <div className="relative">
-                                    <div className="flex flex-col gap-2">
+                                    <div className="flex flex-col gap-2 w-[580px]">
                                         <div className="bg-white bg-opacity-50 backdrop-blur-sm rounded-2xl p-4 flex flex-col gap-1">
                                             <span className="text-lg font-semibold text-gray-700 mb-1">Sell</span>
                                             <div className="flex items-center gap-2">
