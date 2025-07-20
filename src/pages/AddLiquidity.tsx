@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useConnectModal } from '@rainbow-me/rainbowkit';
+import { useEffect, useState } from 'react';
+import { useAccount } from 'wagmi';
+import AddLiquidityForm from '../components/AddLiquidityForm';
 import TokenModal from '../components/TokenModal';
 import TokenSelector from '../components/TokenSelector';
-import AddLiquidityForm from '../components/AddLiquidityForm';
-import { TOKENS, NATIVE_TOKEN } from '../lib/constants';
-import { useConnectModal } from '@rainbow-me/rainbowkit';
-import { useAccount } from 'wagmi';
+import { NATIVE_TOKEN } from '../lib/constants';
 
 // Token type
 interface Token {
@@ -145,7 +145,6 @@ const AddLiquidity = () => {
                 isOpen={isModalOpen}
                 onClose={closeModal}
                 onTokenSelect={handleTokenSelect}
-                tokens={Object.values(TOKENS)}
             />
         </div>
     );
