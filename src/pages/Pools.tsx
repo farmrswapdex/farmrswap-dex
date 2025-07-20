@@ -7,6 +7,7 @@ import { Inbox } from 'lucide-react';
 
 import { TOKENS } from '../lib/constants';
 import { FactoryContract, PairContract } from '../lib/config';
+import { sortTokens } from '../lib/utils';
 
 // Token type
 interface Token {
@@ -40,11 +41,14 @@ const Pools = () => {
 
     // 1. Get pair addresses for all possible token pairs
     const { data: pairAddressesData, isFetched: arePairAddressesFetched } = useReadContracts({
-        contracts: allTokenPairs.map(([tokenA, tokenB]) => ({
-            ...FactoryContract,
-            functionName: 'getPair',
-            args: [tokenA.address as `0x${string}`, tokenB.address as `0x${string}`],
-        })),
+        contracts: allTokenPairs.map(([tokenA, tokenB]) => {
+            const [sortedTokenA, sortedTokenB] = sortTokens(tokenA, tokenB);
+            return {
+                ...FactoryContract,
+                functionName: 'getPair',
+                args: [sortedTokenA.address as `0x${string}`, sortedTokenB.address as `0x${string}`],
+            };
+        }),
         query: { enabled: isConnected },
     });
 
@@ -69,12 +73,15 @@ const Pools = () => {
     useEffect(() => {
         if (areLpBalancesFetched && lpBalancesData) {
             const userPositions = validPairs
-                .map((p, i) => ({
-                    tokenA: p.tokens[0],
-                    tokenB: p.tokens[1],
-                    pairAddress: p.pairAddress as `0x${string}`,
-                    lpBalance: lpBalancesData[i].status === 'success' ? (lpBalancesData[i].result as bigint) : 0n,
-                }))
+                .map((p, i) => {
+                    const [tokenA, tokenB] = sortTokens(p.tokens[0], p.tokens[1]);
+                    return {
+                        tokenA,
+                        tokenB,
+                        pairAddress: p.pairAddress as `0x${string}`,
+                        lpBalance: lpBalancesData[i].status === 'success' ? (lpBalancesData[i].result as bigint) : 0n,
+                    };
+                })
                 .filter(p => p.lpBalance && p.lpBalance > 0n);
 
             setPositions(userPositions);

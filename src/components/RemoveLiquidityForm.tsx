@@ -1,9 +1,10 @@
 import { MaxUint256 } from 'ethers';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { erc20Abi, formatUnits, parseUnits } from 'viem';
 import { useAccount, useReadContract, useWriteContract } from 'wagmi';
 import { FactoryContract, PairContract, RouterContract } from '../lib/config';
+import { sortTokens } from '../lib/utils';
 
 interface Token {
     symbol: string;
@@ -29,10 +30,12 @@ const RemoveLiquidityForm = ({ tokenA, tokenB, onBack }: RemoveLiquidityFormProp
     const [needsApproval, setNeedsApproval] = useState(false);
     const [isApproving, setIsApproving] = useState(false);
 
+    const [sortedTokenA, sortedTokenB] = useMemo(() => sortTokens(tokenA, tokenB), [tokenA, tokenB]);
+
     const { data: pairAddress } = useReadContract({
         ...FactoryContract,
         functionName: 'getPair',
-        args: [tokenA.address as `0x${string}`, tokenB.address as `0x${string}`],
+        args: [sortedTokenA.address as `0x${string}`, sortedTokenB.address as `0x${string}`],
     });
 
     const { data: lpBalance, refetch: refetchLpBalance } = useReadContract({
@@ -131,8 +134,8 @@ const RemoveLiquidityForm = ({ tokenA, tokenB, onBack }: RemoveLiquidityFormProp
                 abi: RouterContract.abi,
                 functionName: 'removeLiquidity',
                 args: [
-                    tokenA.address as `0x${string}`,
-                    tokenB.address as `0x${string}`,
+                    sortedTokenA.address as `0x${string}`,
+                    sortedTokenB.address as `0x${string}`,
                     liquidity,
                     amountAMin,
                     amountBMin,
@@ -158,7 +161,7 @@ const RemoveLiquidityForm = ({ tokenA, tokenB, onBack }: RemoveLiquidityFormProp
     const getEstimatedAmounts = () => {
         if (!lpAmount || !lpTotalSupply || !reserves || lpTotalSupply === 0n) return { amountA: '0.0', amountB: '0.0' };
         const liquidity = parseUnits(lpAmount, 18);
-        const [reserveA, reserveB] = reserves;
+        const [reserveA, reserveB] = tokenA.address.toLowerCase() < tokenB.address.toLowerCase() ? reserves : [reserves[1], reserves[0]];
         const amountA = (liquidity * reserveA) / lpTotalSupply;
         const amountB = (liquidity * reserveB) / lpTotalSupply;
         return {

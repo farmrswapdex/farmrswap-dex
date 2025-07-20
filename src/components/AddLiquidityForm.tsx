@@ -1,10 +1,11 @@
 import { MaxUint256 } from 'ethers';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { erc20Abi, parseUnits } from 'viem';
 import { useAccount, useReadContract, useWriteContract } from 'wagmi';
 import { FactoryContract, PairContract, RouterContract } from '../lib/config';
 import { parseAmount } from '../lib/quoteCalculator';
+import { sortTokens } from '../lib/utils';
 
 interface Token {
     symbol: string;
@@ -33,10 +34,12 @@ const AddLiquidityForm = ({ tokenA, tokenB, onBack }: AddLiquidityFormProps) => 
     const [isApprovingA, setIsApprovingA] = useState(false);
     const [isApprovingB, setIsApprovingB] = useState(false);
 
+    const [sortedTokenA, sortedTokenB] = useMemo(() => sortTokens(tokenA, tokenB), [tokenA, tokenB]);
+
     const { data: pairAddress } = useReadContract({
         ...FactoryContract,
         functionName: 'getPair',
-        args: [tokenA.address as `0x${string}`, tokenB.address as `0x${string}`],
+        args: [sortedTokenA.address as `0x${string}`, sortedTokenB.address as `0x${string}`],
     });
 
     const { data: reserves } = useReadContract({
@@ -85,7 +88,7 @@ const AddLiquidityForm = ({ tokenA, tokenB, onBack }: AddLiquidityFormProps) => 
         setAmountA(parsedValue);
         if (reserves && parsedValue) {
             const amountADesired = parseUnits(parsedValue, tokenA.decimals);
-            const [reserveA, reserveB] = reserves;
+            const [reserveA, reserveB] = tokenA.address.toLowerCase() < tokenB.address.toLowerCase() ? reserves : [reserves[1], reserves[0]];
             const amountBOptimal = (amountADesired * reserveB) / reserveA;
             setAmountB(parseAmount(amountBOptimal.toString(), tokenB.decimals));
         } else {
@@ -98,7 +101,7 @@ const AddLiquidityForm = ({ tokenA, tokenB, onBack }: AddLiquidityFormProps) => 
         setAmountB(parsedValue);
         if (reserves && parsedValue) {
             const amountBDesired = parseUnits(parsedValue, tokenB.decimals);
-            const [reserveA, reserveB] = reserves;
+            const [reserveA, reserveB] = tokenA.address.toLowerCase() < tokenB.address.toLowerCase() ? reserves : [reserves[1], reserves[0]];
             const amountAOptimal = (amountBDesired * reserveA) / reserveB;
             setAmountA(parseAmount(amountAOptimal.toString(), tokenA.decimals));
         } else {
@@ -161,8 +164,8 @@ const AddLiquidityForm = ({ tokenA, tokenB, onBack }: AddLiquidityFormProps) => 
                 abi: RouterContract.abi,
                 functionName: 'addLiquidity',
                 args: [
-                    tokenA.address as `0x${string}`,
-                    tokenB.address as `0x${string}`,
+                    sortedTokenA.address as `0x${string}`,
+                    sortedTokenB.address as `0x${string}`,
                     amountADesired,
                     amountBDesired,
                     amountAMin,
