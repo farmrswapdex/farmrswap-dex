@@ -127,7 +127,7 @@ const AddLiquidityForm = ({ tokenA, tokenB, onBack }: AddLiquidityFormProps) => 
             },
             error: (err) => {
                 setApproving(false);
-                return `Approval failed: ${err.message}`;
+                return `Approval failed: ${err.name}`;
             },
         });
     };

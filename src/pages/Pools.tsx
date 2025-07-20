@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useAccount, useReadContracts } from 'wagmi';
 import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { useNavigate } from 'react-router-dom';
@@ -26,18 +26,18 @@ interface UserPosition {
     pairAddress: `0x${string}`;
 }
 
+// Generate all unique pairs of tokens
+const allTokenValues = Object.values(TOKENS);
+const allTokenPairs = allTokenValues.flatMap((tokenA, i) =>
+    allTokenValues.slice(i + 1).map(tokenB => [tokenA, tokenB])
+);
+
 const Pools = () => {
     const { address, isConnected } = useAccount();
     const { openConnectModal } = useConnectModal();
     const navigate = useNavigate();
     const [positions, setPositions] = useState<UserPosition[]>([]);
     const [isLoading, setIsLoading] = useState(true);
-
-    // Generate all unique pairs of tokens
-    const allTokenValues = Object.values(TOKENS);
-    const allTokenPairs = allTokenValues.flatMap((tokenA, i) =>
-        allTokenValues.slice(i + 1).map(tokenB => [tokenA, tokenB])
-    );
 
     // 1. Get pair addresses for all possible token pairs
     const { data: pairAddressesData, isFetched: arePairAddressesFetched } = useReadContracts({
@@ -53,12 +53,14 @@ const Pools = () => {
     });
 
     // 2. Get LP token balances for all valid pairs
-    const validPairs = arePairAddressesFetched && pairAddressesData
-        ? allTokenPairs.map((tokens, i) => ({
-            tokens,
-            pairAddress: pairAddressesData[i].result,
-        })).filter(p => p.pairAddress && p.pairAddress !== '0x0000000000000000000000000000000000000000')
-        : [];
+    const validPairs = useMemo(() => (
+        arePairAddressesFetched && pairAddressesData
+            ? allTokenPairs.map((tokens, i) => ({
+                tokens,
+                pairAddress: pairAddressesData[i].result,
+            })).filter(p => p.pairAddress && p.pairAddress !== '0x0000000000000000000000000000000000000000')
+            : []
+    ), [arePairAddressesFetched, pairAddressesData]);
 
     const { data: lpBalancesData, isFetched: areLpBalancesFetched } = useReadContracts({
         contracts: validPairs.map(p => ({

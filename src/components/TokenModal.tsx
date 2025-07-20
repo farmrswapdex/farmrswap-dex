@@ -35,6 +35,7 @@ const TokenModal = ({ isOpen, onClose, onTokenSelect }: TokenModalProps) => {
             <Dialog.Portal>
                 <Dialog.Overlay className="fixed inset-0 bg-black bg-opacity-50 z-50" />
                 <Dialog.Content className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl shadow-lg w-full max-w-md mx-4 z-50">
+                    <Dialog.Title className="sr-only">Select a token</Dialog.Title>
                     <div className="p-4 border-b border-gray-200">
                         <input
                             type="text"
