@@ -14,13 +14,13 @@ interface Token {
     color: string;
 }
 
-interface RemoveLiquidityProps {
+interface RemoveLiquidityFormProps {
     tokenA: Token;
     tokenB: Token;
     onBack: () => void;
 }
 
-const RemoveLiquidity = ({ tokenA, tokenB, onBack }: RemoveLiquidityProps) => {
+const RemoveLiquidityForm = ({ tokenA, tokenB, onBack }: RemoveLiquidityFormProps) => {
     const { address } = useAccount();
     const { writeContractAsync } = useWriteContract();
 
@@ -237,4 +237,4 @@ const RemoveLiquidity = ({ tokenA, tokenB, onBack }: RemoveLiquidityProps) => {
     );
 };
 
-export default RemoveLiquidity;
+export default RemoveLiquidityForm;

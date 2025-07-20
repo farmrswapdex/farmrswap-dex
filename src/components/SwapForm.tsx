@@ -130,7 +130,7 @@ const SwapForm = () => {
 
     // Handle body scroll when modal is open
     useEffect(() => {
-        if (isModalOpen || isSettingsModalOpen) {
+        if (isModalOpen) {
             document.body.style.overflow = 'hidden';
         } else {
             document.body.style.overflow = 'auto';
@@ -139,7 +139,7 @@ const SwapForm = () => {
         return () => {
             document.body.style.overflow = 'auto';
         };
-    }, [isModalOpen, isSettingsModalOpen]);
+    }, [isModalOpen]);
 
     // Calculate estimated toAmount for limit order
     useEffect(() => {
@@ -513,9 +513,20 @@ const SwapForm = () => {
                             >
                                 Limit
                             </Tabs.Trigger> */}
-                            <span className="ml-auto text-xl md:text-2xl text-gray-400 cursor-pointer hover:text-gray-600 transition-colors" onClick={() => setIsSettingsModalOpen(true)}>
-                                <Settings />
-                            </span>
+                            <div className="relative ml-auto">
+                                <span className="text-xl md:text-2xl text-gray-400 cursor-pointer hover:text-gray-600 transition-colors" onClick={() => setIsSettingsModalOpen(prev => !prev)}>
+                                    <Settings />
+                                </span>
+                                <SettingsModal
+                                    isOpen={isSettingsModalOpen}
+                                    onClose={() => setIsSettingsModalOpen(false)}
+                                    slippage={slippage}
+                                    setSlippage={setSlippage}
+                                    deadline={deadline}
+                                    setDeadline={setDeadline}
+                                    className="top-full right-0 mt-2"
+                                />
+                            </div>
                         </Tabs.List>
 
                         <Tabs.Content value="swap">
@@ -617,14 +628,6 @@ const SwapForm = () => {
                 isOpen={isModalOpen}
                 onClose={closeModal}
                 onTokenSelect={handleTokenSelectFromModal}
-            />
-            <SettingsModal
-                isOpen={isSettingsModalOpen}
-                onClose={() => setIsSettingsModalOpen(false)}
-                slippage={slippage}
-                setSlippage={setSlippage}
-                deadline={deadline}
-                setDeadline={setDeadline}
             />
         </>
     );
