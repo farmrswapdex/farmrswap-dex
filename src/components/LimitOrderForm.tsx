@@ -36,8 +36,8 @@ const LimitOrderForm = ({
     return (
         <Form.Root className="w-full bg-[#f6f6f6] rounded-2xl p-0 flex flex-col gap-0">
             {/* Sell Section */}
-            <Form.Field name="fromAmount" className="flex flex-col gap-1 border-b border-gray-200 px-6 py-3 pb-2">
-                <Form.Label className="text-lg font-semibold text-gray-700 mb-1">Sell</Form.Label>
+            <Form.Field name="fromAmount" className="flex flex-col gap-1 border-b border-gray-200 px-4 md:px-6 py-3 pb-2">
+                <Form.Label className="text-base md:text-lg font-semibold text-gray-700 mb-1">Sell</Form.Label>
                 <div className="flex items-center gap-2">
                     <Form.Control asChild>
                         <input
@@ -45,7 +45,7 @@ const LimitOrderForm = ({
                             value={fromAmount}
                             onChange={(e) => handleFromAmountChange(e.target.value)}
                             placeholder="0.0"
-                            className="flex-1 bg-transparent text-2xl font-semibold text-black outline-none placeholder-gray-400"
+                            className="flex-1 bg-transparent text-xl md:text-2xl font-semibold text-black outline-none placeholder-gray-400"
                         />
                     </Form.Control>
                     <TokenSelector
@@ -57,8 +57,8 @@ const LimitOrderForm = ({
             </Form.Field>
 
             {/* Limit Price Section */}
-            <Form.Field name="limitPrice" className="flex flex-col gap-1 border-b border-gray-200 px-6 py-4">
-                <Form.Label className="text-lg font-semibold text-gray-700 mb-1">Limit Price</Form.Label>
+            <Form.Field name="limitPrice" className="flex flex-col gap-1 border-b border-gray-200 px-4 md:px-6 py-4">
+                <Form.Label className="text-base md:text-lg font-semibold text-gray-700 mb-1">Limit Price</Form.Label>
                 <div className="flex items-center gap-2">
                     <Form.Control asChild>
                         <input
@@ -66,17 +66,17 @@ const LimitOrderForm = ({
                             value={limitPrice}
                             onChange={(e) => handleLimitPriceChange(e.target.value)}
                             placeholder="0.0"
-                            className="flex-1 bg-transparent text-2xl font-semibold text-black outline-none placeholder-gray-400"
+                            className="flex-1 bg-transparent text-xl md:text-2xl font-semibold text-black outline-none placeholder-gray-400"
                         />
                     </Form.Control>
-                    <span className="text-xl font-semibold text-black">{toToken?.symbol || 'Select Token'}</span>
+                    <span className="text-lg md:text-xl font-semibold text-black">{toToken?.symbol || 'Select Token'}</span>
                 </div>
                 <span className="text-right text-sm text-gray-400 pr-2">Price per {fromToken?.symbol}</span>
             </Form.Field>
 
             {/* Buy Section */}
-            <Form.Field name="toAmount" className="flex flex-col gap-1 px-6 py-4">
-                <Form.Label className="text-lg font-semibold text-gray-700 mb-1">Buy (Estimated)</Form.Label>
+            <Form.Field name="toAmount" className="flex flex-col gap-1 px-4 md:px-6 py-4">
+                <Form.Label className="text-base md:text-lg font-semibold text-gray-700 mb-1">Buy (Estimated)</Form.Label>
                 <div className="flex items-center gap-2">
                     <Form.Control asChild>
                         <input
@@ -84,7 +84,7 @@ const LimitOrderForm = ({
                             value={toAmount}
                             readOnly
                             placeholder="0.0"
-                            className="flex-1 bg-transparent text-2xl font-semibold text-black outline-none placeholder-gray-400"
+                            className="flex-1 bg-transparent text-xl md:text-2xl font-semibold text-black outline-none placeholder-gray-400"
                         />
                     </Form.Control>
                     <TokenSelector

@@ -1,6 +1,7 @@
 import { getDefaultConfig, RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import "@rainbow-me/rainbowkit/styles.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Toaster } from "react-hot-toast";
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { http, WagmiProvider } from "wagmi";
 import { sepolia } from "wagmi/chains";
@@ -12,13 +13,15 @@ import Farms from './pages/Farms';
 import NotFound from './pages/NotFound';
 import Pools from "./pages/Pools";
 import Swap from './pages/Swap';
-import { Toaster } from "react-hot-toast";
+
+import AddLiquidity from "./pages/AddLiquidity";
+import RemoveLiquidity from "./pages/RemoveLiquidity";
 
 const config = getDefaultConfig({
   appName: "FarmrSwap",
   projectId: "8X1df9Wbcqj6A7LWG71Ra5yLYj-1eL7y",
   chains: [sepolia],
-  transports:{
+  transports: {
     [sepolia.id]: http(),
   }
 });
@@ -51,6 +54,8 @@ function App() {
                   <Route path="/pools" element={<Pools />} />
                   <Route path="/explore" element={<Explore />} />
                   <Route path="/bridge" element={<Bridge />} />
+                  <Route path="/add" element={<AddLiquidity />} />
+                  <Route path="/remove" element={<RemoveLiquidity />} />
                   <Route path="*" element={<NotFound />} />
                 </Route>
               </Routes>

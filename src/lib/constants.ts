@@ -12,7 +12,7 @@ export const TOKENS = {
     WETH: {
         symbol: 'WETH',
         name: 'Wrapped Ether',
-        address: '0x4200000000000000000000000000000000000006',
+        address: '0x7b79995e5f793A07Bc00c21412e50Ecae098E7f9',
         decimals: 18,
         logoURI: 'https://assets.coingecko.com/coins/images/279/small/ethereum.png',
         color: ''
@@ -20,7 +20,7 @@ export const TOKENS = {
     USDC: {
         symbol: 'USDC',
         name: 'USD Coin',
-        address: '0x176211869cA2b568f2A7D4EE941E073a821EE1ff',
+        address: '0xe679510e3b614c1DfcfdA519ce9859D982dA7799',
         decimals: 6,
         logoURI: 'https://assets.coingecko.com/coins/images/6319/small/USD_Coin_icon.png',
         color: ''
@@ -28,7 +28,7 @@ export const TOKENS = {
     BLOCX: {
         symbol: 'BLOCX',
         name: 'BLOCX Token',
-        address: '0x0000000000000000000000000000000000000000', // Placeholder address
+        address: '0xcBFbd38167519F4DCcfF1dbd48304a4FC8d4De32', // Placeholder address
         decimals: 18,
         logoURI: 'https://res.cloudinary.com/dma1c8i6n/image/upload/f_auto,q_auto/blocxcoin_nhozz7',
         color: ''
@@ -36,12 +36,22 @@ export const TOKENS = {
     FARMR: {
         symbol: 'FARMR',
         name: 'FARMR Token',
-        address: '0x0000000000000000000000000000000000000001', // Placeholder address
+        address: '0xb3bCB0ee6253F981A6e09044D6B2868b284a0113',
         decimals: 18,
         logoURI: 'https://res.cloudinary.com/dma1c8i6n/image/upload/f_auto,q_auto/farmr_coin_j5gfsd',
         color: ''
     }
 };
+
+export const NATIVE_TOKEN = {
+    symbol: 'BLOCX',
+    name: 'BLOCX Token',
+    address: '0x7b79995e5f793A07Bc00c21412e50Ecae098E7f9', // Placeholder address
+    decimals: 18,
+    logoURI: 'https://res.cloudinary.com/dma1c8i6n/image/upload/f_auto,q_auto/blocxcoin_nhozz7',
+    color: ''
+
+}
 
 export const TOKEN_LIST = Object.values(TOKENS);
 
