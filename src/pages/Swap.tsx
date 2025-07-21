@@ -2,7 +2,7 @@ import SwapForm from '../components/SwapForm';
 
 const Swap = () => {
     return (
-        <div className="w-full min-h-screen bg-[#a7d8f5]">
+        <div className="w-full min-h-screen bg-[#a7d8f5] flex flex-col">
             {/* Floating Tomatoes Background */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
                 <div className="absolute top-[10%] left-[15%] text-5xl rotate-[-10deg] opacity-20 blur-sm animate-pulse">🍅</div>
@@ -17,7 +17,7 @@ const Swap = () => {
             </div>
 
             {/* Content */}
-            <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-4">
+            <div className="relative z-10 flex flex-col items-center justify-start w-full flex-grow pt-8 md:pt-12 p-4">
                 <SwapForm />
             </div>
         </div>

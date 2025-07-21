@@ -493,17 +493,17 @@ const SwapForm = () => {
 
     return (
         <>
-            <div className="flex flex-col items-center w-full">
+            <div className="flex flex-col items-center w-full px-2 sm:px-0">
                 <Tabs.Root
                     value={activeTab}
                     onValueChange={(value) => setActiveTab(value as 'swap' | 'limit')}
-                    className="w-full max-w-lg flex flex-col"
+                    className="w-full max-w-md flex flex-col"
                 >
-                    <div className="backdrop-blur-lg rounded-md shadow-lg p-0 flex flex-col items-center w-full pb-3">
-                        <Tabs.List className="flex items-center gap-4 md:gap-6 mb-2 w-full px-4 md:px-8 pt-4 md:pt-8">
+                    <div className="backdrop-blur-lg rounded-md shadow-lg p-0 flex flex-col items-center w-full pb-3 box-border">
+                        <Tabs.List className="flex items-center gap-4 md:gap-6 mb-2 w-full px-2 sm:px-4 pt-4">
                             <Tabs.Trigger
                                 value="swap"
-                                className="text-xl md:text-3xl font-bold cursor-default transition-colors data-[state=active]:text-black data-[state=inactive]:text-gray-300 hover:text-black focus:outline-none"
+                                className="text-xl sm:text-2xl font-bold cursor-default transition-colors data-[state=active]:text-black data-[state=inactive]:text-gray-300 hover:text-black focus:outline-none"
                             >
                                 Swap
                             </Tabs.Trigger>
@@ -514,7 +514,7 @@ const SwapForm = () => {
                                 Limit
                             </Tabs.Trigger> */}
                             <div className="relative ml-auto">
-                                <span className="text-xl md:text-2xl text-gray-400 cursor-pointer hover:text-gray-600 transition-colors" onClick={() => setIsSettingsModalOpen(prev => !prev)}>
+                                <span className="text-xl sm:text-2xl text-gray-400 cursor-pointer hover:text-gray-600 transition-colors" onClick={() => setIsSettingsModalOpen(prev => !prev)}>
                                     <Settings />
                                 </span>
                                 <SettingsModal
@@ -530,10 +530,10 @@ const SwapForm = () => {
                         </Tabs.List>
 
                         <Tabs.Content value="swap">
-                            <div className="w-full p-4 flex flex-col gap-2">
-                                <div className="relative">
-                                    <div className="flex flex-col gap-2 w-full">
-                                        <div className="bg-white bg-opacity-50 backdrop-blur-sm rounded-2xl p-4 flex flex-col gap-1">
+                            <div className="w-full p-0 sm:p-4 flex flex-col gap-2">
+                                <div className="relative w-full flex flex-col gap-2 items-center">
+                                    <div className="flex flex-col gap-2 w-full max-w-xs sm:max-w-full mx-auto">
+                                        <div className="bg-white bg-opacity-50 backdrop-blur-sm rounded-xl sm:rounded-2xl p-2 sm:p-3 flex flex-col gap-1 w-full">
                                             <span className="text-base md:text-lg font-semibold text-gray-700 mb-1">Sell</span>
                                             <div className="flex items-center gap-2">
                                                 <input
@@ -541,7 +541,7 @@ const SwapForm = () => {
                                                     value={fromAmount}
                                                     onChange={(e) => handleFromAmountChange(e.target.value)}
                                                     placeholder="0.0"
-                                                    className="flex-1 bg-transparent text-xl md:text-2xl font-semibold text-black outline-none placeholder-gray-400"
+                                                    className="flex-1 bg-transparent text-xl sm:text-2xl font-semibold text-black outline-none placeholder-gray-400"
                                                 />
                                                 <TokenSelector
                                                     selectedToken={fromToken}
@@ -550,7 +550,7 @@ const SwapForm = () => {
                                             </div>
                                             <span className="text-right text-sm text-gray-400 pr-2">~${fromAmountInUsd}</span>
                                         </div>
-                                        <div className="bg-white bg-opacity-50 backdrop-blur-sm rounded-2xl p-4 flex flex-col gap-1">
+                                        <div className="bg-white bg-opacity-50 backdrop-blur-sm rounded-xl sm:rounded-2xl p-3 sm:p-4 flex flex-col gap-1 w-full">
                                             <span className="text-base md:text-lg font-semibold text-gray-700 mb-1">Buy</span>
                                             <div className="flex items-center gap-2">
                                                 <input
@@ -558,7 +558,7 @@ const SwapForm = () => {
                                                     value={toAmount}
                                                     onChange={(e) => handleToAmountChange(e.target.value)}
                                                     placeholder="0.0"
-                                                    className="flex-1 bg-transparent text-xl md:text-2xl font-semibold text-black outline-none placeholder-gray-400"
+                                                    className="flex-1 bg-transparent text-xl sm:text-2xl font-semibold text-black outline-none placeholder-gray-400"
                                                 />
                                                 <TokenSelector
                                                     selectedToken={toToken}
@@ -568,7 +568,7 @@ const SwapForm = () => {
                                             <span className="text-right text-sm text-gray-400 pr-2">~${toAmountInUsd}</span>
                                         </div>
                                     </div>
-                                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
+                                    <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
                                         <button
                                             onClick={handleSwapTokens}
                                             disabled={amountsSwapped || !fromToken || !toToken}
@@ -580,7 +580,7 @@ const SwapForm = () => {
                                 </div>
 
                                 {rate && !isLoading && (
-                                    <div className="mt-2 p-4 bg-white bg-opacity-50 backdrop-blur-sm rounded-xl border border-gray-200 shadow-sm">
+                                    <div className="mt-2 p-3 bg-white bg-opacity-50 backdrop-blur-sm rounded-xl border border-gray-200 shadow-sm">
                                         <div className="flex justify-between items-center mb-2">
                                             <span className="text-xs md:text-sm text-gray-600">Rate</span>
                                             <span className="text-xs md:text-sm font-medium">
@@ -615,7 +615,7 @@ const SwapForm = () => {
                     <button
                         onClick={handleButtonClick}
                         disabled={isButtonDisabled()}
-                        className={`w-full mt-6 py-4 rounded-full text-lg md:text-xl font-bold shadow-md transition-all duration-200 ${!isButtonDisabled()
+                        className={`w-full mt-4 py-3 sm:py-4 rounded-full text-lg md:text-xl font-bold shadow-md transition-all duration-200 ${!isButtonDisabled()
                             ? 'bg-blue-600 text-white hover:bg-blue-700 hover:shadow-lg transform hover:scale-[1.02]'
                             : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                             }`}

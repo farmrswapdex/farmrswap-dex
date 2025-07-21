@@ -156,14 +156,14 @@ const Pools = () => {
 
     return (
         <div className="w-full min-h-screen bg-[#a7d8f5] flex flex-col">
-            <div className="w-full max-w-4xl mx-auto pt-16 pb-8 px-4 flex-grow">
-                <div className="flex items-center justify-between mb-8">
+            <div className="w-full max-w-4xl mx-auto pt-8 md:pt-16 pb-8 px-4 flex-grow">
+                <div className="flex flex-col sm:flex-row items-center justify-between mb-8 gap-4">
                     <h1 className="text-4xl md:text-5xl font-extrabold text-gray-800 tracking-tight">
                         Pools
                     </h1>
                     <button
                         onClick={() => navigate('/add')}
-                        className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-xl shadow-lg transition text-lg"
+                        className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-xl shadow-lg transition text-lg w-full sm:w-auto"
                     >
                         + New Position
                     </button>
@@ -176,3 +176,4 @@ const Pools = () => {
 }
 
 export default Pools;
+
