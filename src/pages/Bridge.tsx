@@ -2,6 +2,7 @@ import { useConnectModal } from '@rainbow-me/rainbowkit';
 import * as Tabs from '@radix-ui/react-tabs';
 import { ArrowRight, Wallet } from "lucide-react";
 import { useAccount } from 'wagmi';
+import MobileWarning from '../components/MobileWarning';
 import { TOKENS } from "../lib/constants";
 
 const Bridge = () => {
@@ -10,6 +11,7 @@ const Bridge = () => {
 
     return (
         <div className="w-full min-h-screen bg-[#a7d8f5] flex flex-col justify-between">
+            <MobileWarning />
             <div className="flex flex-col items-center justify-center flex-1 w-full px-4 pt-20 pb-8">
                 <div className="w-full max-w-md bg-white rounded-3xl shadow-lg p-8 flex flex-col gap-6">
                     <Tabs.Root defaultValue="deposit" className="flex flex-col gap-6">

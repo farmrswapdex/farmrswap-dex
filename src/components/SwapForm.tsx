@@ -497,22 +497,16 @@ const SwapForm = () => {
                 <Tabs.Root
                     value={activeTab}
                     onValueChange={(value) => setActiveTab(value as 'swap' | 'limit')}
-                    className="w-full max-w-md flex flex-col"
+                    className="w-full max-w-xs sm:max-w-2xl flex flex-col items-center"
                 >
-                    <div className="backdrop-blur-lg rounded-md shadow-lg p-0 flex flex-col items-center w-full pb-3 box-border">
-                        <Tabs.List className="flex items-center gap-4 md:gap-6 mb-2 w-full px-2 sm:px-4 pt-4">
+                    <div className="backdrop-blur-lg rounded-md shadow-lg p-0 flex flex-col items-center w-full pb-3">
+                        <Tabs.List className="flex items-center gap-4 md:gap-6 mb-2 w-full px-2 sm:px-3 pt-4">
                             <Tabs.Trigger
                                 value="swap"
                                 className="text-xl sm:text-2xl font-bold cursor-default transition-colors data-[state=active]:text-black data-[state=inactive]:text-gray-300 hover:text-black focus:outline-none"
                             >
                                 Swap
                             </Tabs.Trigger>
-                            {/* <Tabs.Trigger
-                                value="limit"
-                                className="text-xl md:text-3xl font-bold cursor-pointer transition-colors data-[state=active]:text-black data-[state=inactive]:text-gray-300 hover:text-black focus:outline-none"
-                            >
-                                Limit
-                            </Tabs.Trigger> */}
                             <div className="relative ml-auto">
                                 <span className="text-xl sm:text-2xl text-gray-400 cursor-pointer hover:text-gray-600 transition-colors" onClick={() => setIsSettingsModalOpen(prev => !prev)}>
                                     <Settings />

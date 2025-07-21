@@ -7,7 +7,6 @@ import SearchModal from './SearchModal';
 
 const NavLinks = ({ className }: { className?: string }) => (
     <>
-        <NavLink to="/swap" className={({ isActive }) => `flex text-slate-600 items-center gap-1 hover:text-red-400 ${isActive ? 'p-2 font-bold rounded-lg bg-black bg-opacity-5' : ''} ${className}`}>Swap</NavLink>
         <NavLink to="/pools" className={({ isActive }) => `flex text-slate-600 items-center gap-1 hover:text-red-400 ${isActive ? 'p-2 font-bold rounded-lg bg-black bg-opacity-5' : ''} ${className}`}>Pool</NavLink>
     </>
 );

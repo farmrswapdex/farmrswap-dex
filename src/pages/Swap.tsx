@@ -1,8 +1,10 @@
+import MobileWarning from '../components/MobileWarning';
 import SwapForm from '../components/SwapForm';
 
 const Swap = () => {
     return (
         <div className="w-full min-h-screen bg-[#a7d8f5] flex flex-col">
+            <MobileWarning />
             {/* Floating Tomatoes Background */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
                 <div className="absolute top-[10%] left-[15%] text-5xl rotate-[-10deg] opacity-20 blur-sm animate-pulse">🍅</div>
