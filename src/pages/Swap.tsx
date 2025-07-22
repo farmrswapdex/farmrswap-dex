@@ -1,10 +1,9 @@
-import MobileWarning from '../components/MobileWarning';
 import SwapForm from '../components/SwapForm';
 
-const Swap = () => {
+
+const FloatingTomatoes = () => {
     return (
-        <div className="w-full min-h-screen bg-[#a7d8f5] flex flex-col">
-            <MobileWarning />
+        <>
             {/* Floating Tomatoes Background */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
                 <div className="absolute top-[10%] left-[15%] text-5xl rotate-[-10deg] opacity-20 blur-sm animate-pulse">🍅</div>
@@ -17,9 +16,16 @@ const Swap = () => {
                 <div className="absolute top-[30%] right-[40%] text-4xl rotate-[20deg] opacity-20 blur-sm animate-pulse">🍅</div>
                 <div className="absolute bottom-[5%] left-[25%] text-6xl rotate-[-20deg] opacity-20 blur-sm animate-pulse">🍅</div>
             </div>
+        </>
+    )
+}
 
-            {/* Content */}
-            <div className="relative z-10 flex flex-col items-center justify-start w-full flex-grow pt-8 md:pt-12 p-4">
+
+const Swap = () => {
+    return (
+        <div className="w-full min-h-screen bg-[#a7d8f5] flex flex-col">
+            <FloatingTomatoes />
+            <div className="relative z-10 w-full max-w-4xl mx-auto pt-8 md:pt-16 pb-8 px-4 flex-grow flex items-center justify-start flex-col">
                 <SwapForm />
             </div>
         </div>

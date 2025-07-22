@@ -1,11 +1,10 @@
 import { BarChart2, ExternalLink, LineChart, Search } from "lucide-react";
-import MobileWarning from "../components/MobileWarning";
 import { TOKEN_LIST } from "../lib/constants";
 
 const Explore = () => {
     return (
         <div className="w-full min-h-screen bg-[#a7d8f5] flex flex-col justify-between">
-            <MobileWarning />
+            
             <div className="w-full max-w-7xl mx-auto pt-16 pb-8 px-4 flex flex-col gap-10">
                 {/* Header and Stats */}
                 <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-8">

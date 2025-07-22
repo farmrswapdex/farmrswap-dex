@@ -493,118 +493,139 @@ const SwapForm = () => {
 
     return (
         <>
-            <div className="flex flex-col items-center w-full px-2 sm:px-0">
+            <div className="flex flex-col items-center w-full px-4 sm:px-6 lg:px-8 max-w-2xl mx-auto lg:max-w-4xl">
                 <Tabs.Root
                     value={activeTab}
                     onValueChange={(value) => setActiveTab(value as 'swap' | 'limit')}
                     className="w-full max-w-xs sm:max-w-2xl flex flex-col items-center"
                 >
-                    <div className="backdrop-blur-lg rounded-md shadow-lg p-0 flex flex-col items-center w-full pb-3">
-                        <Tabs.List className="flex items-center gap-4 md:gap-6 mb-2 w-full px-2 sm:px-3 pt-4">
-                            <Tabs.Trigger
-                                value="swap"
-                                className="text-xl sm:text-2xl font-bold cursor-default transition-colors data-[state=active]:text-black data-[state=inactive]:text-gray-300 hover:text-black focus:outline-none"
-                            >
-                                Swap
-                            </Tabs.Trigger>
-                            <div className="relative ml-auto">
-                                <span className="text-xl sm:text-2xl text-gray-400 cursor-pointer hover:text-gray-600 transition-colors" onClick={() => setIsSettingsModalOpen(prev => !prev)}>
-                                    <Settings />
-                                </span>
-                                <SettingsModal
-                                    isOpen={isSettingsModalOpen}
-                                    onClose={() => setIsSettingsModalOpen(false)}
-                                    slippage={slippage}
-                                    setSlippage={setSlippage}
-                                    deadline={deadline}
-                                    setDeadline={setDeadline}
-                                    className="top-full right-0 mt-2"
-                                />
-                            </div>
-                        </Tabs.List>
+                    <div className="backdrop-blur-lg bg-white/20 rounded-2xl lg:rounded-2xl shadow-xl border border-white/40 p-0 flex flex-col items-center w-full pb-3 overflow-hidden">
 
-                        <Tabs.Content value="swap">
-                            <div className="w-full p-0 sm:p-4 flex flex-col gap-2">
-                                <div className="relative w-full flex flex-col gap-2 items-center">
-                                    <div className="flex flex-col gap-2 w-full max-w-xs sm:max-w-full mx-auto">
-                                        <div className="bg-white bg-opacity-50 backdrop-blur-sm rounded-xl sm:rounded-2xl p-2 sm:p-3 flex flex-col gap-1 w-full">
-                                            <span className="text-base md:text-lg font-semibold text-gray-700 mb-1">Sell</span>
-                                            <div className="flex items-center gap-2">
-                                                <input
-                                                    type="text"
-                                                    value={fromAmount}
-                                                    onChange={(e) => handleFromAmountChange(e.target.value)}
-                                                    placeholder="0.0"
-                                                    className="flex-1 bg-transparent text-xl sm:text-2xl font-semibold text-black outline-none placeholder-gray-400"
-                                                />
-                                                <TokenSelector
-                                                    selectedToken={fromToken}
-                                                    onClick={() => openModal('from')}
-                                                />
-                                            </div>
-                                            <span className="text-right text-sm text-gray-400 pr-2">~${fromAmountInUsd}</span>
-                                        </div>
-                                        <div className="bg-white bg-opacity-50 backdrop-blur-sm rounded-xl sm:rounded-2xl p-3 sm:p-4 flex flex-col gap-1 w-full">
-                                            <span className="text-base md:text-lg font-semibold text-gray-700 mb-1">Buy</span>
-                                            <div className="flex items-center gap-2">
-                                                <input
-                                                    type="text"
-                                                    value={toAmount}
-                                                    onChange={(e) => handleToAmountChange(e.target.value)}
-                                                    placeholder="0.0"
-                                                    className="flex-1 bg-transparent text-xl sm:text-2xl font-semibold text-black outline-none placeholder-gray-400"
-                                                />
-                                                <TokenSelector
-                                                    selectedToken={toToken}
-                                                    onClick={() => openModal('to')}
-                                                />
-                                            </div>
-                                            <span className="text-right text-sm text-gray-400 pr-2">~${toAmountInUsd}</span>
-                                        </div>
-                                    </div>
-                                    <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
-                                        <button
-                                            onClick={handleSwapTokens}
-                                            disabled={amountsSwapped || !fromToken || !toToken}
-                                            className="bg-white rounded-full p-2 shadow-md flex items-center justify-center hover:bg-gray-50 transition-colors border border-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                                        >
-                                            <ArrowDown className="w-5 h-5 text-gray-400" />
-                                        </button>
-                                    </div>
+                        <div className="p-4 sm:p-6 lg:p-8 mx-auto">
+                            <Tabs.List className="flex items-center justify-between w-full">
+                                <Tabs.Trigger
+                                    value="swap"
+                                    className="text-xl sm:text-2xl font-bold cursor-default transition-all duration-200 data-[state=active]:text-black data-[state=inactive]:text-gray-300 hover:text-black focus:outline-none px-2 py-1"
+                                >
+                                    Swap
+                                </Tabs.Trigger>
+                                <div className="relative">
+                                    <button className="text-xl sm:text-2xl text-gray-400 cursor-pointer hover:text-gray-600 p-3 rounded-full transition-all duration-200 focus:outline-none active:scale-95 touch-manipulation" onClick={() => setIsSettingsModalOpen(prev => !prev)}>
+                                        <Settings className="w-5 h-5 sm:w-6 sm:h-6" />
+                                    </button>
+                                    <SettingsModal
+                                        isOpen={isSettingsModalOpen}
+                                        onClose={() => setIsSettingsModalOpen(false)}
+                                        slippage={slippage}
+                                        setSlippage={setSlippage}
+                                        deadline={deadline}
+                                        setDeadline={setDeadline}
+                                        className="absolute top-full right-0 mt-2 z-50"
+                                    />
                                 </div>
+                            </Tabs.List>
+                        </div>
 
-                                {rate && !isLoading && (
-                                    <div className="mt-2 p-3 bg-white bg-opacity-50 backdrop-blur-sm rounded-xl border border-gray-200 shadow-sm">
-                                        <div className="flex justify-between items-center mb-2">
-                                            <span className="text-xs md:text-sm text-gray-600">Rate</span>
-                                            <span className="text-xs md:text-sm font-medium">
-                                                1 {isFlipped ? toToken?.symbol : fromToken?.symbol} = {formatNumber(rate.toString(), 6)} {isFlipped ? fromToken?.symbol : toToken?.symbol}
-                                            </span>
-                                        </div>
-                                        {!isFlipped && minimumReceived() && (
-                                            <div className="flex justify-between items-center mb-2">
-                                                <span className="text-xs md:text-sm text-gray-600">Minimum Received</span>
-                                                <span className="text-xs md:text-sm font-medium">{minimumReceived()} {toToken?.symbol}</span>
+                        <div className="p-4 sm:p-6 lg:p-8">
+                            <Tabs.Content value="swap" className='outline-none'>
+                                <div className="w-full p-0 sm:p-4 flex flex-col gap-2">
+                                    <div className="relative w-full flex flex-col gap-2 items-center">
+                                        <div className="flex flex-col gap-2 w-full max-w-xs sm:max-w-full mx-auto">
+                                            <div className="bg-white bg-opacity-50 backdrop-blur-sm rounded-xl lg:rounded-xl sm:rounded-2xl border border-white/20 p-4 lg:p-6 transition-all duration-200 sm:p-3 flex flex-col gap-1 w-full">
+
+                                                <div className="flex items-center justify-between mb-3">
+                                                    <span className="text-sm sm:text-base font-semibold text-gray-700 mb-1">Sell</span>
+                                                </div>
+
+                                                <div className="flex items-center gap-3 lg:gap-4">
+                                                    <input
+                                                        type="text"
+                                                        value={fromAmount}
+                                                        onChange={(e) => handleFromAmountChange(e.target.value)}
+                                                        placeholder="0.0"
+                                                        inputMode='decimal'
+                                                        autoComplete='off'
+                                                        spellCheck='false'
+                                                        className="flex-1 bg-transparent text-2xl sm:text-3xl lg:text-4xl font-bold text-black placeholder-black outline-none focus:placeholder-black transition-colors min-w-0"
+                                                    />
+                                                    <TokenSelector
+                                                        selectedToken={fromToken}
+                                                        onClick={() => openModal('from')}
+                                                    />
+                                                </div>
+                                                <div className="mt-3 text-right">
+                                                    <span className="text-sm text-gray-400 pr-2">~${fromAmountInUsd}</span>
+                                                </div>
                                             </div>
-                                        )}
+
+                                            <div className="flex justify-center">
+                                                <button
+                                                    onClick={handleSwapTokens}
+                                                    disabled={amountsSwapped || !fromToken || !toToken}
+                                                    aria-label='Swap tokens'
+                                                    className="relative z-10 bg-white rounded-full p-3 lg:p-4 shadow-lg border-2 border-white/20 transition-all duration-200 hover:bg-gray-50 hover:shadow-xl hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 touch-manipulation"
+                                                >
+                                                    <ArrowDown className="w-5 h-5 lg:w-6 lg:h-6 text-gray-600" />
+                                                </button>
+                                            </div>
+
+
+                                            <div className="bg-white bg-opacity-50 backdrop-blur-sm rounded-xl sm:rounded-2xl p-3 sm:p-4 flex flex-col gap-1 w-full lg:rounded-2xl border border-white/30 lg:p-6 transition-all duration-200 hover:bg-white/25 focus-within:bg-white/25 focus-within:ring-2 focus-within:ring-blue-500/30">
+                                                <div className="flex items-center justify-between mb-3">
+                                                    <span className="text-base md:text-lg font-semibold text-gray-700 mb-1">Buy</span>
+                                                </div>
+                                                {isLoading && (
+                                                    <div className="flex items-center gap-2">
+                                                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                                        <span className="text-xs text-white/60">Calculating...</span>
+                                                    </div>
+                                                )}
+
+                                                <div className="flex items-center gap-3 lg:gap-4">
+                                                    <input
+                                                        type="text"
+                                                        value={toAmount}
+                                                        onChange={(e) => handleToAmountChange(e.target.value)}
+                                                        placeholder="0.0"
+                                                        inputMode="decimal"
+                                                        autoComplete="off"
+                                                        spellCheck="false"
+                                                        className="flex-1 bg-transparent text-2xl sm:text-3xl lg:text-4xl font-bold text-black placeholder-black outline-none focus:placeholder-black transition-colors min-w-0"
+                                                    />
+                                                    <TokenSelector
+                                                        selectedToken={toToken}
+                                                        onClick={() => openModal('to')}
+                                                    />
+                                                </div>
+
+                                                <div className="mt-3 text-right">
+                                                    <span className="text-sm text-gray-400">~${toAmountInUsd}</span>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-                                )}
-                            </div>
-                        </Tabs.Content>
-                        <Tabs.Content value="limit">
-                            <LimitOrderForm
-                                fromToken={fromToken}
-                                toToken={toToken}
-                                fromAmount={fromAmount}
-                                limitPrice={limitPrice}
-                                toAmount={toAmount}
-                                handleFromAmountChange={handleFromAmountChange}
-                                handleLimitPriceChange={handleLimitPriceChange}
-                                onFromTokenSelectClick={() => openModal('from')}
-                                onToTokenSelectClick={() => openModal('to')}
-                            />
-                        </Tabs.Content>
-                    </div>
+
+                                    {rate && !isLoading && (
+                                        <div className="mt-2 p-3 bg-white bg-opacity-50 backdrop-blur-sm rounded-xl border border-gray-200 shadow-sm sm:p-5 space-y-3">
+                                            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                                                <span className="text-xs md:text-sm font-medium text-gray-600">Rate</span>
+                                                <span className="text-xs md:text-sm font-bold">
+                                                    1 {isFlipped ? toToken?.symbol : fromToken?.symbol} = {formatNumber(rate.toString(), 6)} {isFlipped ? fromToken?.symbol : toToken?.symbol}
+                                                </span>
+                                            </div>
+                                            {!isFlipped && minimumReceived() && (
+                                                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 pt-2 border-t border-white/102">
+                                                    <span className="text-xs md:text-sm font-medium text-gray-600">Minimum Received</span>
+                                                    <span className="text-xs md:text-sm font-bold">{minimumReceived()} {toToken?.symbol}</span>
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
+                            </Tabs.Content>
+                        </div>
+
+                    </div >
 
                     <button
                         onClick={handleButtonClick}
@@ -616,8 +637,8 @@ const SwapForm = () => {
                     >
                         {getButtonText()}
                     </button>
-                </Tabs.Root>
-            </div>
+                </Tabs.Root >
+            </div >
             <TokenModal
                 isOpen={isModalOpen}
                 onClose={closeModal}

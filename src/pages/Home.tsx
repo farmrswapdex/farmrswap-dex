@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 import FeatureCard from "../components/FeatureCard";
-import MobileWarning from "../components/MobileWarning";
 
 const features = [
     {
@@ -28,7 +27,7 @@ const features = [
 const Home = () => {
     return (
         <div className="w-full min-h-screen bg-gradient-to-br from-[#a7d8f5] to-[#d1e8f7] flex flex-col justify-between overflow-hidden">
-            <MobileWarning />
+            
             {/* Hero Section */}
             <div className="relative flex flex-col items-center justify-center text-center px-4 pt-24 pb-16 flex-1">
                 {/* Floating Tomatoes */}
