@@ -6,14 +6,15 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { http, WagmiProvider } from "wagmi";
 import { sepolia } from "wagmi/chains";
 import './App.css';
+
 import Layout from './components/Layout';
+
 import Bridge from "./pages/Bridge";
 import Explore from "./pages/Explore";
 import Farms from './pages/Farms';
 import NotFound from './pages/NotFound';
 import Pools from "./pages/Pools";
 import Swap from './pages/Swap';
-
 import AddLiquidity from "./pages/AddLiquidity";
 import RemoveLiquidity from "./pages/RemoveLiquidity";
 

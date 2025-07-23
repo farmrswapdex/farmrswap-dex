@@ -52,7 +52,7 @@ const NavBar = () => {
                         className="bg-[#232c48] text-white rounded-lg shadow-2xl w-56 py-2 z-30 animate-fade-in"
                     >
                         <DropdownMenu.Item asChild>
-                            <NavLink to="/swap" className={({ isActive }) => `flex items-center gap-2 px-4 py-2 text-lg hover:bg-white/10 ${isActive ? 'text-red-400' : 'text-[#b3b9d8]'}`}>Swap</NavLink>
+                            <NavLink to="/" className={({ isActive }) => `flex items-center gap-2 px-4 py-2 text-lg hover:bg-white/10 ${isActive ? 'text-red-400' : 'text-[#b3b9d8]'}`}>Swap</NavLink>
                         </DropdownMenu.Item>
                         <DropdownMenu.Item asChild>
                             <NavLink to="/pools" className={({ isActive }) => `flex items-center gap-2 px-4 py-2 text-lg hover:bg-white/10 ${isActive ? 'text-red-400' : 'text-[#b3b9d8]'}`}>Pool</NavLink>

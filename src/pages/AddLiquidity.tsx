@@ -2,7 +2,6 @@ import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { useEffect, useState } from 'react';
 import { useAccount } from 'wagmi';
 import AddLiquidityForm from '../components/AddLiquidityForm';
-import MobileWarning from '../components/MobileWarning';
 import TokenModal from '../components/TokenModal';
 import TokenSelector from '../components/TokenSelector';
 import { NATIVE_TOKEN } from '../lib/constants';
@@ -86,7 +85,7 @@ const AddLiquidity = () => {
 
     return (
         <div className="w-full min-h-screen bg-[#a7d8f5]">
-            <MobileWarning />
+            
             {/* Floating Tomatoes Background */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
                 <div className="absolute top-[10%] left-[15%] text-5xl rotate-[-10deg] opacity-20 blur-sm animate-pulse">🍅</div>

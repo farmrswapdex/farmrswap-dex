@@ -4,7 +4,6 @@ import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { useNavigate } from 'react-router-dom';
 import { formatUnits } from 'viem';
 import { Inbox } from 'lucide-react';
-import MobileWarning from '../components/MobileWarning';
 
 import { TOKENS } from '../lib/constants';
 import { FactoryContract, PairContract } from '../lib/config';
@@ -157,7 +156,6 @@ const Pools = () => {
 
     return (
         <div className="w-full min-h-screen bg-[#a7d8f5] flex flex-col">
-            <MobileWarning />
             <div className="w-full max-w-4xl mx-auto pt-8 md:pt-16 pb-8 px-4 flex-grow">
                 <div className="flex flex-col sm:flex-row items-center justify-between mb-8 gap-4">
                     <h1 className="text-4xl md:text-5xl font-extrabold text-gray-800 tracking-tight">
