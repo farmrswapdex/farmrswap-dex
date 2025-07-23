@@ -1,4 +1,3 @@
-import * as Tabs from '@radix-ui/react-tabs';
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { MaxUint256 } from 'ethers';
 import { ArrowDown, Settings } from 'lucide-react';
@@ -9,7 +8,6 @@ import { useAccount, useReadContract, useWriteContract } from 'wagmi';
 import { RouterContract, Weth9Contract } from '../lib/config';
 import { NATIVE_TOKEN, TOKENS } from '../lib/constants';
 import { formatNumber, parseAmount } from '../lib/quoteCalculator';
-import LimitOrderForm from './LimitOrderForm';
 import SettingsModal from './SettingsModal';
 import TokenModal from "./TokenModal";
 import TokenSelector from './TokenSelector';
@@ -33,7 +31,6 @@ const SwapForm = () => {
     const [toToken, setToToken] = useState<Token | null>(TOKENS.FARMR);
     const [fromAmount, setFromAmount] = useState('');
     const [toAmount, setToAmount] = useState('');
-    const [activeTab, setActiveTab] = useState<'swap' | 'limit'>('swap');
 
     // Swap-specific state
     const [isFlipped, setIsFlipped] = useState(false);
@@ -44,9 +41,6 @@ const SwapForm = () => {
     // Settings
     const [slippage, setSlippage] = useState(0.5);
     const [deadline, setDeadline] = useState(20);
-
-    // Limit-order-specific state
-    const [limitPrice, setLimitPrice] = useState('');
 
     // Modal state
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -141,18 +135,12 @@ const SwapForm = () => {
         };
     }, [isModalOpen]);
 
-    // Calculate estimated toAmount for limit order
     useEffect(() => {
-        if (activeTab === 'limit' && fromAmount && limitPrice) {
-            const amount = parseFloat(fromAmount) * parseFloat(limitPrice);
-            setToAmount(isNaN(amount) ? '' : amount.toString());
-        } else if (activeTab === 'swap') {
-            // Reset toAmount when switching back to swap unless there's a quote
-            if (!isLoading && !amountsInData && !amountsOutData) {
-                setToAmount('');
-            }
+        // Reset toAmount when there is no quote
+        if (!isLoading && !amountsInData && !amountsOutData) {
+            setToAmount('');
         }
-    }, [fromAmount, limitPrice, activeTab, isLoading, amountsInData, amountsOutData]);
+    }, [fromAmount, isLoading, amountsInData, amountsOutData]);
 
     useEffect(() => {
         if (error) {
@@ -178,10 +166,6 @@ const SwapForm = () => {
         }
         setIsFlipped(true);
         setAmountsSwapped(false);
-    };
-
-    const handleLimitPriceChange = (value: string) => {
-        setLimitPrice(value);
     };
 
     const handleTokenSelect = (token: Token, isFromToken: boolean) => {
@@ -410,10 +394,6 @@ const SwapForm = () => {
         }
     };
 
-    const handlePlaceLimitOrder = () => {
-        console.log('Placing Limit Order:', { fromToken, toToken, fromAmount, limitPrice, toAmount });
-    };
-
     const openModal = (selection: 'from' | 'to') => {
         setSelectingFor(selection);
         setIsModalOpen(true);
@@ -434,29 +414,21 @@ const SwapForm = () => {
     };
 
     const canSwap = fromToken && toToken && fromAmount && toAmount && !isLoading;
-    const canPlaceOrder = fromToken && toToken && fromAmount && limitPrice && parseFloat(fromAmount) > 0 && parseFloat(limitPrice) > 0;
 
     const fromAmountInUsd = fromAmount ? (parseFloat(fromAmount) * 0.001).toFixed(2) : '0.00';
     const toAmountInUsd = toAmount ? (parseFloat(toAmount) * 0.001).toFixed(2) : '0.00';
 
     const getButtonText = () => {
         if (!isConnected) return 'Connect Wallet';
-        if (activeTab === 'swap') {
-            if (isLoading) return 'Calculating...';
-            if (needsApproval) return `Approve ${fromToken?.symbol}`;
-            return 'Swap';
-        }
-        return 'Place Limit Order';
+        if (isLoading) return 'Calculating...';
+        if (needsApproval) return `Approve ${fromToken?.symbol}`;
+        return 'Swap';
     };
 
     const isButtonDisabled = () => {
         if (!isConnected) return false; // Always enabled to connect
-        if (activeTab === 'swap') {
-            if (needsApproval) return isApproving;
-            return !canSwap || isApproving;
-        }
-        if (activeTab === 'limit') return !canPlaceOrder;
-        return true;
+        if (needsApproval) return isApproving;
+        return !canSwap || isApproving;
     };
 
     const handleButtonClick = () => {
@@ -464,14 +436,11 @@ const SwapForm = () => {
             openConnectModal?.();
             return;
         }
-        if (activeTab === 'swap') {
-            if (needsApproval) {
-                handleApprove();
-            } else {
-                handleSwap();
-            }
+        if (needsApproval) {
+            handleApprove();
+        } else {
+            handleSwap();
         }
-        if (activeTab === 'limit') handlePlaceLimitOrder();
     };
 
     const minimumReceived = () => {
@@ -494,21 +463,16 @@ const SwapForm = () => {
     return (
         <>
             <div className="flex flex-col items-center w-full px-4 sm:px-6 lg:px-8 max-w-2xl mx-auto lg:max-w-4xl">
-                <Tabs.Root
-                    value={activeTab}
-                    onValueChange={(value) => setActiveTab(value as 'swap' | 'limit')}
-                    className="w-full max-w-xs sm:max-w-2xl flex flex-col items-center"
-                >
+                <div className="w-full max-w-xs sm:max-w-2xl flex flex-col items-center">
                     <div className="backdrop-blur-lg bg-white/20 rounded-2xl lg:rounded-2xl shadow-xl border border-white/40 p-0 flex flex-col items-center w-full pb-3 overflow-hidden">
 
                         <div className="p-4 sm:p-6 lg:p-8 mx-auto">
-                            <Tabs.List className="flex items-center justify-between w-full">
-                                <Tabs.Trigger
-                                    value="swap"
-                                    className="text-xl sm:text-2xl font-bold cursor-default transition-all duration-200 data-[state=active]:text-black data-[state=inactive]:text-gray-300 hover:text-black focus:outline-none px-2 py-1"
+                            <div className="flex items-center justify-between w-full">
+                                <div
+                                    className="text-xl sm:text-2xl font-bold cursor-default transition-all duration-200 text-black px-2 py-1"
                                 >
                                     Swap
-                                </Tabs.Trigger>
+                                </div>
                                 <div className="relative">
                                     <button className="text-xl sm:text-2xl text-gray-400 cursor-pointer hover:text-gray-600 p-3 rounded-full transition-all duration-200 focus:outline-none active:scale-95 touch-manipulation" onClick={() => setIsSettingsModalOpen(prev => !prev)}>
                                         <Settings className="w-5 h-5 sm:w-6 sm:h-6" />
@@ -523,11 +487,11 @@ const SwapForm = () => {
                                         className="absolute top-full right-0 mt-2 z-50"
                                     />
                                 </div>
-                            </Tabs.List>
+                            </div>
                         </div>
 
                         <div className="p-4 sm:p-6 lg:p-8">
-                            <Tabs.Content value="swap" className='outline-none'>
+                            <div className='outline-none'>
                                 <div className="w-full p-0 sm:p-4 flex flex-col gap-2">
                                     <div className="relative w-full flex flex-col gap-2 items-center">
                                         <div className="flex flex-col gap-2 w-full max-w-xs sm:max-w-full mx-auto">
@@ -622,7 +586,7 @@ const SwapForm = () => {
                                         </div>
                                     )}
                                 </div>
-                            </Tabs.Content>
+                            </div>
                         </div>
 
                     </div >
@@ -637,7 +601,7 @@ const SwapForm = () => {
                     >
                         {getButtonText()}
                     </button>
-                </Tabs.Root >
+                </div >
             </div >
             <TokenModal
                 isOpen={isModalOpen}
