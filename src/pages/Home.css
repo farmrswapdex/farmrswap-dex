@@ -1,0 +1,38 @@
+body {
+  font-family: "Baloo 2", sans-serif;
+  font-style: normal;
+  font-optical-sizing: auto;
+  font-weight: 400;
+}
+
+.bolder {
+  font-weight: 700;
+}
+
+.custom-bounce-box {
+  width: 800px;
+  animation: bounce 4s infinite;
+  margin-top: 2.5rem; /* mt-10 */
+
+  /* Responsive (Tailwind md breakpoint = min-width: 768px) */
+}
+
+@media (min-width: 768px) {
+  .custom-bounce-box {
+    margin: 0;
+  }
+}
+
+/* Tailwind's default bounce animation */
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(-5%);
+    animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+  }
+
+  50% {
+    transform: translateY(0);
+    animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+  }
+}

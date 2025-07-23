@@ -12,6 +12,7 @@ import Layout from './components/Layout';
 import Bridge from "./pages/Bridge";
 import Explore from "./pages/Explore";
 import Farms from './pages/Farms';
+import Home from "./pages/Home";
 import NotFound from './pages/NotFound';
 import Pools from "./pages/Pools";
 import Swap from './pages/Swap';
@@ -50,7 +51,8 @@ function App() {
             <BrowserRouter>
               <Routes>
                 <Route element={<Layout />}>
-                  <Route path="/" element={<Swap />} />
+                  <Route path="/" element={<Home />} />
+                  <Route path="/swap" element={<Swap />} />
                   <Route path="/farms" element={<Farms />} />
                   <Route path="/pools" element={<Pools />} />
                   <Route path="/explore" element={<Explore />} />
