@@ -5,7 +5,7 @@ import './Home.css';
 const Home = () => {
   return (
     <main className="container md:max-w-[80%] xl:max-w-[90%] mx-auto p-4">
-      <section className="pt-20 lg:pt-32 md:grid grid-cols-2">
+      <section className="pt-5 lg:pt-8 md:grid grid-cols-2">
         <div className="">
           <div>
             <h1 className="text-4xl font-semibold my-3">
@@ -53,12 +53,12 @@ const Home = () => {
           </div>
         </div>
         <div className="">
-          <img src="https://res.cloudinary.com/dma1c8i6n/image/upload/v1753230763/farmrunner_bsuz1b.png" className="w-[800px] custom-bounce-box md:m-0" alt="" />
+          <img src="https://res.cloudinary.com/dma1c8i6n/image/upload/v1753230763/farmrunner_bsuz1b.png" className="w-[800px] custom-bounce-box md:m-0 md:pb-5 sm:pb-10" alt="" />
         </div>
       </section>
 
       <section className="flex justify-center mt-[-50px]">
-        <div className="flex flex-col items-center justify-center mb-10">
+        <div className="flex flex-col items-center justify-center mb-10 mt-5">
           <div className="sc-eZNQZU eeTebd">
             <a className="bg-[rgb(24,32,53)] block w-fit p-4 rounded-3xl z-10 relative"
               href="https://farmrswap.gitbook.io/docs">
