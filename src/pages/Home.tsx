@@ -1,6 +1,7 @@
 
 import { Link } from 'react-router-dom';
 import './Home.css';
+import Footer from '../components/Footer';
 
 const Home = () => {
   return (
@@ -88,12 +89,12 @@ const Home = () => {
               backgroundSize: 'auto 100%',
               textDecoration: 'none'
             }}>
-            <div className="flex items-center justify-between">
+            <div>
               <div className="font-semibold text-2xl">Swap tokens</div>
+              <p className="mt-4">Buy, sell, and explore tokens on Farmrswap.</p>
             </div>
             <div>
-              <p className="">Buy, sell, and explore tokens on Farmrswap.</p>
-              <p className="text-[rgb(40,182,226)] font-semibold mt-6">
+              <p className="text-[rgb(40,182,226)] font-semibold">
                 Trade Tokens
               </p>
             </div>
@@ -167,6 +168,7 @@ const Home = () => {
           </a>
         </div>
       </section>
+      <Footer />
     </main>
   );
 };

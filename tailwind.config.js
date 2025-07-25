@@ -17,11 +17,21 @@ export default {
         'slide': {
           '0%': { transform: 'translateX(0)' },
           '100%': { transform: 'translateX(-100%)' },
-        }
+        },
+        'slide-up': {
+          'from': { transform: 'translateY(100%)' },
+          'to': { transform: 'translateY(0)' },
+        },
+        'slide-down': {
+          'from': { transform: 'translateY(0)' },
+          'to': { transform: 'translateY(100%)' },
+        },
       },
       animation: {
         'fade-in-up': 'fade-in-up 0.8s ease-out forwards',
         'slide': 'slide 20s linear infinite',
+        'slide-up': 'slide-up 0.3s ease-out',
+        'slide-down': 'slide-down 0.3s ease-out',
       }
     },
   },

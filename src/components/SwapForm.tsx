@@ -462,7 +462,7 @@ const SwapForm = () => {
 
     return (
         <>
-            <div className="flex flex-col items-center w-full px-4 sm:px-6 lg:px-8 max-w-2xl mx-auto lg:max-w-4xl">
+            <div className="flex flex-col items-center w-full px-4 sm:px-6 lg:px-8 max-w-md mx-auto lg:max-w-4xl">
                 <div className="w-full max-w-xs sm:max-w-2xl flex flex-col items-center">
                     {/* Main Swap Container - Keep your existing backdrop blur styling */}
                     <div className="backdrop-blur-lg bg-white/20 rounded-2xl lg:rounded-2xl shadow-xl border border-white/40 overflow-hidden w-full">
@@ -491,11 +491,11 @@ const SwapForm = () => {
                         </div>
 
                         {/* Swap Interface - Remove extra padding, make sections full width */}
-                        <div className="flex flex-col">
+                        <div className="flex flex-col mx-auto relative">
                             {/* Sell Section - Full width with your styling */}
-                            <div className="bg-white bg-opacity-50 backdrop-blur-sm p-4 sm:p-6 lg:p-6 border-b border-white/20">
+                            <div className="bg-white bg-opacity-50 backdrop-blur-sm p-4 sm:p-6 lg:p-6 rounded-xl">
                                 <div className="flex items-center justify-between mb-3">
-                                    <span className="text-sm sm:text-base font-semibold text-gray-700">Sell</span>
+                                    <span className="text-sm sm:text-base font-semibold text-gray-600">Sell</span>
                                 </div>
 
                                 <div className="flex items-center gap-3 lg:gap-4">
@@ -520,22 +520,19 @@ const SwapForm = () => {
                                 </div>
                             </div>
 
-                            {/* Swap Button Section - Light blue background */}
-                            <div className="bg-white/10 backdrop-blur-sm flex justify-center py-4 border-b border-white/20">
-                                <button
-                                    onClick={handleSwapTokens}
-                                    disabled={amountsSwapped || !fromToken || !toToken}
-                                    aria-label='Swap tokens'
-                                    className="bg-white rounded-full p-3 lg:p-4 shadow-lg border-2 border-white/20 transition-all duration-200 hover:bg-gray-50 hover:shadow-xl hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 touch-manipulation"
-                                >
-                                    <ArrowDown className="w-5 h-5 lg:w-6 lg:h-6 text-gray-600" />
-                                </button>
-                            </div>
+                            <button
+                                onClick={handleSwapTokens}
+                                disabled={amountsSwapped || !fromToken || !toToken}
+                                aria-label='Swap tokens'
+                                className="absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2 bg-white rounded-full p-3 lg:p-4 shadow-lg border-2 border-white/20 transition-all duration-200 hover:bg-gray-50 hover:shadow-xl hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 touch-manipulation"
+                            >
+                                <ArrowDown className="w-4 h-4 lg:w-6 lg:h-6 text-gray-600" />
+                            </button>
 
                             {/* Buy Section - Full width with your styling */}
-                            <div className="bg-white bg-opacity-50 backdrop-blur-sm p-4 sm:p-6 lg:p-6">
+                            <div className="bg-white bg-opacity-50 backdrop-blur-sm p-4 sm:p-6 lg:p-6 rounded-xl mt-4">
                                 <div className="flex items-center justify-between mb-3">
-                                    <span className="text-sm sm:text-base font-semibold text-gray-700">Buy</span>
+                                    <span className="text-sm sm:text-base font-semibold text-gray-600">Buy</span>
                                 </div>
 
                                 {isLoading && (
