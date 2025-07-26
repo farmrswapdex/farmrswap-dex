@@ -33,7 +33,7 @@ const TokenModal = ({ isOpen, onClose, onTokenSelect }: TokenModalProps) => {
     };
 
     const modalClasses = isMobile
-        ? "fixed bottom-0 left-0 right-0 bg-[rgb(24,32,53)] rounded-t-2xl shadow-lg w-full max-w-2xl mx-auto z-50 border-t border-x border-[rgba(255,255,255,0.07)] max-h-[95vh] h-[800px] flex flex-col data-[state=open]:animate-slide-up data-[state=closed]:animate-slide-down"
+        ? "fixed bottom-0 left-0 right-0 bg-[rgb(24,32,53)] rounded-t-2xl shadow-lg w-full max-w-2xl mx-auto z-50 border-t border-x border-[rgba(255,255,255,0.07)] max-h-[95vh] h-[500px] flex flex-col data-[state=open]:animate-slide-up data-[state=closed]:animate-slide-down"
         : "fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[rgb(24,32,53)] rounded-2xl shadow-lg w-full max-w-md mx-4 z-50 border border-[rgba(255,255,255,0.07)] max-h-[90vh] flex flex-col";
 
 
