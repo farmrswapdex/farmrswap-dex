@@ -204,9 +204,9 @@ const AddLiquidityForm = ({ tokenA, tokenB, onBack }: AddLiquidityFormProps) => 
                         value={amountA}
                         onChange={(e) => handleAmountAChange(e.target.value)}
                         placeholder="0.0"
-                        className="flex-1 bg-transparent text-xl md:text-2xl font-semibold text-black outline-none placeholder-gray-400"
+                        className="flex-1 bg-transparent text-xl md:text-2xl font-semibold text-black outline-none placeholder-gray-400 min-w-0"
                     />
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 flex-shrink-0">
                         <img src={tokenA.logoURI} alt={tokenA.symbol} className="w-8 h-8 rounded-full" />
                         <span className="font-bold text-lg">{tokenA.symbol}</span>
                     </div>
@@ -220,9 +220,9 @@ const AddLiquidityForm = ({ tokenA, tokenB, onBack }: AddLiquidityFormProps) => 
                         value={amountB}
                         onChange={(e) => handleAmountBChange(e.target.value)}
                         placeholder="0.0"
-                        className="flex-1 bg-transparent text-xl md:text-2xl font-semibold text-black outline-none placeholder-gray-400"
+                        className="flex-1 bg-transparent text-xl md:text-2xl font-semibold text-black outline-none placeholder-gray-400 min-w-0"
                     />
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 flex-shrink-0">
                         <img src={tokenB.logoURI} alt={tokenB.symbol} className="w-8 h-8 rounded-full" />
                         <span className="font-bold text-lg">{tokenB.symbol}</span>
                     </div>
