@@ -4,7 +4,8 @@ import { toast } from 'react-hot-toast';
 import { erc20Abi, parseUnits } from 'viem';
 import { useAccount, useReadContract, useWriteContract } from 'wagmi';
 import { FactoryContract, PairContract, RouterContract } from '../lib/config';
-import { parseAmount } from '../lib/quoteCalculator';
+import { formatNumber, parseAmount } from '../lib/quoteCalculator';
+import { useTokenStore } from '../store/useTokenStore';
 import { sortTokens } from '../lib/utils';
 
 interface Token {
@@ -25,6 +26,7 @@ interface AddLiquidityFormProps {
 const AddLiquidityForm = ({ tokenA, tokenB, onBack }: AddLiquidityFormProps) => {
     const { address } = useAccount();
     const { writeContractAsync } = useWriteContract();
+    const { userTokens, fetchUserTokens } = useTokenStore();
 
     const [amountA, setAmountA] = useState('');
     const [amountB, setAmountB] = useState('');
@@ -33,6 +35,15 @@ const AddLiquidityForm = ({ tokenA, tokenB, onBack }: AddLiquidityFormProps) => 
     const [needsApprovalB, setNeedsApprovalB] = useState(false);
     const [isApprovingA, setIsApprovingA] = useState(false);
     const [isApprovingB, setIsApprovingB] = useState(false);
+
+    useEffect(() => {
+        if (address) {
+            fetchUserTokens(address);
+        }
+    }, [address, fetchUserTokens]);
+
+    const tokenABalance = userTokens.find(t => t.address === tokenA.address)?.balance || '0';
+    const tokenBBalance = userTokens.find(t => t.address === tokenB.address)?.balance || '0';
 
     const [sortedTokenA, sortedTokenB] = useMemo(() => sortTokens(tokenA, tokenB), [tokenA, tokenB]);
 
@@ -89,8 +100,12 @@ const AddLiquidityForm = ({ tokenA, tokenB, onBack }: AddLiquidityFormProps) => 
         if (reserves && parsedValue) {
             const amountADesired = parseUnits(parsedValue, tokenA.decimals);
             const [reserveA, reserveB] = tokenA.address.toLowerCase() < tokenB.address.toLowerCase() ? reserves : [reserves[1], reserves[0]];
-            const amountBOptimal = (amountADesired * reserveB) / reserveA;
-            setAmountB(parseAmount(amountBOptimal.toString(), tokenB.decimals));
+            if (reserveA > 0) {
+                const amountBOptimal = (amountADesired * reserveB) / reserveA;
+                setAmountB(formatNumber(parseUnits(amountBOptimal.toString(), tokenB.decimals).toString(), tokenB.decimals));
+            }
+        } else if (!reserves) {
+            // Allow independent input if no reserves
         } else {
             setAmountB('');
         }
@@ -102,8 +117,12 @@ const AddLiquidityForm = ({ tokenA, tokenB, onBack }: AddLiquidityFormProps) => 
         if (reserves && parsedValue) {
             const amountBDesired = parseUnits(parsedValue, tokenB.decimals);
             const [reserveA, reserveB] = tokenA.address.toLowerCase() < tokenB.address.toLowerCase() ? reserves : [reserves[1], reserves[0]];
-            const amountAOptimal = (amountBDesired * reserveA) / reserveB;
-            setAmountA(parseAmount(amountAOptimal.toString(), tokenA.decimals));
+            if (reserveB > 0) {
+                const amountAOptimal = (amountBDesired * reserveA) / reserveB;
+                setAmountA(formatNumber(parseUnits(amountAOptimal.toString(), tokenA.decimals).toString(), tokenA.decimals));
+            }
+        } else if (!reserves) {
+            // Allow independent input if no reserves
         } else {
             setAmountA('');
         }
@@ -140,9 +159,8 @@ const AddLiquidityForm = ({ tokenA, tokenB, onBack }: AddLiquidityFormProps) => 
         const amountADesired = parseUnits(amountA, tokenA.decimals);
         const amountBDesired = parseUnits(amountB, tokenB.decimals);
 
-        // Note: Slippage is not implemented for simplicity, using desired amounts as minimum.
-        const amountAMin = amountADesired;
-        const amountBMin = amountBDesired;
+        const amountAMin = amountADesired; // Simplified: no slippage
+        const amountBMin = amountBDesired; // Simplified: no slippage
 
         let promise;
         if (tokenA.symbol === 'ETH' || tokenB.symbol === 'ETH') {
@@ -183,21 +201,23 @@ const AddLiquidityForm = ({ tokenA, tokenB, onBack }: AddLiquidityFormProps) => 
         });
     };
 
-    const getActionButton = () => {
-        const buttonClass = "w-full py-3 rounded-xl text-lg font-bold text-white transition-all disabled:bg-gray-500 disabled:cursor-not-allowed";
-        if (needsApprovalA) {
-            return <button onClick={() => handleApprove(tokenA, setIsApprovingA, refetchAllowanceA)} disabled={isApprovingA} className={`${buttonClass} bg-blue-600 hover:bg-blue-700`}>Approve {tokenA.symbol}</button>;
-        }
-        if (needsApprovalB) {
-            return <button onClick={() => handleApprove(tokenB, setIsApprovingB, refetchAllowanceB)} disabled={isApprovingB} className={`${buttonClass} bg-blue-600 hover:bg-blue-700`}>Approve {tokenB.symbol}</button>;
-        }
-        return <button onClick={handleAddLiquidity} disabled={!amountA || !amountB || isApprovingA || isApprovingB} className={`${buttonClass} bg-blue-600 hover:bg-blue-700`}>Add Liquidity</button>;
-    };
+    const isAddLiquidityDisabled = !amountA || !amountB || needsApprovalA || needsApprovalB || isApprovingA || isApprovingB;
 
     return (
         <div className="w-full flex flex-col gap-4">
-            <div className="bg-white bg-opacity-50 backdrop-blur-sm rounded-2xl p-4 flex flex-col gap-1">
-                <span className="text-base md:text-lg font-semibold text-gray-700 mb-1">Amount for {tokenA.symbol}</span>
+            <div className="bg-white bg-opacity-50 backdrop-blur-sm rounded-2xl p-4 flex flex-col gap-2">
+                <div className="flex justify-between items-center">
+                    <span className="text-base md:text-lg font-semibold text-gray-700">Amount for {tokenA.symbol}</span>
+                    <div className="text-sm text-gray-500">
+                        Balance: {formatNumber(tokenABalance, 4)}
+                        <button
+                            onClick={() => handleAmountAChange(tokenABalance)}
+                            className="ml-2 text-blue-600 hover:text-blue-800 font-semibold"
+                        >
+                            Max
+                        </button>
+                    </div>
+                </div>
                 <div className="flex items-center gap-2">
                     <input
                         type="text"
@@ -211,9 +231,30 @@ const AddLiquidityForm = ({ tokenA, tokenB, onBack }: AddLiquidityFormProps) => 
                         <span className="font-bold text-lg">{tokenA.symbol}</span>
                     </div>
                 </div>
+                {needsApprovalA && (
+                    <button
+                        onClick={() => handleApprove(tokenA, setIsApprovingA, refetchAllowanceA)}
+                        disabled={isApprovingA}
+                        className="w-full mt-2 py-2 rounded-xl text-md font-bold text-white bg-blue-600 hover:bg-blue-700 transition-all disabled:bg-gray-500"
+                    >
+                        {isApprovingA ? 'Approving...' : `Approve ${tokenA.symbol}`}
+                    </button>
+                )}
             </div>
-            <div className="bg-white bg-opacity-50 backdrop-blur-sm rounded-2xl p-4 flex flex-col gap-1">
-                <span className="text-base md:text-lg font-semibold text-gray-700 mb-1">Amount for {tokenB.symbol}</span>
+
+            <div className="bg-white bg-opacity-50 backdrop-blur-sm rounded-2xl p-4 flex flex-col gap-2">
+                <div className="flex justify-between items-center">
+                    <span className="text-base md:text-lg font-semibold text-gray-700">Amount for {tokenB.symbol}</span>
+                    <div className="text-sm text-gray-500">
+                        Balance: {formatNumber(tokenBBalance, 4)}
+                        <button
+                            onClick={() => handleAmountBChange(tokenBBalance)}
+                            className="ml-2 text-blue-600 hover:text-blue-800 font-semibold"
+                        >
+                            Max
+                        </button>
+                    </div>
+                </div>
                 <div className="flex items-center gap-2">
                     <input
                         type="text"
@@ -227,11 +268,27 @@ const AddLiquidityForm = ({ tokenA, tokenB, onBack }: AddLiquidityFormProps) => 
                         <span className="font-bold text-lg">{tokenB.symbol}</span>
                     </div>
                 </div>
+                {needsApprovalB && (
+                    <button
+                        onClick={() => handleApprove(tokenB, setIsApprovingB, refetchAllowanceB)}
+                        disabled={isApprovingB}
+                        className="w-full mt-2 py-2 rounded-xl text-md font-bold text-white bg-blue-600 hover:bg-blue-700 transition-all disabled:bg-gray-500"
+                    >
+                        {isApprovingB ? 'Approving...' : `Approve ${tokenB.symbol}`}
+                    </button>
+                )}
             </div>
+
             <div className="flex gap-4 mt-4">
                 <button onClick={onBack} className="flex-1 py-3 rounded-xl text-lg font-bold bg-gray-200 text-gray-800 hover:bg-gray-300 transition-all">Back</button>
                 <div className="flex-1">
-                    {getActionButton()}
+                    <button
+                        onClick={handleAddLiquidity}
+                        disabled={isAddLiquidityDisabled}
+                        className="w-full py-3 rounded-xl text-lg font-bold text-white transition-all disabled:bg-gray-500 disabled:cursor-not-allowed bg-blue-600 hover:bg-blue-700"
+                    >
+                        Add Liquidity
+                    </button>
                 </div>
             </div>
         </div>

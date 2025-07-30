@@ -8,6 +8,7 @@ import { useAccount, useReadContract, useWriteContract } from 'wagmi';
 import { RouterContract, Weth9Contract } from '../lib/config';
 import { NATIVE_TOKEN, TOKENS } from '../lib/constants';
 import { formatNumber, parseAmount } from '../lib/quoteCalculator';
+import { useTokenStore } from '../store/useTokenStore';
 import SettingsModal from './SettingsModal';
 import TokenModal from "./TokenModal";
 import TokenSelector from './TokenSelector';
@@ -25,6 +26,7 @@ const SwapForm = () => {
     const { openConnectModal } = useConnectModal();
     const { address, isConnected } = useAccount();
     const { writeContractAsync, error } = useWriteContract();
+    const { userTokens, fetchUserTokens, loading: tokensLoading } = useTokenStore();
 
     // Common state for both forms
     const [fromToken, setFromToken] = useState<Token | null>(NATIVE_TOKEN);
@@ -46,6 +48,14 @@ const SwapForm = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
     const [selectingFor, setSelectingFor] = useState<'from' | 'to' | null>(null);
+
+    useEffect(() => {
+        if (isConnected && address) {
+            fetchUserTokens(address);
+        }
+    }, [isConnected, address, fetchUserTokens]);
+
+    const fromTokenBalance = userTokens.find(t => t.address === fromToken?.address)?.balance || '0';
 
     const { data: allowance, refetch: refetchAllowance } = useReadContract({
         abi: erc20Abi,
@@ -420,6 +430,7 @@ const SwapForm = () => {
 
     const getButtonText = () => {
         if (!isConnected) return 'Connect Wallet';
+        if (tokensLoading) return 'Loading Balances...';
         if (isLoading) return 'Calculating...';
         if (needsApproval) return `Approve ${fromToken?.symbol}`;
         return 'Swap';
@@ -428,7 +439,7 @@ const SwapForm = () => {
     const isButtonDisabled = () => {
         if (!isConnected) return false; // Always enabled to connect
         if (needsApproval) return isApproving;
-        return !canSwap || isApproving;
+        return !canSwap || isApproving || tokensLoading;
     };
 
     const handleButtonClick = () => {
@@ -496,6 +507,14 @@ const SwapForm = () => {
                             <div className="bg-white bg-opacity-50 backdrop-blur-sm p-4 sm:p-6 lg:p-6 rounded-xl">
                                 <div className="flex items-center justify-between mb-3">
                                     <span className="text-sm sm:text-base font-semibold text-gray-600">Sell</span>
+                                    <div className="text-sm text-gray-500">
+                                        <button
+                                            onClick={() => handleFromAmountChange(fromTokenBalance)}
+                                            className="ml-2 text-blue-600 hover:text-blue-800 font-semibold"
+                                        >
+                                            Max
+                                        </button>
+                                    </div>
                                 </div>
 
                                 <div className="flex items-center gap-3 lg:gap-4">

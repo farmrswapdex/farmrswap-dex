@@ -1,4 +1,6 @@
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
+import { useTokenStore } from '../store/useTokenStore';
+import { formatNumber } from '../lib/quoteCalculator';
 
 interface Token {
     symbol: string;
@@ -16,6 +18,9 @@ interface TokenSelectorProps {
 }
 
 const TokenSelector = ({ selectedToken, onClick, disabled = false }: TokenSelectorProps) => {
+    const { userTokens } = useTokenStore();
+    const balance = userTokens.find(t => t.address === selectedToken?.address)?.balance;
+
     return (
         <DropdownMenu.Root>
             <DropdownMenu.Trigger asChild>
@@ -49,7 +54,14 @@ const TokenSelector = ({ selectedToken, onClick, disabled = false }: TokenSelect
                                     }}
                                 />
                             </span>
-                            <span className="text-xs sm:text-sm md:text-base">{selectedToken.symbol}</span>
+                            <div className="flex flex-col items-start">
+                                <span className="text-xs sm:text-sm md:text-base">{selectedToken.symbol}</span>
+                                {balance && (
+                                    <span className="text-xs text-gray-500">
+                                        {formatNumber(balance, 4)}
+                                    </span>
+                                )}
+                            </div>
                         </>
                     ) : (
                         <span className="text-xs sm:text-sm md:text-base">Select token</span>

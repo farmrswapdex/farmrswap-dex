@@ -1,7 +1,10 @@
 import * as Dialog from '@radix-ui/react-dialog';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useAccount } from 'wagmi';
 import { TOKEN_LIST } from '../lib/constants';
+import { formatNumber } from '../lib/quoteCalculator';
 import useIsMobile from '../lib/useIsMobile';
+import { useTokenStore } from '../store/useTokenStore';
 
 interface Token {
     symbol: string;
@@ -21,8 +24,24 @@ interface TokenModalProps {
 const TokenModal = ({ isOpen, onClose, onTokenSelect }: TokenModalProps) => {
     const [searchTerm, setSearchTerm] = useState('');
     const isMobile = useIsMobile();
+    const { userTokens, loading, fetchUserTokens } = useTokenStore();
+    const { address, isConnected } = useAccount();
 
-    const filteredTokens = TOKEN_LIST.filter(token =>
+    useEffect(() => {
+        if (isOpen && isConnected && address) {
+            fetchUserTokens(address);
+        }
+    }, [isOpen, isConnected, address, fetchUserTokens]);
+
+    const tokenListWithBalances = TOKEN_LIST.map(token => {
+        const userToken = userTokens.find(ut => ut.address === token.address);
+        return {
+            ...token,
+            balance: userToken ? userToken.balance : '0',
+        };
+    });
+
+    const filteredTokens = tokenListWithBalances.filter(token =>
         token.symbol.toLowerCase().includes(searchTerm.toLowerCase()) ||
         token.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
@@ -57,28 +76,37 @@ const TokenModal = ({ isOpen, onClose, onTokenSelect }: TokenModalProps) => {
                         <span className="block text-[rgb(152,161,192)] text-xs font-semibold mb-2">Tokens</span>
                     </div>
                     <div className="flex-1 min-h-0 overflow-y-auto px-2 pb-4">
-                        {filteredTokens.map((token) => (
-                            <button
-                                key={token.address}
-                                onClick={() => handleTokenClick(token)}
-                                className="w-full flex items-center gap-3 py-3 px-2 rounded-xl hover:bg-[rgb(40,182,226)/.08] transition-colors mb-1"
-                            >
-                                <span
-                                    className="w-9 h-9 rounded-full flex items-center justify-center"
-                                    style={{ backgroundColor: token.color || 'rgba(255,255,255,0.07)' }}
+                        {loading ? (
+                            <div className="flex justify-center items-center h-full">
+                                <div className="w-8 h-8 border-4 border-gray-400/30 border-t-gray-600 rounded-full animate-spin" />
+                            </div>
+                        ) : (
+                            filteredTokens.map((token) => (
+                                <button
+                                    key={token.address}
+                                    onClick={() => handleTokenClick(token)}
+                                    className="w-full flex items-center justify-between gap-3 py-3 px-2 rounded-xl hover:bg-[rgb(40,182,226)/.08] transition-colors mb-1"
                                 >
-                                    <img
-                                        src={token.logoURI}
-                                        alt={token.symbol}
-                                        className="w-7 h-7 rounded-full"
-                                    />
-                                </span>
-                                <div className="flex flex-col items-start">
-                                    <span className="font-semibold text-white text-base leading-tight">{token.name}</span>
-                                    <span className="text-xs text-[rgb(152,161,192)] leading-tight">{token.symbol}</span>
-                                </div>
-                            </button>
-                        ))}
+                                    <div className="flex items-center gap-3">
+                                        <span
+                                            className="w-9 h-9 rounded-full flex items-center justify-center"
+                                            style={{ backgroundColor: token.color || 'rgba(255,255,255,0.07)' }}
+                                        >
+                                            <img
+                                                src={token.logoURI}
+                                                alt={token.symbol}
+                                                className="w-7 h-7 rounded-full"
+                                            />
+                                        </span>
+                                        <div className="flex flex-col items-start">
+                                            <span className="font-semibold text-white text-base leading-tight">{token.name}</span>
+                                            <span className="text-xs text-[rgb(152,161,192)] leading-tight">{token.symbol}</span>
+                                        </div>
+                                    </div>
+                                    <span className="text-white font-medium">{formatNumber(token.balance, 4)}</span>
+                                </button>
+                            ))
+                        )}
                     </div>
                 </Dialog.Content>
             </Dialog.Portal>
