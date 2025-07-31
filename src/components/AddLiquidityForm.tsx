@@ -6,6 +6,7 @@ import { useAccount, useReadContract, useWriteContract } from "wagmi";
 import { FactoryContract, PairContract, RouterContract } from "../lib/config";
 import { formatNumber, parseAmount } from "../lib/quoteCalculator";
 import { useTokenStore } from "../store/useTokenStore";
+import { NATIVE_TOKEN } from "../lib/constants";
 import { sortTokens } from "../lib/utils";
 import Decimal from "decimal.js";
 
@@ -78,13 +79,10 @@ const AddLiquidityForm = ({
 
   const reserves = reservesResult as [bigint, bigint, number] | undefined;
 
-  // Check if token is native (ETH on Sepolia, BLOCX on BLOCX chain)
   const isTokenANative =
-    tokenA.address === "0x0000000000000000000000000000000000000000" ||
-    tokenA.symbol === "BLOCX";
+    tokenA.address.toLowerCase() === NATIVE_TOKEN.address.toLowerCase();
   const isTokenBNative =
-    tokenB.address === "0x0000000000000000000000000000000000000000" ||
-    tokenB.symbol === "BLOCX";
+    tokenB.address.toLowerCase() === NATIVE_TOKEN.address.toLowerCase();
 
   const { data: allowanceA, refetch: refetchAllowanceA } = useReadContract({
     abi: erc20Abi,
