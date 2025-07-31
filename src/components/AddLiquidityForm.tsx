@@ -1,12 +1,13 @@
 import { MaxUint256 } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'react-hot-toast';
-import { erc20Abi, parseUnits } from 'viem';
+import { erc20Abi, parseUnits, formatUnits } from 'viem';
 import { useAccount, useReadContract, useWriteContract } from 'wagmi';
 import { FactoryContract, PairContract, RouterContract } from '../lib/config';
 import { formatNumber, parseAmount } from '../lib/quoteCalculator';
 import { useTokenStore } from '../store/useTokenStore';
 import { sortTokens } from '../lib/utils';
+import Decimal from 'decimal.js';
 
 interface Token {
     symbol: string;
@@ -53,12 +54,14 @@ const AddLiquidityForm = ({ tokenA, tokenB, onBack }: AddLiquidityFormProps) => 
         args: [sortedTokenA.address as `0x${string}`, sortedTokenB.address as `0x${string}`],
     });
 
-    const { data: reserves } = useReadContract({
+    const { data: reservesResult } = useReadContract({
         abi: PairContract.abi,
         address: pairAddress as `0x${string}`,
         functionName: 'getReserves',
         query: { enabled: !!pairAddress },
     });
+
+    const reserves = reservesResult as [bigint, bigint, number] | undefined;
 
     const { data: allowanceA, refetch: refetchAllowanceA } = useReadContract({
         abi: erc20Abi,
@@ -78,8 +81,12 @@ const AddLiquidityForm = ({ tokenA, tokenB, onBack }: AddLiquidityFormProps) => 
 
     useEffect(() => {
         if (tokenA.symbol !== 'ETH' && amountA && allowanceA !== undefined) {
-            const requiredAmount = parseUnits(amountA, tokenA.decimals);
-            setNeedsApprovalA(allowanceA < requiredAmount);
+            try {
+                const requiredAmount = parseUnits(amountA, tokenA.decimals);
+                setNeedsApprovalA(allowanceA < requiredAmount);
+            } catch (e) {
+                // Ignore invalid number format for this check
+            }
         } else {
             setNeedsApprovalA(false);
         }
@@ -87,8 +94,12 @@ const AddLiquidityForm = ({ tokenA, tokenB, onBack }: AddLiquidityFormProps) => 
 
     useEffect(() => {
         if (tokenB.symbol !== 'ETH' && amountB && allowanceB !== undefined) {
-            const requiredAmount = parseUnits(amountB, tokenB.decimals);
-            setNeedsApprovalB(allowanceB < requiredAmount);
+            try {
+                const requiredAmount = parseUnits(amountB, tokenB.decimals);
+                setNeedsApprovalB(allowanceB < requiredAmount);
+            } catch (e) {
+                // Ignore invalid number format for this check
+            }
         } else {
             setNeedsApprovalB(false);
         }
@@ -97,15 +108,19 @@ const AddLiquidityForm = ({ tokenA, tokenB, onBack }: AddLiquidityFormProps) => 
     const handleAmountAChange = (value: string) => {
         const parsedValue = parseAmount(value, tokenA.decimals);
         setAmountA(parsedValue);
-        if (reserves && parsedValue) {
-            const amountADesired = parseUnits(parsedValue, tokenA.decimals);
+
+        if (reserves && parsedValue && !isNaN(parseFloat(parsedValue))) {
             const [reserveA, reserveB] = tokenA.address.toLowerCase() < tokenB.address.toLowerCase() ? reserves : [reserves[1], reserves[0]];
-            if (reserveA > 0) {
-                const amountBOptimal = (amountADesired * reserveB) / reserveA;
-                setAmountB(formatNumber(parseUnits(amountBOptimal.toString(), tokenB.decimals).toString(), tokenB.decimals));
+            
+            if (reserveA > 0n) {
+                const amountADesired = new Decimal(parsedValue).times(new Decimal(10).pow(tokenA.decimals));
+                const reserveADecimal = new Decimal(reserveA.toString());
+                const reserveBDecimal = new Decimal(reserveB.toString());
+
+                const amountBOptimal = amountADesired.times(reserveBDecimal).dividedBy(reserveADecimal);
+                
+                setAmountB(amountBOptimal.dividedBy(new Decimal(10).pow(tokenB.decimals)).toDecimalPlaces(tokenB.decimals).toString());
             }
-        } else if (!reserves) {
-            // Allow independent input if no reserves
         } else {
             setAmountB('');
         }
@@ -114,15 +129,19 @@ const AddLiquidityForm = ({ tokenA, tokenB, onBack }: AddLiquidityFormProps) => 
     const handleAmountBChange = (value: string) => {
         const parsedValue = parseAmount(value, tokenB.decimals);
         setAmountB(parsedValue);
-        if (reserves && parsedValue) {
-            const amountBDesired = parseUnits(parsedValue, tokenB.decimals);
+
+        if (reserves && parsedValue && !isNaN(parseFloat(parsedValue))) {
             const [reserveA, reserveB] = tokenA.address.toLowerCase() < tokenB.address.toLowerCase() ? reserves : [reserves[1], reserves[0]];
-            if (reserveB > 0) {
-                const amountAOptimal = (amountBDesired * reserveA) / reserveB;
-                setAmountA(formatNumber(parseUnits(amountAOptimal.toString(), tokenA.decimals).toString(), tokenA.decimals));
+
+            if (reserveB > 0n) {
+                const amountBDesired = new Decimal(parsedValue).times(new Decimal(10).pow(tokenB.decimals));
+                const reserveADecimal = new Decimal(reserveA.toString());
+                const reserveBDecimal = new Decimal(reserveB.toString());
+
+                const amountAOptimal = amountBDesired.times(reserveADecimal).dividedBy(reserveBDecimal);
+
+                setAmountA(amountAOptimal.dividedBy(new Decimal(10).pow(tokenA.decimals)).toDecimalPlaces(tokenA.decimals).toString());
             }
-        } else if (!reserves) {
-            // Allow independent input if no reserves
         } else {
             setAmountA('');
         }

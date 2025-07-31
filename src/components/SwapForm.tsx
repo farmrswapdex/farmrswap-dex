@@ -539,7 +539,7 @@ const SwapForm = () => {
                                     onClick={handleSwapTokens}
                                     disabled={amountsSwapped || !fromToken || !toToken}
                                     aria-label='Swap tokens'
-                                    className="absolute left-1/2 bottom-[-54px] z-10 -translate-x-1/2 bg-white rounded-full p-3 lg:p-4 shadow-lg border-2 border-white/20 transition-all duration-200 hover:bg-gray-50 hover:shadow-xl hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 touch-manipulation"
+                                    className="absolute left-1/2 bottom-[-40px] z-10 -translate-x-1/2 bg-white rounded-full p-3 lg:p-4 shadow-lg border-2 border-white/20 transition-all duration-200 hover:bg-gray-50 hover:shadow-xl hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 touch-manipulation"
                                 >
                                     <ArrowDown className="w-4 h-4 lg:w-6 lg:h-6 text-gray-600" />
                                 </button>
