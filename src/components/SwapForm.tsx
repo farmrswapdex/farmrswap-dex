@@ -501,10 +501,9 @@ const SwapForm = () => {
                             </div>
                         </div>
 
-                        {/* Swap Interface - Remove extra padding, make sections full width */}
-                        <div className="flex flex-col mx-auto relative">
-                            {/* Sell Section - Full width with your styling */}
-                            <div className="bg-white bg-opacity-50 backdrop-blur-sm p-4 sm:p-6 lg:p-6 rounded-xl">
+                        <div className="flex flex-col mx-auto">
+                            {/* Sell Section */}
+                            <div className="bg-white bg-opacity-50 backdrop-blur-sm p-4 sm:p-6 lg:p-6 rounded-xl relative">
                                 <div className="flex items-center justify-between mb-3">
                                     <span className="text-sm sm:text-base font-semibold text-gray-600">Sell</span>
                                     <div className="text-sm text-gray-500">
@@ -516,7 +515,6 @@ const SwapForm = () => {
                                         </button>
                                     </div>
                                 </div>
-
                                 <div className="flex items-center gap-3 lg:gap-4">
                                     <input
                                         type="text"
@@ -533,34 +531,31 @@ const SwapForm = () => {
                                         onClick={() => openModal('from')}
                                     />
                                 </div>
-
-                                <div className="mt-3 text-right">
-                                    <span className="text-sm text-gray-400 pr-2">~${fromAmountInUsd}</span>
+                                <div className="mt-3 text-right h-5">
+                                    {fromAmount && <span className="text-sm text-gray-400 pr-2">~${fromAmountInUsd}</span>}
                                 </div>
+                                
+                                <button
+                                    onClick={handleSwapTokens}
+                                    disabled={amountsSwapped || !fromToken || !toToken}
+                                    aria-label='Swap tokens'
+                                    className="absolute left-1/2 bottom-[-54px] z-10 -translate-x-1/2 bg-white rounded-full p-3 lg:p-4 shadow-lg border-2 border-white/20 transition-all duration-200 hover:bg-gray-50 hover:shadow-xl hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 touch-manipulation"
+                                >
+                                    <ArrowDown className="w-4 h-4 lg:w-6 lg:h-6 text-gray-600" />
+                                </button>
                             </div>
 
-                            <button
-                                onClick={handleSwapTokens}
-                                disabled={amountsSwapped || !fromToken || !toToken}
-                                aria-label='Swap tokens'
-                                className="absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2 bg-white rounded-full p-3 lg:p-4 shadow-lg border-2 border-white/20 transition-all duration-200 hover:bg-gray-50 hover:shadow-xl hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 touch-manipulation"
-                            >
-                                <ArrowDown className="w-4 h-4 lg:w-6 lg:h-6 text-gray-600" />
-                            </button>
-
-                            {/* Buy Section - Full width with your styling */}
-                            <div className="bg-white bg-opacity-50 backdrop-blur-sm p-4 sm:p-6 lg:p-6 rounded-xl mt-4">
+                            {/* Buy Section */}
+                            <div className="bg-white bg-opacity-50 backdrop-blur-sm p-4 sm:p-6 lg:p-6 rounded-xl mt-8">
                                 <div className="flex items-center justify-between mb-3">
                                     <span className="text-sm sm:text-base font-semibold text-gray-600">Buy</span>
                                 </div>
-
                                 {isLoading && (
                                     <div className="flex items-center gap-2 mb-2">
                                         <div className="w-4 h-4 border-2 border-gray-400/30 border-t-gray-600 rounded-full animate-spin" />
                                         <span className="text-xs text-gray-600">Calculating...</span>
                                     </div>
                                 )}
-
                                 <div className="flex items-center gap-3 lg:gap-4">
                                     <input
                                         type="text"
@@ -577,15 +572,14 @@ const SwapForm = () => {
                                         onClick={() => openModal('to')}
                                     />
                                 </div>
-
-                                <div className="mt-3 text-right">
-                                    <span className="text-sm text-gray-400">~${toAmountInUsd}</span>
+                                <div className="mt-3 text-right h-5">
+                                    {toAmount && <span className="text-sm text-gray-400">~${toAmountInUsd}</span>}
                                 </div>
                             </div>
 
-                            {/* Rate Section - Keep your existing styling */}
+                            {/* Rate Section */}
                             {rate && !isLoading && (
-                                <div className="bg-white/30 backdrop-blur-sm border-t border-white/20 p-4 sm:p-6">
+                                <div className="bg-white/30 backdrop-blur-sm border-t border-white/20 p-4 sm:p-6 mt-1">
                                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                                         <span className="text-xs md:text-sm font-medium text-gray-600">Rate</span>
                                         <span className="text-xs md:text-sm font-bold">
@@ -624,6 +618,7 @@ const SwapForm = () => {
             />
         </>
     );
+
 };
 
 export default SwapForm;

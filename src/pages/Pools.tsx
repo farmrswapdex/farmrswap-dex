@@ -8,6 +8,7 @@ import { Inbox } from 'lucide-react';
 import { TOKENS } from '../lib/constants';
 import { FactoryContract, PairContract } from '../lib/config';
 import { sortTokens } from '../lib/utils';
+import FloatingTomatoes from '../components/FloatingTomatoes';
 
 // Token type
 interface Token {
@@ -155,8 +156,9 @@ const Pools = () => {
     };
 
     return (
-        <div className="w-full min-h-screen bg-[#a7d8f5] flex flex-col">
-            <div className="w-full max-w-4xl mx-auto pt-8 md:pt-16 pb-8 px-4 flex-grow">
+        <div className="w-full min-h-screen bg-[#a7d8f5] flex flex-col relative">
+            <FloatingTomatoes />
+            <div className="w-full max-w-4xl mx-auto pt-8 md:pt-16 pb-8 px-4 flex-grow z-10">
                 <div className="flex flex-col sm:flex-row items-center justify-between mb-8 gap-4">
                     <h1 className="text-4xl md:text-5xl font-extrabold text-gray-800 tracking-tight">
                         Pools
