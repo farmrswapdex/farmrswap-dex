@@ -1,7 +1,7 @@
 import { MaxUint256 } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'react-hot-toast';
-import { erc20Abi, parseUnits, formatUnits } from 'viem';
+import { erc20Abi, parseUnits } from 'viem';
 import { useAccount, useReadContract, useWriteContract } from 'wagmi';
 import { FactoryContract, PairContract, RouterContract } from '../lib/config';
 import { formatNumber, parseAmount } from '../lib/quoteCalculator';
@@ -109,10 +109,11 @@ const AddLiquidityForm = ({ tokenA, tokenB, onBack }: AddLiquidityFormProps) => 
         const parsedValue = parseAmount(value, tokenA.decimals);
         setAmountA(parsedValue);
 
+        // Only auto-calculate amountB if pool exists (has reserves)
         if (reserves && parsedValue && !isNaN(parseFloat(parsedValue))) {
             const [reserveA, reserveB] = tokenA.address.toLowerCase() < tokenB.address.toLowerCase() ? reserves : [reserves[1], reserves[0]];
             
-            if (reserveA > 0n) {
+            if (reserveA > 0n && reserveB > 0n) {
                 const amountADesired = new Decimal(parsedValue).times(new Decimal(10).pow(tokenA.decimals));
                 const reserveADecimal = new Decimal(reserveA.toString());
                 const reserveBDecimal = new Decimal(reserveB.toString());
@@ -121,6 +122,9 @@ const AddLiquidityForm = ({ tokenA, tokenB, onBack }: AddLiquidityFormProps) => 
                 
                 setAmountB(amountBOptimal.dividedBy(new Decimal(10).pow(tokenB.decimals)).toDecimalPlaces(tokenB.decimals).toString());
             }
+            // For new pools, allow free input of both amounts
+        } else if (!reserves || (reserves && reserves[0] === 0n && reserves[1] === 0n)) {
+            // Don't auto-clear amountB for new pools
         } else {
             setAmountB('');
         }
@@ -130,10 +134,11 @@ const AddLiquidityForm = ({ tokenA, tokenB, onBack }: AddLiquidityFormProps) => 
         const parsedValue = parseAmount(value, tokenB.decimals);
         setAmountB(parsedValue);
 
+        // Only auto-calculate amountA if pool exists (has reserves)
         if (reserves && parsedValue && !isNaN(parseFloat(parsedValue))) {
             const [reserveA, reserveB] = tokenA.address.toLowerCase() < tokenB.address.toLowerCase() ? reserves : [reserves[1], reserves[0]];
 
-            if (reserveB > 0n) {
+            if (reserveA > 0n && reserveB > 0n) {
                 const amountBDesired = new Decimal(parsedValue).times(new Decimal(10).pow(tokenB.decimals));
                 const reserveADecimal = new Decimal(reserveA.toString());
                 const reserveBDecimal = new Decimal(reserveB.toString());
@@ -142,6 +147,9 @@ const AddLiquidityForm = ({ tokenA, tokenB, onBack }: AddLiquidityFormProps) => 
 
                 setAmountA(amountAOptimal.dividedBy(new Decimal(10).pow(tokenA.decimals)).toDecimalPlaces(tokenA.decimals).toString());
             }
+            // For new pools, allow free input of both amounts
+        } else if (!reserves || (reserves && reserves[0] === 0n && reserves[1] === 0n)) {
+            // Don't auto-clear amountA for new pools
         } else {
             setAmountA('');
         }
@@ -222,6 +230,52 @@ const AddLiquidityForm = ({ tokenA, tokenB, onBack }: AddLiquidityFormProps) => 
 
     const isAddLiquidityDisabled = !amountA || !amountB || needsApprovalA || needsApprovalB || isApprovingA || isApprovingB;
 
+    // Calculate initial prices and pool share
+    const isNewPool = !reserves || (reserves && reserves[0] === 0n && reserves[1] === 0n);
+    
+    const initialPrices = useMemo(() => {
+        if (!amountA || !amountB || parseFloat(amountA) === 0 || parseFloat(amountB) === 0) {
+            return { priceAPerB: '0', priceBPerA: '0' };
+        }
+        
+        const amountADecimal = new Decimal(amountA);
+        const amountBDecimal = new Decimal(amountB);
+        
+        const priceAPerB = amountBDecimal.dividedBy(amountADecimal).toDecimalPlaces(6).toString();
+        const priceBPerA = amountADecimal.dividedBy(amountBDecimal).toDecimalPlaces(6).toString();
+        
+        return { priceAPerB, priceBPerA };
+    }, [amountA, amountB]);
+
+    const poolShare = useMemo(() => {
+        if (isNewPool) {
+            return '100';
+        }
+        
+        if (!reserves || !amountA || !amountB) {
+            return '0';
+        }
+        
+        const [reserveA, reserveB] = tokenA.address.toLowerCase() < tokenB.address.toLowerCase() ? reserves : [reserves[1], reserves[0]];
+        
+        if (reserveA === 0n || reserveB === 0n) {
+            return '100';
+        }
+        
+        try {
+            const amountABigInt = parseUnits(amountA, tokenA.decimals);
+            const amountBBigInt = parseUnits(amountB, tokenB.decimals);
+            
+            // Calculate share based on the minimum ratio
+            const shareA = new Decimal(amountABigInt.toString()).times(100).dividedBy(new Decimal(reserveA.toString()).plus(amountABigInt.toString()));
+            const shareB = new Decimal(amountBBigInt.toString()).times(100).dividedBy(new Decimal(reserveB.toString()).plus(amountBBigInt.toString()));
+            
+            return Decimal.min(shareA, shareB).toDecimalPlaces(2).toString();
+        } catch (e) {
+            return '0';
+        }
+    }, [reserves, amountA, amountB, tokenA, tokenB, isNewPool]);
+
     return (
         <div className="w-full flex flex-col gap-4">
             <div className="bg-white bg-opacity-50 backdrop-blur-sm rounded-2xl p-4 flex flex-col gap-2">
@@ -297,6 +351,44 @@ const AddLiquidityForm = ({ tokenA, tokenB, onBack }: AddLiquidityFormProps) => 
                     </button>
                 )}
             </div>
+
+            {/* Price and Pool Share Information */}
+            {(amountA && amountB && parseFloat(amountA) > 0 && parseFloat(amountB) > 0) && (
+                <div className="bg-white bg-opacity-50 backdrop-blur-sm rounded-2xl p-4">
+                    <h3 className="text-lg font-semibold text-gray-700 mb-3">Pool Information</h3>
+                    
+                    {isNewPool && (
+                        <div className="text-sm text-orange-600 mb-3 font-medium">
+                            ⚠️ You are the first liquidity provider for this pool
+                        </div>
+                    )}
+                    
+                    <div className="space-y-2">
+                        <div className="flex justify-between text-sm">
+                            <span className="text-gray-600">Initial Price:</span>
+                            <div className="text-right">
+                                <div className="font-medium text-gray-800">
+                                    1 {tokenA.symbol} = {initialPrices.priceAPerB} {tokenB.symbol}
+                                </div>
+                                <div className="text-xs text-gray-600">
+                                    1 {tokenB.symbol} = {initialPrices.priceBPerA} {tokenA.symbol}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div className="flex justify-between text-sm">
+                            <span className="text-gray-600">Your Pool Share:</span>
+                            <span className="font-medium text-gray-800">{poolShare}%</span>
+                        </div>
+                        
+                        {isNewPool && (
+                            <div className="mt-3 p-3 bg-blue-50 rounded-lg text-sm text-blue-700">
+                                You are setting the initial price for this pool. Please ensure the amounts reflect the desired exchange rate.
+                            </div>
+                        )}
+                    </div>
+                </div>
+            )}
 
             <div className="flex gap-4 mt-4">
                 <button onClick={onBack} className="flex-1 py-3 rounded-xl text-lg font-bold bg-gray-200 text-gray-800 hover:bg-gray-300 transition-all">Back</button>
