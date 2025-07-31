@@ -36,6 +36,10 @@ export const useTokenStore = create<TokenStoreState>((set) => ({
         set({ loading: true });
 
         try {
+            // Get ETH balance from wagmi config
+            const { getBalance } = await import('@wagmi/core');
+            const ethBalance = await getBalance(config, { address });
+            
             const tokenContracts = TOKEN_LIST.map(token => ({
                 address: token.address as `0x${string}`,
                 abi: erc20Abi,
@@ -48,6 +52,14 @@ export const useTokenStore = create<TokenStoreState>((set) => ({
             });
 
             const userTokens = TOKEN_LIST.map((token, index) => {
+                // Handle native token (BLOCX/ETH)
+                if (token.address === '0x0000000000000000000000000000000000000000' || token.symbol === 'BLOCX') {
+                    return { 
+                        ...token, 
+                        balance: formatUnits(ethBalance.value, 18) 
+                    };
+                }
+                
                 const balanceResult = balances[index];
                 const balance = balanceResult.status === 'success'
                     ? formatUnits(BigInt(balanceResult.result), token.decimals)
