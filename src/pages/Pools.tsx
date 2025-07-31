@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { formatUnits } from 'viem';
 import { Inbox } from 'lucide-react';
 
-import { TOKENS } from '../lib/constants';
+import { TOKENS, NATIVE_TOKEN } from '../lib/constants';
 import { FactoryContract, PairContract } from '../lib/config';
 import { sortTokens } from '../lib/utils';
 import FloatingTomatoes from '../components/FloatingTomatoes';
@@ -27,8 +27,8 @@ interface UserPosition {
     pairAddress: `0x${string}`;
 }
 
-// Generate all unique pairs of tokens
-const allTokenValues = Object.values(TOKENS);
+// Generate all unique pairs of tokens (including native token)
+const allTokenValues = [NATIVE_TOKEN, ...Object.values(TOKENS)];
 const allTokenPairs = allTokenValues.flatMap((tokenA, i) =>
     allTokenValues.slice(i + 1).map(tokenB => [tokenA, tokenB])
 );
@@ -130,7 +130,10 @@ const Pools = () => {
                                     <img src={position.tokenB.logoURI} alt={position.tokenB.symbol} className="w-10 h-10 rounded-full border-2 border-white" />
                                 </div>
                                 <div>
-                                    <p className="font-bold text-lg text-gray-800">{position.tokenA.symbol}/{position.tokenB.symbol}</p>
+                                    <p className="font-bold text-lg text-gray-800">
+                                        {position.tokenA.symbol === 'BLOCX' ? 'ETH' : position.tokenA.symbol}/
+                                        {position.tokenB.symbol === 'BLOCX' ? 'ETH' : position.tokenB.symbol}
+                                    </p>
                                     <p className="text-sm text-gray-600">LP Tokens: {parseFloat(formatUnits(position.lpBalance, 18)).toFixed(6)}</p>
                                 </div>
                             </div>

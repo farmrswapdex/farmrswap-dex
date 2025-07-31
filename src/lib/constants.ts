@@ -46,13 +46,12 @@ export const TOKENS = {
 export const NATIVE_TOKEN = {
     symbol: 'BLOCX',
     name: 'BLOCX Token',
-    address: '0x7b79995e5f793A07Bc00c21412e50Ecae098E7f9', // Placeholder address
+    address: '0x0000000000000000000000000000000000000000', // Native token address
     decimals: 18,
     logoURI: 'https://res.cloudinary.com/dma1c8i6n/image/upload/f_auto,q_auto/blocxcoin_nhozz7',
-    color: ''
-
+    color: '#1E90FF'
 }
 
-export const TOKEN_LIST = Object.values(TOKENS);
+export const TOKEN_LIST = [NATIVE_TOKEN, ...Object.values(TOKENS)];
 
 export { feeToSpacing, uint256Max };
