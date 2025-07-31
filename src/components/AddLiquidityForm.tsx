@@ -1,7 +1,7 @@
 import { MaxUint256 } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'react-hot-toast';
-import { erc20Abi, parseUnits, formatUnits } from 'viem';
+import { erc20Abi, parseUnits } from 'viem';
 import { useAccount, useReadContract, useWriteContract } from 'wagmi';
 import { FactoryContract, PairContract, RouterContract } from '../lib/config';
 import { formatNumber, parseAmount } from '../lib/quoteCalculator';
