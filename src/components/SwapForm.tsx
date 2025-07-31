@@ -63,13 +63,13 @@ const SwapForm = () => {
         functionName: 'allowance',
         args: [address!, RouterContract.address],
         query: {
-            enabled: !!address && !!fromToken && fromToken.symbol !== 'ETH',
+            enabled: !!address && !!fromToken && fromToken.symbol !== 'BLOCX',
         },
     });
 
     const path = [
-        fromToken?.symbol === 'ETH' ? Weth9Contract.address : fromToken?.address as `0x${string}`,
-        toToken?.symbol === 'ETH' ? Weth9Contract.address : toToken?.address as `0x${string}`
+        fromToken?.symbol === 'BLOCX' ? Weth9Contract.address : fromToken?.address as `0x${string}`,
+        toToken?.symbol === 'BLOCX' ? Weth9Contract.address : toToken?.address as `0x${string}`
     ].filter(Boolean);
 
     const { data: amountsOutData, isLoading: isLoadingAmountsOut, error: amountsOutError } = useReadContract({
@@ -123,7 +123,7 @@ const SwapForm = () => {
 
 
     useEffect(() => {
-        if (fromToken && fromToken.symbol !== 'ETH' && fromAmount && allowance !== undefined) {
+        if (fromToken && fromToken.symbol !== 'BLOCX' && fromAmount && allowance !== undefined) {
             const amount = parseUnits(fromAmount, fromToken.decimals);
             setNeedsApproval(allowance < amount);
         } else {
@@ -247,11 +247,17 @@ const SwapForm = () => {
             return;
         }
 
+        // Check for insufficient balance
+        if (hasInsufficientBalance()) {
+            toast.error(`Insufficient ${fromToken.symbol} balance`);
+            return;
+        }
+
         const deadlineTimestamp = BigInt(Math.floor(Date.now() / 1000) + 60 * deadline);
         const wethAddress = Weth9Contract.address;
         const swapPath = [
-            fromToken.symbol === 'ETH' ? wethAddress : fromToken.address,
-            toToken.symbol === 'ETH' ? wethAddress : toToken.address
+            fromToken.symbol === 'BLOCX' ? wethAddress : fromToken.address,
+            toToken.symbol === 'BLOCX' ? wethAddress : toToken.address
         ].map(a => a as `0x${string}`);
 
         let value: bigint | undefined = undefined;
@@ -261,7 +267,7 @@ const SwapForm = () => {
             const amountOut = parseUnits(toAmount, toToken.decimals);
             const amountInMax = parseUnits((parseFloat(fromAmount) * (1 + slippage / 100)).toFixed(fromToken.decimals), fromToken.decimals);
 
-            if (fromToken.symbol === 'ETH') {
+            if (fromToken.symbol === 'BLOCX') {
                 // swapETHForExactTokens(uint amountOut, address[] path, address to, uint deadline)
                 const functionName: 'swapETHForExactTokens' = 'swapETHForExactTokens';
                 const args: [bigint, readonly `0x${string}`[], `0x${string}`, bigint] = [
@@ -284,7 +290,7 @@ const SwapForm = () => {
                     error: 'Swap failed.',
                 });
                 return;
-            } else if (toToken.symbol === 'ETH') {
+            } else if (toToken.symbol === 'BLOCX') {
                 // swapTokensForExactETH(uint amountOut, uint amountInMax, address[] path, address to, uint deadline)
                 const functionName: 'swapTokensForExactETH' = 'swapTokensForExactETH';
                 const args: [bigint, bigint, readonly `0x${string}`[], `0x${string}`, bigint] = [
@@ -333,7 +339,7 @@ const SwapForm = () => {
             const amountIn = parseUnits(fromAmount, fromToken.decimals);
             const amountOutMin = parseUnits((parseFloat(toAmount) * (1 - slippage / 100)).toFixed(toToken.decimals), toToken.decimals);
 
-            if (fromToken.symbol === 'ETH') {
+            if (fromToken.symbol === 'BLOCX') {
                 // swapExactETHForTokens(uint amountOutMin, address[] path, address to, uint deadline)
                 const functionName: 'swapExactETHForTokens' = 'swapExactETHForTokens';
                 const args: [bigint, readonly `0x${string}`[], `0x${string}`, bigint] = [
@@ -356,7 +362,7 @@ const SwapForm = () => {
                     error: 'Swap failed.',
                 });
                 return;
-            } else if (toToken.symbol === 'ETH') {
+            } else if (toToken.symbol === 'BLOCX') {
                 // swapExactTokensForETH(uint amountIn, uint amountOutMin, address[] path, address to, uint deadline)
                 const functionName: 'swapExactTokensForETH' = 'swapExactTokensForETH';
                 const args: [bigint, bigint, readonly `0x${string}`[], `0x${string}`, bigint] = [
@@ -423,7 +429,13 @@ const SwapForm = () => {
         closeModal();
     };
 
-    const canSwap = fromToken && toToken && fromAmount && toAmount && !isLoading;
+    // Check if user has sufficient balance
+    const hasInsufficientBalance = () => {
+        if (!fromToken || !fromAmount || !fromTokenBalance) return false;
+        return parseFloat(fromAmount) > parseFloat(fromTokenBalance);
+    };
+
+    const canSwap = fromToken && toToken && fromAmount && toAmount && !isLoading && !hasInsufficientBalance();
 
     const fromAmountInUsd = fromAmount ? (parseFloat(fromAmount) * 0.001).toFixed(2) : '0.00';
     const toAmountInUsd = toAmount ? (parseFloat(toAmount) * 0.001).toFixed(2) : '0.00';
@@ -432,12 +444,14 @@ const SwapForm = () => {
         if (!isConnected) return 'Connect Wallet';
         if (tokensLoading) return 'Loading Balances...';
         if (isLoading) return 'Calculating...';
+        if (hasInsufficientBalance()) return 'Insufficient Balance';
         if (needsApproval) return `Approve ${fromToken?.symbol}`;
         return 'Swap';
     };
 
     const isButtonDisabled = () => {
         if (!isConnected) return false; // Always enabled to connect
+        if (hasInsufficientBalance()) return true; // Disable if insufficient balance
         if (needsApproval) return isApproving;
         return !canSwap || isApproving || tokensLoading;
     };
