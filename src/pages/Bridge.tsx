@@ -2,7 +2,7 @@ import { useConnectModal } from '@rainbow-me/rainbowkit';
 import * as Tabs from '@radix-ui/react-tabs';
 import { ArrowRight, Wallet } from "lucide-react";
 import { useAccount } from 'wagmi';
-import { TOKENS } from "../lib/constants";
+import { TOKENS, NATIVE_TOKEN } from "../lib/constants";
 
 const Bridge = () => {
     const { isConnected } = useAccount();
@@ -31,16 +31,16 @@ const Bridge = () => {
                                     <div className="flex flex-col flex-1">
                                         <span className="text-[#b0c4d4] text-sm mb-1">From</span>
                                         <div className="flex items-center gap-2 bg-[#f6f6f6] rounded-full px-4 py-2 w-full">
-                                            <span className="w-6 h-6 rounded-full flex items-center justify-center bg-[#7c6dfa]"><img src={TOKENS.WETH.logoURI} alt={TOKENS.WETH.name} className="w-5 h-5" /></span>
-                                            <span className="font-semibold text-[#2d3e3e] text-base">{TOKENS.WETH.symbol}</span>
+                                            <span className="w-6 h-6 rounded-full flex items-center justify-center bg-[#7c6dfa]"><img src={TOKENS.WBLOCX.logoURI} alt={TOKENS.WBLOCX.name} className="w-5 h-5" /></span>
+                                            <span className="font-semibold text-[#2d3e3e] text-base">{TOKENS.WBLOCX.symbol}</span>
                                         </div>
                                     </div>
                                     <ArrowRight className="w-6 h-6 text-[#b0c4d4] mx-2" />
                                     <div className="flex flex-col flex-1">
                                         <span className="text-[#b0c4d4] text-sm mb-1">To</span>
                                         <div className="flex items-center gap-2 bg-[#f6f6f6] rounded-full px-4 py-2 w-full">
-                                            <span className="w-6 h-6 rounded-full flex items-center justify-center bg-black"><img src={TOKENS.BLOCX.logoURI} alt={TOKENS.BLOCX.name} className="w-5 h-5" /></span>
-                                            <span className="font-semibold text-[#2d3e3e] text-base">{TOKENS.BLOCX.symbol}</span>
+                                            <span className="w-6 h-6 rounded-full flex items-center justify-center bg-black"><img src={NATIVE_TOKEN.logoURI} alt={NATIVE_TOKEN.name} className="w-5 h-5" /></span>
+                                            <span className="font-semibold text-[#2d3e3e] text-base">{NATIVE_TOKEN.symbol}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -51,7 +51,7 @@ const Bridge = () => {
                                     <div className="flex items-center gap-3">
                                         <span className="w-12 h-12 rounded-full flex items-center justify-center bg-white border border-gray-200">
                                             <img src={TOKENS.USDC.logoURI} alt={TOKENS.USDC.name} className="w-8 h-8" />
-                                            <img src={TOKENS.WETH.logoURI} alt={TOKENS.WETH.name} className="w-4 h-4 absolute ml-6 mt-6" style={{ marginLeft: '-18px', marginTop: '18px' }} />
+                                            <img src={TOKENS.WBLOCX.logoURI} alt={TOKENS.WBLOCX.name} className="w-4 h-4 absolute ml-6 mt-6" style={{ marginLeft: '-18px', marginTop: '18px' }} />
                                         </span>
                                         <span className="font-semibold text-[#2d3e3e] text-base">{TOKENS.USDC.symbol}</span>
                                         <div className="flex-1"></div>
@@ -65,7 +65,7 @@ const Bridge = () => {
                                     <div className="flex items-center gap-3">
                                         <span className="w-12 h-12 rounded-full flex items-center justify-center bg-white border border-gray-200">
                                             <img src={TOKENS.USDC.logoURI} alt={TOKENS.USDC.name} className="w-8 h-8" />
-                                            <img src={TOKENS.BLOCX.logoURI} alt={TOKENS.BLOCX.name} className="w-4 h-4 absolute ml-6 mt-6" style={{ marginLeft: '-18px', marginTop: '18px' }} />
+                                            <img src={NATIVE_TOKEN.logoURI} alt={NATIVE_TOKEN.name} className="w-4 h-4 absolute ml-6 mt-6" style={{ marginLeft: '-18px', marginTop: '18px' }} />
                                         </span>
                                         <span className="font-semibold text-[#2d3e3e] text-base">{TOKENS.USDC.symbol}</span>
                                     </div>

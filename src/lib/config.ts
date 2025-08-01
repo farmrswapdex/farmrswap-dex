@@ -1339,7 +1339,7 @@ export const RouterContract = {
 } as const
 
 export const Weth9Contract = {
-    address: "0x7b79995e5f793A07Bc00c21412e50Ecae098E7f9",
+    address: "0x7b79995e5f793A07Bc00c21412e50Ecae098E7f9", // WBLOCX Contract
     abi: [
         {
             "constant": true,
