@@ -11,6 +11,7 @@ import {
 } from "../lib/config";
 import { formatNumber, parseAmount } from "../lib/quoteCalculator";
 import { useTokenStore } from "../store/useTokenStore";
+import { NATIVE_TOKEN } from "../lib/constants";
 import { sortTokens } from "../lib/utils";
 import Decimal from "decimal.js";
 
@@ -57,13 +58,11 @@ const AddLiquidityForm = ({
   const tokenBBalance =
     userTokens.find((t) => t.address === tokenB.address)?.balance || "0";
 
-  // Check if token is native (ETH on Sepolia, BLOCX on BLOCX chain)
+  // Check if token is native (BLOCX)
   const isTokenANative =
-    tokenA.address === "0x0000000000000000000000000000000000000000" ||
-    tokenA.symbol === "BLOCX";
+    tokenA.address.toLowerCase() === NATIVE_TOKEN.address.toLowerCase();
   const isTokenBNative =
-    tokenB.address === "0x0000000000000000000000000000000000000000" ||
-    tokenB.symbol === "BLOCX";
+    tokenB.address.toLowerCase() === NATIVE_TOKEN.address.toLowerCase();
 
   // Convert native token addresses to WBLOCX for pool lookup
   const poolTokenA = isTokenANative
