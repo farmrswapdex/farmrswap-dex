@@ -1,6 +1,6 @@
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
-import { useTokenStore } from '../store/useTokenStore';
 import { formatNumber } from '../lib/quoteCalculator';
+import { useTokenStore } from '../store/useTokenStore';
 
 interface Token {
     symbol: string;

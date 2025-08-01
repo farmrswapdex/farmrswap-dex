@@ -6,7 +6,7 @@ import { toast } from 'react-hot-toast';
 import { erc20Abi, formatUnits, parseUnits } from 'viem';
 import { useAccount, useReadContract, useWriteContract } from 'wagmi';
 import { RouterContract, Weth9Contract } from '../lib/config';
-import { NATIVE_TOKEN, TOKENS } from '../lib/constants';
+import { TOKENS } from '../lib/constants';
 import { formatNumber, parseAmount } from '../lib/quoteCalculator';
 import { useTokenStore } from '../store/useTokenStore';
 import SettingsModal from './SettingsModal';
@@ -29,7 +29,7 @@ const SwapForm = () => {
     const { userTokens, fetchUserTokens, loading: tokensLoading } = useTokenStore();
 
     // Common state for both forms
-    const [fromToken, setFromToken] = useState<Token | null>(NATIVE_TOKEN);
+    const [fromToken, setFromToken] = useState<Token | null>();
     const [toToken, setToToken] = useState<Token | null>(TOKENS.FARMR);
     const [fromAmount, setFromAmount] = useState('');
     const [toAmount, setToAmount] = useState('');
@@ -184,7 +184,7 @@ const SwapForm = () => {
             if (toToken?.symbol === token.symbol) {
                 const currentFromToken = fromToken;
                 setFromToken(toToken);
-                setToToken(currentFromToken);
+                setToToken(currentFromToken || null);
             } else {
                 setFromToken(token);
             }
@@ -541,7 +541,7 @@ const SwapForm = () => {
                                         className="flex-1 bg-transparent text-2xl sm:text-3xl lg:text-4xl font-bold text-black placeholder-black outline-none focus:placeholder-black transition-colors min-w-0"
                                     />
                                     <TokenSelector
-                                        selectedToken={fromToken}
+                                        selectedToken={fromToken || null}
                                         onClick={() => openModal('from')}
                                     />
                                 </div>
@@ -636,3 +636,4 @@ const SwapForm = () => {
 };
 
 export default SwapForm;
+

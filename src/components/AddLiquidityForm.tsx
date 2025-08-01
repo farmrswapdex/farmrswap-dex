@@ -11,6 +11,7 @@ import {
 } from "../lib/config";
 import { formatNumber, parseAmount } from "../lib/quoteCalculator";
 import { useTokenStore } from "../store/useTokenStore";
+import { NATIVE_TOKEN } from "../lib/constants";
 import { sortTokens } from "../lib/utils";
 import Decimal from "decimal.js";
 
