@@ -52,12 +52,12 @@ export const TOKENS = {
 };
 
 export const NATIVE_TOKEN = {
-    symbol: 'ETH',
-    name: 'Ether',
+    symbol: 'BLOCX',
+    name: 'BLOCX Token',
     address: '0x0000000000000000000000000000000000000000', // Native token address
     decimals: 18,
-    logoURI: 'https://assets.coingecko.com/coins/images/279/small/ethereum.png',
-    color: '#627EEA'
+    logoURI: 'https://res.cloudinary.com/dma1c8i6n/image/upload/f_auto,q_auto/blocxcoin_nhozz7',
+    color: '#1E90FF'
 }
 
 export const TOKEN_LIST = Object.values(TOKENS);
