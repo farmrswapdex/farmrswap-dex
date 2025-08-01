@@ -1,7 +1,7 @@
 import { readContracts } from '@wagmi/core';
 import { erc20Abi, formatUnits } from 'viem';
 import { create } from 'zustand';
-import { TOKEN_LIST } from '../lib/constants';
+import { TOKEN_LIST, NATIVE_TOKEN } from '../lib/constants';
 import { config } from '../lib/wagmi';
 
 interface Token {
@@ -51,21 +51,22 @@ export const useTokenStore = create<TokenStoreState>((set) => ({
                 contracts: tokenContracts,
             });
 
-            const userTokens = TOKEN_LIST.map((token, index) => {
-                // Handle native token (BLOCX/ETH)
-                if (token.address === '0x0000000000000000000000000000000000000000' || token.symbol === 'BLOCX') {
-                    return { 
-                        ...token, 
-                        balance: formatUnits(ethBalance.value, 18) 
-                    };
-                }
-                
-                const balanceResult = balances[index];
-                const balance = balanceResult.status === 'success'
-                    ? formatUnits(BigInt(balanceResult.result), token.decimals)
-                    : '0';
-                return { ...token, balance };
-            });
+            // Create user tokens list starting with native token
+            const userTokens = [
+                // Add native token first
+                { 
+                    ...NATIVE_TOKEN, 
+                    balance: formatUnits(ethBalance.value, 18) 
+                },
+                // Add other tokens
+                ...TOKEN_LIST.map((token, index) => {
+                    const balanceResult = balances[index];
+                    const balance = balanceResult.status === 'success'
+                        ? formatUnits(BigInt(balanceResult.result), token.decimals)
+                        : '0';
+                    return { ...token, balance };
+                })
+            ];
 
             set({ userTokens, loading: false });
         } catch (error) {
