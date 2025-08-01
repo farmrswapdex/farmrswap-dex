@@ -42,22 +42,22 @@ export const TOKENS = {
         color: ''
     },
     HAWK: {
-        symbol: 'HAWK',
-        name: 'HAWK Token',
-        address: '0xEB638EDAA8D6A64C72d130392C29530fdC1B7444',
+        symbol: 'PUMP',
+        name: 'Pump',
+        address: '0xEDEc9DED06B2935F81f0e8815eCcdcd986B5a40B',
         decimals: 18,
-        logoURI: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS5ilNmaZUzgdvi3pPnSqEpLBY1lb2eUX-N_Q&s',
+        logoURI: 'https://s3.coinmarketcap.com/static-gravity/image/671df5275f824476bde27e42354a3359.jpg',
         color: ''
     }
 };
 
 export const NATIVE_TOKEN = {
-    symbol: 'ETH',
-    name: 'Ether',
+    symbol: 'BLOCX',
+    name: 'BLOCX Token',
     address: '0x0000000000000000000000000000000000000000', // Native token address
     decimals: 18,
-    logoURI: 'https://assets.coingecko.com/coins/images/279/small/ethereum.png',
-    color: '#627EEA'
+    logoURI: 'https://res.cloudinary.com/dma1c8i6n/image/upload/f_auto,q_auto/blocxcoin_nhozz7',
+    color: '#1E90FF'
 }
 
 export const TOKEN_LIST = Object.values(TOKENS);
