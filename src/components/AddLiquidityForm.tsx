@@ -3,7 +3,12 @@ import { useEffect, useMemo, useState } from "react";
 import { toast } from "react-hot-toast";
 import { erc20Abi, parseUnits } from "viem";
 import { useAccount, useReadContract, useWriteContract } from "wagmi";
-import { FactoryContract, PairContract, RouterContract } from "../lib/config";
+import {
+  FactoryContract,
+  PairContract,
+  RouterContract,
+  Weth9Contract,
+} from "../lib/config";
 import { formatNumber, parseAmount } from "../lib/quoteCalculator";
 import { useTokenStore } from "../store/useTokenStore";
 import { sortTokens } from "../lib/utils";
@@ -52,9 +57,25 @@ const AddLiquidityForm = ({
   const tokenBBalance =
     userTokens.find((t) => t.address === tokenB.address)?.balance || "0";
 
+  // Check if token is native (ETH on Sepolia, BLOCX on BLOCX chain)
+  const isTokenANative =
+    tokenA.address === "0x0000000000000000000000000000000000000000" ||
+    tokenA.symbol === "BLOCX";
+  const isTokenBNative =
+    tokenB.address === "0x0000000000000000000000000000000000000000" ||
+    tokenB.symbol === "BLOCX";
+
+  // Convert native token addresses to WBLOCX for pool lookup
+  const poolTokenA = isTokenANative
+    ? { ...tokenA, address: Weth9Contract.address }
+    : tokenA;
+  const poolTokenB = isTokenBNative
+    ? { ...tokenB, address: Weth9Contract.address }
+    : tokenB;
+
   const [sortedTokenA, sortedTokenB] = useMemo(
-    () => sortTokens(tokenA, tokenB),
-    [tokenA, tokenB]
+    () => sortTokens(poolTokenA, poolTokenB),
+    [poolTokenA, poolTokenB]
   );
 
   const { data: pairAddress } = useReadContract({
@@ -77,14 +98,6 @@ const AddLiquidityForm = ({
   });
 
   const reserves = reservesResult as [bigint, bigint, number] | undefined;
-
-  // Check if token is native (ETH on Sepolia, BLOCX on BLOCX chain)
-  const isTokenANative =
-    tokenA.address === "0x0000000000000000000000000000000000000000" ||
-    tokenA.symbol === "BLOCX";
-  const isTokenBNative =
-    tokenB.address === "0x0000000000000000000000000000000000000000" ||
-    tokenB.symbol === "BLOCX";
 
   const { data: allowanceA, refetch: refetchAllowanceA } = useReadContract({
     abi: erc20Abi,
@@ -132,10 +145,16 @@ const AddLiquidityForm = ({
 
     // Only auto-calculate amountB if pool exists (has reserves)
     if (reserves && parsedValue && !isNaN(parseFloat(parsedValue))) {
-      const [reserveA, reserveB] =
-        tokenA.address.toLowerCase() < tokenB.address.toLowerCase()
-          ? reserves
-          : [reserves[1], reserves[0]];
+      // Need to determine which reserve corresponds to which token
+      // considering we might be dealing with WBLOCX instead of native
+      const [reserve0, reserve1] = reserves;
+
+      // Determine correct reserve order based on sorted pool tokens
+      const isTokenAFirst =
+        poolTokenA.address.toLowerCase() < poolTokenB.address.toLowerCase();
+      const [reserveA, reserveB] = isTokenAFirst
+        ? [reserve0, reserve1]
+        : [reserve1, reserve0];
 
       if (reserveA > 0n && reserveB > 0n) {
         const amountADesired = new Decimal(parsedValue).times(
@@ -172,10 +191,16 @@ const AddLiquidityForm = ({
 
     // Only auto-calculate amountA if pool exists (has reserves)
     if (reserves && parsedValue && !isNaN(parseFloat(parsedValue))) {
-      const [reserveA, reserveB] =
-        tokenA.address.toLowerCase() < tokenB.address.toLowerCase()
-          ? reserves
-          : [reserves[1], reserves[0]];
+      // Need to determine which reserve corresponds to which token
+      // considering we might be dealing with WBLOCX instead of native
+      const [reserve0, reserve1] = reserves;
+
+      // Determine correct reserve order based on sorted pool tokens
+      const isTokenAFirst =
+        poolTokenA.address.toLowerCase() < poolTokenB.address.toLowerCase();
+      const [reserveA, reserveB] = isTokenAFirst
+        ? [reserve0, reserve1]
+        : [reserve1, reserve0];
 
       if (reserveA > 0n && reserveB > 0n) {
         const amountBDesired = new Decimal(parsedValue).times(
@@ -355,10 +380,13 @@ const AddLiquidityForm = ({
       return "0";
     }
 
-    const [reserveA, reserveB] =
-      tokenA.address.toLowerCase() < tokenB.address.toLowerCase()
-        ? reserves
-        : [reserves[1], reserves[0]];
+    // Use the same logic as in handleAmountChange functions
+    const [reserve0, reserve1] = reserves;
+    const isTokenAFirst =
+      poolTokenA.address.toLowerCase() < poolTokenB.address.toLowerCase();
+    const [reserveA, reserveB] = isTokenAFirst
+      ? [reserve0, reserve1]
+      : [reserve1, reserve0];
 
     if (reserveA === 0n || reserveB === 0n) {
       return "100";
@@ -384,7 +412,16 @@ const AddLiquidityForm = ({
     } catch (e) {
       return "0";
     }
-  }, [reserves, amountA, amountB, tokenA, tokenB, isNewPool]);
+  }, [
+    reserves,
+    amountA,
+    amountB,
+    tokenA,
+    tokenB,
+    poolTokenA,
+    poolTokenB,
+    isNewPool,
+  ]);
 
   return (
     <div className="w-full flex flex-col gap-4">
