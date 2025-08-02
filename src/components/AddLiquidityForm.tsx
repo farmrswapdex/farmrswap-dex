@@ -61,11 +61,16 @@ const AddLiquidityForm = ({
   const [liquidityHash, setLiquidityHash] = useState<
     `0x${string}` | undefined
   >();
-  const [approvalToastIdA, setApprovalToastIdA] = useState<string | undefined>();
-  const [approvalToastIdB, setApprovalToastIdB] = useState<string | undefined>();
-  const [liquidityToastId, setLiquidityToastId] = useState<string | undefined>();
+  const [approvalToastIdA, setApprovalToastIdA] = useState<
+    string | undefined
+  >();
+  const [approvalToastIdB, setApprovalToastIdB] = useState<
+    string | undefined
+  >();
+  const [liquidityToastId, setLiquidityToastId] = useState<
+    string | undefined
+  >();
 
-  // Wait for approval confirmations
   const { isLoading: isConfirmingApprovalA, isSuccess: isApprovedA } =
     useWaitForTransactionReceipt({
       hash: approvalHashA,
@@ -76,13 +81,11 @@ const AddLiquidityForm = ({
       hash: approvalHashB,
     });
 
-  // Wait for liquidity transaction confirmation
   const { isLoading: isConfirmingLiquidity, isSuccess: isLiquidityAdded } =
     useWaitForTransactionReceipt({
       hash: liquidityHash,
     });
 
-  // Update approval states when confirmations complete
   useEffect(() => {
     if (isApprovedA && approvalHashA) {
       setIsApprovingA(false);
@@ -95,7 +98,14 @@ const AddLiquidityForm = ({
       refetchAllowanceA();
       fetchUserTokens(address!);
     }
-  }, [isApprovedA, approvalHashA, address, fetchUserTokens, approvalToastIdA, tokenA.symbol]);
+  }, [
+    isApprovedA,
+    approvalHashA,
+    address,
+    fetchUserTokens,
+    approvalToastIdA,
+    tokenA.symbol,
+  ]);
 
   useEffect(() => {
     if (isApprovedB && approvalHashB) {
@@ -109,7 +119,14 @@ const AddLiquidityForm = ({
       refetchAllowanceB();
       fetchUserTokens(address!);
     }
-  }, [isApprovedB, approvalHashB, address, fetchUserTokens, approvalToastIdB, tokenB.symbol]);
+  }, [
+    isApprovedB,
+    approvalHashB,
+    address,
+    fetchUserTokens,
+    approvalToastIdB,
+    tokenB.symbol,
+  ]);
 
   // Handle liquidity addition success
   useEffect(() => {
@@ -126,7 +143,13 @@ const AddLiquidityForm = ({
       setAmountA("");
       setAmountB("");
     }
-  }, [isLiquidityAdded, liquidityHash, address, fetchUserTokens, liquidityToastId]);
+  }, [
+    isLiquidityAdded,
+    liquidityHash,
+    address,
+    fetchUserTokens,
+    liquidityToastId,
+  ]);
 
   useEffect(() => {
     if (address) {
@@ -139,7 +162,6 @@ const AddLiquidityForm = ({
   const tokenBBalance =
     userTokens.find((t) => t.address === tokenB.address)?.balance || "0";
 
-  // Check if token is native (BLOCX)
   const isTokenANative =
     tokenA.address.toLowerCase() === NATIVE_TOKEN.address.toLowerCase();
   const isTokenBNative =
@@ -195,7 +217,6 @@ const AddLiquidityForm = ({
     query: { enabled: !!address && !isTokenBNative },
   });
 
-  // Check approval needs with proper dependencies
   useEffect(() => {
     if (!isTokenANative && amountA && allowanceA !== undefined) {
       try {
@@ -414,7 +435,9 @@ const AddLiquidityForm = ({
       }
 
       setLiquidityHash(hash);
-      const toastId = toast.loading("Adding liquidity... Please wait for confirmation.");
+      const toastId = toast.loading(
+        "Adding liquidity... Please wait for confirmation."
+      );
       setLiquidityToastId(toastId);
     } catch (err: any) {
       setIsAddingLiquidity(false);
@@ -554,7 +577,12 @@ const AddLiquidityForm = ({
         {needsApprovalA && (
           <button
             onClick={() =>
-              handleApprove(tokenA, setIsApprovingA, setApprovalHashA, setApprovalToastIdA)
+              handleApprove(
+                tokenA,
+                setIsApprovingA,
+                setApprovalHashA,
+                setApprovalToastIdA
+              )
             }
             disabled={isApprovingA || isConfirmingApprovalA}
             className="w-full mt-2 py-2 rounded-xl text-md font-bold text-white bg-blue-600 hover:bg-blue-700 transition-all disabled:bg-gray-500"
@@ -601,7 +629,12 @@ const AddLiquidityForm = ({
         {needsApprovalB && (
           <button
             onClick={() =>
-              handleApprove(tokenB, setIsApprovingB, setApprovalHashB, setApprovalToastIdB)
+              handleApprove(
+                tokenB,
+                setIsApprovingB,
+                setApprovalHashB,
+                setApprovalToastIdB
+              )
             }
             disabled={isApprovingB || isConfirmingApprovalB}
             className="w-full mt-2 py-2 rounded-xl text-md font-bold text-white bg-blue-600 hover:bg-blue-700 transition-all disabled:bg-gray-500"

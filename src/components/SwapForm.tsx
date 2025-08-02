@@ -515,7 +515,9 @@ const SwapForm = () => {
       }
 
       setSwapHash(hash);
-      const toastId = toast.loading("Swapping... Please wait for confirmation.");
+      const toastId = toast.loading(
+        "Swapping... Please wait for confirmation."
+      );
       setSwapToastId(toastId);
     } catch (err: any) {
       setIsSwapping(false);
@@ -773,7 +775,6 @@ const SwapForm = () => {
             </div>
           </div>
 
-          {/* Connect Wallet Button - Keep your existing styling */}
           <button
             onClick={handleButtonClick}
             disabled={isButtonDisabled()}

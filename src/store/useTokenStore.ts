@@ -19,12 +19,16 @@ interface UserToken extends Token {
 
 interface TokenStoreState {
     userTokens: UserToken[];
+    customTokens: Token[];
     fetchUserTokens: (address: `0x${string}` | undefined) => Promise<void>;
+    addCustomToken: (token: Token) => void;
+    removeCustomToken: (address: string) => void;
     loading: boolean;
 }
 
-export const useTokenStore = create<TokenStoreState>((set) => ({
+export const useTokenStore = create<TokenStoreState>((set, get) => ({
     userTokens: [],
+    customTokens: JSON.parse(localStorage.getItem('customTokens') || '[]'),
     loading: false,
 
     fetchUserTokens: async (address) => {
@@ -40,7 +44,11 @@ export const useTokenStore = create<TokenStoreState>((set) => ({
             const { getBalance } = await import('@wagmi/core');
             const ethBalance = await getBalance(config, { address });
             
-            const tokenContracts = TOKEN_LIST.map(token => ({
+            // Combine default tokens with custom tokens
+            const { customTokens } = get();
+            const allTokens = [...TOKEN_LIST, ...customTokens];
+            
+            const tokenContracts = allTokens.map(token => ({
                 address: token.address as `0x${string}`,
                 abi: erc20Abi,
                 functionName: 'balanceOf',
@@ -59,7 +67,7 @@ export const useTokenStore = create<TokenStoreState>((set) => ({
                     balance: formatUnits(ethBalance.value, 18) 
                 },
                 // Add other tokens
-                ...TOKEN_LIST.map((token, index) => {
+                ...allTokens.map((token, index) => {
                     const balanceResult = balances[index];
                     const balance = balanceResult.status === 'success'
                         ? formatUnits(BigInt(balanceResult.result), token.decimals)
@@ -73,5 +81,23 @@ export const useTokenStore = create<TokenStoreState>((set) => ({
             console.error("Error fetching token balances:", error);
             set({ loading: false });
         }
+    },
+
+    addCustomToken: (token: Token) => {
+        const { customTokens } = get();
+        // Check if token already exists
+        const exists = customTokens.some(t => t.address.toLowerCase() === token.address.toLowerCase());
+        if (!exists) {
+            const updatedCustomTokens = [...customTokens, token];
+            localStorage.setItem('customTokens', JSON.stringify(updatedCustomTokens));
+            set({ customTokens: updatedCustomTokens });
+        }
+    },
+
+    removeCustomToken: (address: string) => {
+        const { customTokens } = get();
+        const updatedCustomTokens = customTokens.filter(t => t.address.toLowerCase() !== address.toLowerCase());
+        localStorage.setItem('customTokens', JSON.stringify(updatedCustomTokens));
+        set({ customTokens: updatedCustomTokens });
     },
 }));
