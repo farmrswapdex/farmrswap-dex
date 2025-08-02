@@ -2,7 +2,12 @@ import { MaxUint256 } from "ethers";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "react-hot-toast";
 import { erc20Abi, parseUnits } from "viem";
-import { useAccount, useReadContract, useWriteContract } from "wagmi";
+import {
+  useAccount,
+  useReadContract,
+  useWriteContract,
+  useWaitForTransactionReceipt,
+} from "wagmi";
 import {
   FactoryContract,
   PairContract,
@@ -46,6 +51,82 @@ const AddLiquidityForm = ({
   const [needsApprovalB, setNeedsApprovalB] = useState(false);
   const [isApprovingA, setIsApprovingA] = useState(false);
   const [isApprovingB, setIsApprovingB] = useState(false);
+  const [approvalHashA, setApprovalHashA] = useState<
+    `0x${string}` | undefined
+  >();
+  const [approvalHashB, setApprovalHashB] = useState<
+    `0x${string}` | undefined
+  >();
+  const [isAddingLiquidity, setIsAddingLiquidity] = useState(false);
+  const [liquidityHash, setLiquidityHash] = useState<
+    `0x${string}` | undefined
+  >();
+  const [approvalToastIdA, setApprovalToastIdA] = useState<string | undefined>();
+  const [approvalToastIdB, setApprovalToastIdB] = useState<string | undefined>();
+  const [liquidityToastId, setLiquidityToastId] = useState<string | undefined>();
+
+  // Wait for approval confirmations
+  const { isLoading: isConfirmingApprovalA, isSuccess: isApprovedA } =
+    useWaitForTransactionReceipt({
+      hash: approvalHashA,
+    });
+
+  const { isLoading: isConfirmingApprovalB, isSuccess: isApprovedB } =
+    useWaitForTransactionReceipt({
+      hash: approvalHashB,
+    });
+
+  // Wait for liquidity transaction confirmation
+  const { isLoading: isConfirmingLiquidity, isSuccess: isLiquidityAdded } =
+    useWaitForTransactionReceipt({
+      hash: liquidityHash,
+    });
+
+  // Update approval states when confirmations complete
+  useEffect(() => {
+    if (isApprovedA && approvalHashA) {
+      setIsApprovingA(false);
+      setApprovalHashA(undefined);
+      if (approvalToastIdA) {
+        toast.dismiss(approvalToastIdA);
+        setApprovalToastIdA(undefined);
+      }
+      toast.success(`${tokenA.symbol} approval successful!`);
+      refetchAllowanceA();
+      fetchUserTokens(address!);
+    }
+  }, [isApprovedA, approvalHashA, address, fetchUserTokens, approvalToastIdA, tokenA.symbol]);
+
+  useEffect(() => {
+    if (isApprovedB && approvalHashB) {
+      setIsApprovingB(false);
+      setApprovalHashB(undefined);
+      if (approvalToastIdB) {
+        toast.dismiss(approvalToastIdB);
+        setApprovalToastIdB(undefined);
+      }
+      toast.success(`${tokenB.symbol} approval successful!`);
+      refetchAllowanceB();
+      fetchUserTokens(address!);
+    }
+  }, [isApprovedB, approvalHashB, address, fetchUserTokens, approvalToastIdB, tokenB.symbol]);
+
+  // Handle liquidity addition success
+  useEffect(() => {
+    if (isLiquidityAdded && liquidityHash) {
+      setIsAddingLiquidity(false);
+      setLiquidityHash(undefined);
+      if (liquidityToastId) {
+        toast.dismiss(liquidityToastId);
+        setLiquidityToastId(undefined);
+      }
+      toast.success("Liquidity added successfully!");
+      fetchUserTokens(address!);
+      // Reset form
+      setAmountA("");
+      setAmountB("");
+    }
+  }, [isLiquidityAdded, liquidityHash, address, fetchUserTokens, liquidityToastId]);
 
   useEffect(() => {
     if (address) {
@@ -114,16 +195,19 @@ const AddLiquidityForm = ({
     query: { enabled: !!address && !isTokenBNative },
   });
 
+  // Check approval needs with proper dependencies
   useEffect(() => {
     if (!isTokenANative && amountA && allowanceA !== undefined) {
       try {
         const requiredAmount = parseUnits(amountA, tokenA.decimals);
         setNeedsApprovalA(allowanceA < requiredAmount);
-      } catch (e) {}
+      } catch (e) {
+        setNeedsApprovalA(false);
+      }
     } else {
       setNeedsApprovalA(false);
     }
-  }, [amountA, tokenA, allowanceA, isTokenANative]);
+  }, [amountA, tokenA.decimals, allowanceA, isTokenANative]);
 
   useEffect(() => {
     if (!isTokenBNative && amountB && allowanceB !== undefined) {
@@ -131,12 +215,12 @@ const AddLiquidityForm = ({
         const requiredAmount = parseUnits(amountB, tokenB.decimals);
         setNeedsApprovalB(allowanceB < requiredAmount);
       } catch (e) {
-        // Ignore invalid number format for this check
+        setNeedsApprovalB(false);
       }
     } else {
       setNeedsApprovalB(false);
     }
-  }, [amountB, tokenB, allowanceB, isTokenBNative]);
+  }, [amountB, tokenB.decimals, allowanceB, isTokenBNative]);
 
   const handleAmountAChange = (value: string) => {
     const parsedValue = parseAmount(value, tokenA.decimals);
@@ -233,28 +317,29 @@ const AddLiquidityForm = ({
   const handleApprove = async (
     token: Token,
     setApproving: (isApproving: boolean) => void,
-    refetch: () => void
+    setApprovalHash: (hash: `0x${string}` | undefined) => void,
+    setToastId: (id: string | undefined) => void
   ) => {
     if (!address) return;
-    setApproving(true);
-    const promise = writeContractAsync({
-      address: token.address as `0x${string}`,
-      abi: erc20Abi,
-      functionName: "approve",
-      args: [RouterContract.address, MaxUint256],
-    });
-    toast.promise(promise, {
-      loading: `Approving ${token.symbol}...`,
-      success: () => {
-        refetch();
-        setApproving(false);
-        return "Approval successful!";
-      },
-      error: (err) => {
-        setApproving(false);
-        return `Approval failed: ${err.name}`;
-      },
-    });
+
+    try {
+      setApproving(true);
+      const hash = await writeContractAsync({
+        address: token.address as `0x${string}`,
+        abi: erc20Abi,
+        functionName: "approve",
+        args: [RouterContract.address, MaxUint256],
+      });
+
+      setApprovalHash(hash);
+      const toastId = toast.loading(
+        `Approving ${token.symbol}... Please wait for confirmation.`
+      );
+      setToastId(toastId);
+    } catch (err: any) {
+      setApproving(false);
+      toast.error(`Approval failed: ${err.message || err.name}`);
+    }
   };
 
   const handleAddLiquidity = async () => {
@@ -274,61 +359,67 @@ const AddLiquidityForm = ({
       Math.floor(Number(amountBDesired) * slippageTolerance)
     );
 
-    let promise;
-    if (isTokenANative || isTokenBNative) {
-      const [token, amountTokenDesired, amountTokenMin, amountETHMin, value] =
-        isTokenANative
-          ? [tokenB, amountBDesired, amountBMin, amountAMin, amountADesired]
-          : [tokenA, amountADesired, amountAMin, amountBMin, amountBDesired];
+    try {
+      setIsAddingLiquidity(true);
+      let hash: `0x${string}`;
 
-      promise = writeContractAsync({
-        address: RouterContract.address,
-        abi: RouterContract.abi,
-        functionName: "addLiquidityETH",
-        args: [
-          token.address as `0x${string}`,
-          amountTokenDesired,
-          amountTokenMin,
-          amountETHMin,
-          address,
-          deadline,
-        ],
-        value: value,
-      });
-    } else {
-      // For token-token pairs, we need to use the correct order
-      const [token0, token1] =
-        sortedTokenA.address.toLowerCase() < sortedTokenB.address.toLowerCase()
-          ? [sortedTokenA, sortedTokenB]
-          : [sortedTokenB, sortedTokenA];
+      if (isTokenANative || isTokenBNative) {
+        const [token, amountTokenDesired, amountTokenMin, amountETHMin, value] =
+          isTokenANative
+            ? [tokenB, amountBDesired, amountBMin, amountAMin, amountADesired]
+            : [tokenA, amountADesired, amountAMin, amountBMin, amountBDesired];
 
-      const [amount0Desired, amount1Desired, amount0Min, amount1Min] =
-        token0.address === tokenA.address
-          ? [amountADesired, amountBDesired, amountAMin, amountBMin]
-          : [amountBDesired, amountADesired, amountBMin, amountAMin];
+        hash = await writeContractAsync({
+          address: RouterContract.address,
+          abi: RouterContract.abi,
+          functionName: "addLiquidityETH",
+          args: [
+            token.address as `0x${string}`,
+            amountTokenDesired,
+            amountTokenMin,
+            amountETHMin,
+            address,
+            deadline,
+          ],
+          value: value,
+        });
+      } else {
+        // For token-token pairs, we need to use the correct order
+        const [token0, token1] =
+          sortedTokenA.address.toLowerCase() <
+          sortedTokenB.address.toLowerCase()
+            ? [sortedTokenA, sortedTokenB]
+            : [sortedTokenB, sortedTokenA];
 
-      promise = writeContractAsync({
-        address: RouterContract.address,
-        abi: RouterContract.abi,
-        functionName: "addLiquidity",
-        args: [
-          token0.address as `0x${string}`,
-          token1.address as `0x${string}`,
-          amount0Desired,
-          amount1Desired,
-          amount0Min,
-          amount1Min,
-          address,
-          deadline,
-        ],
-      });
+        const [amount0Desired, amount1Desired, amount0Min, amount1Min] =
+          token0.address === tokenA.address
+            ? [amountADesired, amountBDesired, amountAMin, amountBMin]
+            : [amountBDesired, amountADesired, amountBMin, amountAMin];
+
+        hash = await writeContractAsync({
+          address: RouterContract.address,
+          abi: RouterContract.abi,
+          functionName: "addLiquidity",
+          args: [
+            token0.address as `0x${string}`,
+            token1.address as `0x${string}`,
+            amount0Desired,
+            amount1Desired,
+            amount0Min,
+            amount1Min,
+            address,
+            deadline,
+          ],
+        });
+      }
+
+      setLiquidityHash(hash);
+      const toastId = toast.loading("Adding liquidity... Please wait for confirmation.");
+      setLiquidityToastId(toastId);
+    } catch (err: any) {
+      setIsAddingLiquidity(false);
+      toast.error(`Failed to add liquidity: ${err.message || err.name}`);
     }
-
-    toast.promise(promise, {
-      loading: "Adding liquidity...",
-      success: "Liquidity added successfully!",
-      error: (err) => `Failed to add liquidity: ${err.message}`,
-    });
   };
 
   const isAddLiquidityDisabled =
@@ -337,7 +428,11 @@ const AddLiquidityForm = ({
     needsApprovalA ||
     needsApprovalB ||
     isApprovingA ||
-    isApprovingB;
+    isApprovingB ||
+    isConfirmingApprovalA ||
+    isConfirmingApprovalB ||
+    isAddingLiquidity ||
+    isConfirmingLiquidity;
 
   // Calculate initial prices and pool share
   const isNewPool =
@@ -459,12 +554,14 @@ const AddLiquidityForm = ({
         {needsApprovalA && (
           <button
             onClick={() =>
-              handleApprove(tokenA, setIsApprovingA, refetchAllowanceA)
+              handleApprove(tokenA, setIsApprovingA, setApprovalHashA, setApprovalToastIdA)
             }
-            disabled={isApprovingA}
+            disabled={isApprovingA || isConfirmingApprovalA}
             className="w-full mt-2 py-2 rounded-xl text-md font-bold text-white bg-blue-600 hover:bg-blue-700 transition-all disabled:bg-gray-500"
           >
-            {isApprovingA ? "Approving..." : `Approve ${tokenA.symbol}`}
+            {isApprovingA || isConfirmingApprovalA
+              ? "Approving..."
+              : `Approve ${tokenA.symbol}`}
           </button>
         )}
       </div>
@@ -504,12 +601,14 @@ const AddLiquidityForm = ({
         {needsApprovalB && (
           <button
             onClick={() =>
-              handleApprove(tokenB, setIsApprovingB, refetchAllowanceB)
+              handleApprove(tokenB, setIsApprovingB, setApprovalHashB, setApprovalToastIdB)
             }
-            disabled={isApprovingB}
+            disabled={isApprovingB || isConfirmingApprovalB}
             className="w-full mt-2 py-2 rounded-xl text-md font-bold text-white bg-blue-600 hover:bg-blue-700 transition-all disabled:bg-gray-500"
           >
-            {isApprovingB ? "Approving..." : `Approve ${tokenB.symbol}`}
+            {isApprovingB || isConfirmingApprovalB
+              ? "Approving..."
+              : `Approve ${tokenB.symbol}`}
           </button>
         )}
       </div>
@@ -573,7 +672,9 @@ const AddLiquidityForm = ({
             disabled={isAddLiquidityDisabled}
             className="w-full py-3 rounded-xl text-lg font-bold text-white transition-all disabled:bg-gray-500 disabled:cursor-not-allowed bg-blue-600 hover:bg-blue-700"
           >
-            Add Liquidity
+            {isAddingLiquidity || isConfirmingLiquidity
+              ? "Adding Liquidity..."
+              : "Add Liquidity"}
           </button>
         </div>
       </div>

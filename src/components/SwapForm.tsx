@@ -4,7 +4,12 @@ import { ArrowDown, Settings } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { erc20Abi, formatUnits, parseUnits } from "viem";
-import { useAccount, useReadContract, useWriteContract } from "wagmi";
+import {
+  useAccount,
+  useReadContract,
+  useWriteContract,
+  useWaitForTransactionReceipt,
+} from "wagmi";
 import { RouterContract, Weth9Contract } from "../lib/config";
 import { NATIVE_TOKEN, TOKENS } from "../lib/constants";
 import { formatNumber, parseAmount } from "../lib/quoteCalculator";
@@ -43,6 +48,11 @@ const SwapForm = () => {
   const [amountsSwapped, setAmountsSwapped] = useState(false);
   const [needsApproval, setNeedsApproval] = useState(false);
   const [isApproving, setIsApproving] = useState(false);
+  const [approvalHash, setApprovalHash] = useState<`0x${string}` | undefined>();
+  const [swapHash, setSwapHash] = useState<`0x${string}` | undefined>();
+  const [isSwapping, setIsSwapping] = useState(false);
+  const [approvalToastId, setApprovalToastId] = useState<string | undefined>();
+  const [swapToastId, setSwapToastId] = useState<string | undefined>();
 
   // Settings
   const [slippage, setSlippage] = useState(0.5);
@@ -52,6 +62,50 @@ const SwapForm = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
   const [selectingFor, setSelectingFor] = useState<"from" | "to" | null>(null);
+
+  // Wait for approval confirmation
+  const { isLoading: isConfirmingApproval, isSuccess: isApproved } =
+    useWaitForTransactionReceipt({
+      hash: approvalHash,
+    });
+
+  // Wait for swap confirmation
+  const { isLoading: isConfirmingSwap, isSuccess: isSwapComplete } =
+    useWaitForTransactionReceipt({
+      hash: swapHash,
+    });
+
+  // Update approval state when confirmation completes
+  useEffect(() => {
+    if (isApproved && approvalHash) {
+      setIsApproving(false);
+      setApprovalHash(undefined);
+      if (approvalToastId) {
+        toast.dismiss(approvalToastId);
+        setApprovalToastId(undefined);
+      }
+      refetchAllowance();
+      toast.success("Approval successful!");
+      fetchUserTokens(address!);
+    }
+  }, [isApproved, approvalHash, address, fetchUserTokens, approvalToastId]);
+
+  // Handle swap success
+  useEffect(() => {
+    if (isSwapComplete && swapHash) {
+      setIsSwapping(false);
+      setSwapHash(undefined);
+      if (swapToastId) {
+        toast.dismiss(swapToastId);
+        setSwapToastId(undefined);
+      }
+      toast.success("Swap successful!");
+      fetchUserTokens(address!);
+      // Reset form
+      setFromAmount("");
+      setToAmount("");
+    }
+  }, [isSwapComplete, swapHash, address, fetchUserTokens, swapToastId]);
 
   useEffect(() => {
     if (isConnected && address) {
@@ -153,6 +207,7 @@ const SwapForm = () => {
     }
   }, [amountsInData, isFlipped, fromToken]);
 
+  // Check approval needs with refetch after successful approval
   useEffect(() => {
     if (
       fromToken &&
@@ -254,26 +309,24 @@ const SwapForm = () => {
   const handleApprove = async () => {
     if (!fromToken || !address) return;
 
-    setIsApproving(true);
-    const promise = writeContractAsync({
-      address: fromToken.address as `0x${string}`,
-      abi: erc20Abi,
-      functionName: "approve",
-      args: [RouterContract.address, MaxUint256],
-    });
+    try {
+      setIsApproving(true);
+      const hash = await writeContractAsync({
+        address: fromToken.address as `0x${string}`,
+        abi: erc20Abi,
+        functionName: "approve",
+        args: [RouterContract.address, MaxUint256],
+      });
 
-    toast.promise(promise, {
-      loading: `Approving ${fromToken.symbol}...`,
-      success: () => {
-        refetchAllowance();
-        setIsApproving(false);
-        return "Approval successful!";
-      },
-      error: (err) => {
-        setIsApproving(false);
-        return `Approval failed: ${err.message}`;
-      },
-    });
+      setApprovalHash(hash);
+      const toastId = toast.loading(
+        `Approving ${fromToken.symbol}... Please wait for confirmation.`
+      );
+      setApprovalToastId(toastId);
+    } catch (err: any) {
+      setIsApproving(false);
+      toast.error(`Approval failed: ${err.message || err.name}`);
+    }
   };
 
   const handleSwap = async () => {
@@ -298,179 +351,175 @@ const SwapForm = () => {
 
     let value: bigint | undefined = undefined;
 
-    // Type-safe functionName and args
-    if (isFlipped) {
-      // Exact output
-      const amountOut = parseUnits(toAmount, toToken.decimals);
-      const amountInMax = parseUnits(
-        (parseFloat(fromAmount) * (1 + slippage / 100)).toFixed(
+    try {
+      setIsSwapping(true);
+      let hash: `0x${string}`;
+
+      // Type-safe functionName and args
+      if (isFlipped) {
+        // Exact output
+        const amountOut = parseUnits(toAmount, toToken.decimals);
+        const amountInMax = parseUnits(
+          (parseFloat(fromAmount) * (1 + slippage / 100)).toFixed(
+            fromToken.decimals
+          ),
           fromToken.decimals
-        ),
-        fromToken.decimals
-      );
+        );
 
-      if (fromToken.symbol === "BLOCX") {
-        // swapETHForExactTokens(uint amountOut, address[] path, address to, uint deadline)
-        const functionName: "swapETHForExactTokens" = "swapETHForExactTokens";
-        const args: [bigint, readonly `0x${string}`[], `0x${string}`, bigint] =
-          [amountOut, swapPath, address as `0x${string}`, deadlineTimestamp];
-        value = amountInMax;
-        const promise = writeContractAsync({
-          address: RouterContract.address,
-          abi: RouterContract.abi,
-          functionName,
-          args,
-          value,
-        });
-        toast.promise(promise, {
-          loading: "Submitting transaction...",
-          success: "Swap successful!",
-          error: "Swap failed.",
-        });
-        return;
-      } else if (toToken.symbol === "BLOCX") {
-        // swapTokensForExactETH(uint amountOut, uint amountInMax, address[] path, address to, uint deadline)
-        const functionName: "swapTokensForExactETH" = "swapTokensForExactETH";
-        const args: [
-          bigint,
-          bigint,
-          readonly `0x${string}`[],
-          `0x${string}`,
-          bigint
-        ] = [
-          amountOut,
-          amountInMax,
-          swapPath,
-          address as `0x${string}`,
-          deadlineTimestamp,
-        ];
-        const promise = writeContractAsync({
-          address: RouterContract.address,
-          abi: RouterContract.abi,
-          functionName,
-          args,
-        });
-        toast.promise(promise, {
-          loading: "Submitting transaction...",
-          success: "Swap successful!",
-          error: "Swap failed.",
-        });
-        return;
+        if (fromToken.symbol === "BLOCX") {
+          // swapETHForExactTokens(uint amountOut, address[] path, address to, uint deadline)
+          const functionName: "swapETHForExactTokens" = "swapETHForExactTokens";
+          const args: [
+            bigint,
+            readonly `0x${string}`[],
+            `0x${string}`,
+            bigint
+          ] = [
+            amountOut,
+            swapPath,
+            address as `0x${string}`,
+            deadlineTimestamp,
+          ];
+          value = amountInMax;
+          hash = await writeContractAsync({
+            address: RouterContract.address,
+            abi: RouterContract.abi,
+            functionName,
+            args,
+            value,
+          });
+        } else if (toToken.symbol === "BLOCX") {
+          // swapTokensForExactETH(uint amountOut, uint amountInMax, address[] path, address to, uint deadline)
+          const functionName: "swapTokensForExactETH" = "swapTokensForExactETH";
+          const args: [
+            bigint,
+            bigint,
+            readonly `0x${string}`[],
+            `0x${string}`,
+            bigint
+          ] = [
+            amountOut,
+            amountInMax,
+            swapPath,
+            address as `0x${string}`,
+            deadlineTimestamp,
+          ];
+          hash = await writeContractAsync({
+            address: RouterContract.address,
+            abi: RouterContract.abi,
+            functionName,
+            args,
+          });
+        } else {
+          // swapTokensForExactTokens(uint amountOut, uint amountInMax, address[] path, address to, uint deadline)
+          const functionName: "swapTokensForExactTokens" =
+            "swapTokensForExactTokens";
+          const args: [
+            bigint,
+            bigint,
+            readonly `0x${string}`[],
+            `0x${string}`,
+            bigint
+          ] = [
+            amountOut,
+            amountInMax,
+            swapPath,
+            address as `0x${string}`,
+            deadlineTimestamp,
+          ];
+          hash = await writeContractAsync({
+            address: RouterContract.address,
+            abi: RouterContract.abi,
+            functionName,
+            args,
+          });
+        }
       } else {
-        // swapTokensForExactTokens(uint amountOut, uint amountInMax, address[] path, address to, uint deadline)
-        const functionName: "swapTokensForExactTokens" =
-          "swapTokensForExactTokens";
-        const args: [
-          bigint,
-          bigint,
-          readonly `0x${string}`[],
-          `0x${string}`,
-          bigint
-        ] = [
-          amountOut,
-          amountInMax,
-          swapPath,
-          address as `0x${string}`,
-          deadlineTimestamp,
-        ];
-        const promise = writeContractAsync({
-          address: RouterContract.address,
-          abi: RouterContract.abi,
-          functionName,
-          args,
-        });
-        toast.promise(promise, {
-          loading: "Submitting transaction...",
-          success: "Swap successful!",
-          error: "Swap failed.",
-        });
-        return;
-      }
-    } else {
-      // Exact input
-      const amountIn = parseUnits(fromAmount, fromToken.decimals);
-      const amountOutMin = parseUnits(
-        (parseFloat(toAmount) * (1 - slippage / 100)).toFixed(toToken.decimals),
-        toToken.decimals
-      );
+        // Exact input
+        const amountIn = parseUnits(fromAmount, fromToken.decimals);
+        const amountOutMin = parseUnits(
+          (parseFloat(toAmount) * (1 - slippage / 100)).toFixed(
+            toToken.decimals
+          ),
+          toToken.decimals
+        );
 
-      if (fromToken.symbol === "BLOCX") {
-        // swapExactETHForTokens(uint amountOutMin, address[] path, address to, uint deadline)
-        const functionName: "swapExactETHForTokens" = "swapExactETHForTokens";
-        const args: [bigint, readonly `0x${string}`[], `0x${string}`, bigint] =
-          [amountOutMin, swapPath, address as `0x${string}`, deadlineTimestamp];
-        value = amountIn;
-        const promise = writeContractAsync({
-          address: RouterContract.address,
-          abi: RouterContract.abi,
-          functionName,
-          args,
-          value,
-        });
-        toast.promise(promise, {
-          loading: "Submitting transaction...",
-          success: "Swap successful!",
-          error: "Swap failed.",
-        });
-        return;
-      } else if (toToken.symbol === "BLOCX") {
-        // swapExactTokensForETH(uint amountIn, uint amountOutMin, address[] path, address to, uint deadline)
-        const functionName: "swapExactTokensForETH" = "swapExactTokensForETH";
-        const args: [
-          bigint,
-          bigint,
-          readonly `0x${string}`[],
-          `0x${string}`,
-          bigint
-        ] = [
-          amountIn,
-          amountOutMin,
-          swapPath,
-          address as `0x${string}`,
-          deadlineTimestamp,
-        ];
-        const promise = writeContractAsync({
-          address: RouterContract.address,
-          abi: RouterContract.abi,
-          functionName,
-          args,
-        });
-        toast.promise(promise, {
-          loading: "Submitting transaction...",
-          success: "Swap successful!",
-          error: "Swap failed.",
-        });
-        return;
-      } else {
-        // swapExactTokensForTokens(uint amountIn, uint amountOutMin, address[] path, address to, uint deadline)
-        const functionName: "swapExactTokensForTokens" =
-          "swapExactTokensForTokens";
-        const args: [
-          bigint,
-          bigint,
-          readonly `0x${string}`[],
-          `0x${string}`,
-          bigint
-        ] = [
-          amountIn,
-          amountOutMin,
-          swapPath,
-          address as `0x${string}`,
-          deadlineTimestamp,
-        ];
-        const promise = writeContractAsync({
-          address: RouterContract.address,
-          abi: RouterContract.abi,
-          functionName,
-          args,
-        });
-        toast.promise(promise, {
-          loading: "Submitting transaction...",
-          success: "Swap successful!",
-          error: "Swap failed.",
-        });
-        return;
+        if (fromToken.symbol === "BLOCX") {
+          // swapExactETHForTokens(uint amountOutMin, address[] path, address to, uint deadline)
+          const functionName: "swapExactETHForTokens" = "swapExactETHForTokens";
+          const args: [
+            bigint,
+            readonly `0x${string}`[],
+            `0x${string}`,
+            bigint
+          ] = [
+            amountOutMin,
+            swapPath,
+            address as `0x${string}`,
+            deadlineTimestamp,
+          ];
+          value = amountIn;
+          hash = await writeContractAsync({
+            address: RouterContract.address,
+            abi: RouterContract.abi,
+            functionName,
+            args,
+            value,
+          });
+        } else if (toToken.symbol === "BLOCX") {
+          // swapExactTokensForETH(uint amountIn, uint amountOutMin, address[] path, address to, uint deadline)
+          const functionName: "swapExactTokensForETH" = "swapExactTokensForETH";
+          const args: [
+            bigint,
+            bigint,
+            readonly `0x${string}`[],
+            `0x${string}`,
+            bigint
+          ] = [
+            amountIn,
+            amountOutMin,
+            swapPath,
+            address as `0x${string}`,
+            deadlineTimestamp,
+          ];
+          hash = await writeContractAsync({
+            address: RouterContract.address,
+            abi: RouterContract.abi,
+            functionName,
+            args,
+          });
+        } else {
+          // swapExactTokensForTokens(uint amountIn, uint amountOutMin, address[] path, address to, uint deadline)
+          const functionName: "swapExactTokensForTokens" =
+            "swapExactTokensForTokens";
+          const args: [
+            bigint,
+            bigint,
+            readonly `0x${string}`[],
+            `0x${string}`,
+            bigint
+          ] = [
+            amountIn,
+            amountOutMin,
+            swapPath,
+            address as `0x${string}`,
+            deadlineTimestamp,
+          ];
+          hash = await writeContractAsync({
+            address: RouterContract.address,
+            abi: RouterContract.abi,
+            functionName,
+            args,
+          });
+        }
       }
+
+      setSwapHash(hash);
+      const toastId = toast.loading("Swapping... Please wait for confirmation.");
+      setSwapToastId(toastId);
+    } catch (err: any) {
+      setIsSwapping(false);
+      toast.error(`Swap failed: ${err.message || err.name}`);
     }
   };
 
@@ -519,15 +568,25 @@ const SwapForm = () => {
     if (tokensLoading) return "Loading Balances...";
     if (isLoading) return "Calculating...";
     if (hasInsufficientBalance()) return "Insufficient Balance";
+    if (isApproving || isConfirmingApproval)
+      return `Approving ${fromToken?.symbol}...`;
     if (needsApproval) return `Approve ${fromToken?.symbol}`;
+    if (isSwapping || isConfirmingSwap) return "Swapping...";
     return "Swap";
   };
 
   const isButtonDisabled = () => {
     if (!isConnected) return false; // Always enabled to connect
     if (hasInsufficientBalance()) return true; // Disable if insufficient balance
-    if (needsApproval) return isApproving;
-    return !canSwap || isApproving || tokensLoading;
+    if (needsApproval) return isApproving || isConfirmingApproval;
+    return (
+      !canSwap ||
+      isApproving ||
+      isConfirmingApproval ||
+      isSwapping ||
+      isConfirmingSwap ||
+      tokensLoading
+    );
   };
 
   const handleButtonClick = () => {
