@@ -36,7 +36,6 @@ const Farms = () => {
         </div>
       </div>
 
-      {/* Farm Management Section */}
       <div className="flex flex-col items-center justify-center w-full py-8">
         <div className="flex flex-col md:flex-row gap-6 w-full max-w-3xl justify-center">
           <div className="bg-[#f6f6f6] rounded-2xl shadow-md flex-1 p-6 flex flex-col justify-between min-w-[250px]">
