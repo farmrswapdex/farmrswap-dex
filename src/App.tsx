@@ -18,6 +18,7 @@ import NotFound from './pages/NotFound';
 import Pools from "./pages/Pools";
 import RemoveLiquidity from "./pages/RemoveLiquidity";
 import Swap from './pages/Swap';
+import NFTPage from "./pages/NFTPage";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -50,6 +51,7 @@ function App() {
                   <Route path="/bridge" element={<Bridge />} />
                   <Route path="/add" element={<AddLiquidity />} />
                   <Route path="/remove" element={<RemoveLiquidity />} />
+                  <Route path="/mint" element={<NFTPage />} />
                   <Route path="*" element={<NotFound />} />
                 </Route>
               </Routes>
