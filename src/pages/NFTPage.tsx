@@ -39,9 +39,8 @@ const NFTPage = () => {
 			<div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-4">
 				<div className="w-full max-w-md backdrop-blur-lg rounded-2xl shadow-lg p-8 flex flex-col items-center bg-white/50 text-center">
 					<h2 className="text-4xl font-bold text-gray-800 mb-4" style={{ fontFamily: "Fredoka One, sans-serif" }}>Mint a Farmr NFT</h2>
-					<p className="text-gray-600 mb-6">Get your unique Farmr NFT and join the community!</p>
+					<p className="text-gray-600">Get your unique Farmr NFT and join the community!</p>
 
-					<div className="bg-white rounded-xl shadow-md p-2 mb-2">
 						<div className="flex justify-center rounded-lg">
 							<iframe
 								src="https://lottie.host/embed/c73a7da7-1e70-4636-8322-575f1376bb2e/u7JGvit7Kl.lottie"
@@ -49,7 +48,6 @@ const NFTPage = () => {
 								title="Growing Tomatoes Animation"
 							></iframe>
 						</div>
-					</div>
 
 					<div className="w-full mt-2">
 						{!isConnected ? (
