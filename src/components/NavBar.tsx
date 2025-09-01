@@ -31,9 +31,9 @@ const NavBar = () => {
           <img src="https://res.cloudinary.com/dma1c8i6n/image/upload/v1753230758/003-piggy-bank_a18vpu.png" alt="" />
           <span className="font-bold">Stake</span>
         </NavLink>
-        <NavLink to="/mint" className="flex items-center gap-1">
+        {/* <NavLink to="/mint" className="flex items-center gap-1">
           <img src="https://res.cloudinary.com/dma1c8i6n/image/upload/v1753230759/leaf_bu9iiv.png" alt="" /> <span className="font-bold">Mint NFT</span>
-        </NavLink>
+        </NavLink> */}
       </nav>
 
       <div className="flex items-center gap-2">
