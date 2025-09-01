@@ -168,7 +168,7 @@ const NFTMintForm = () => {
 				<div className="w-full mt-2">
 					<button
 						onClick={handleMint}
-						disabled={isPending || isConfirming || isApproving || isConfirmingApproval}
+						disabled
 						className="w-full py-3 rounded-xl text-lg font-bold transition-all duration-300 bg-green-600 text-white hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed shadow-md hover:shadow-lg"
 					>
 						{getButtonText()}
