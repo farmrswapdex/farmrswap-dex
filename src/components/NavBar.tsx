@@ -31,6 +31,10 @@ const NavBar = () => {
           <img src="https://res.cloudinary.com/dma1c8i6n/image/upload/v1753230758/003-piggy-bank_a18vpu.png" alt="" />
           <span className="font-bold">Stake</span>
         </NavLink>
+        <NavLink to="/launchpad" className="flex items-center gap-1">
+          <img src="https://res.cloudinary.com/dma1c8i6n/image/upload/v1753230759/leaf_bu9iiv.png" alt="" />
+          <span className="font-bold">Launchpad</span>
+        </NavLink>
         {/* <NavLink to="/mint" className="flex items-center gap-1">
           <img src="https://res.cloudinary.com/dma1c8i6n/image/upload/v1753230759/leaf_bu9iiv.png" alt="" /> <span className="font-bold">Mint NFT</span>
         </NavLink> */}
@@ -95,6 +99,9 @@ const NavBar = () => {
           <NavLink to="/farms" onClick={() => setIsNavOpen(false)} className="flex items-center gap-1 bg-white rounded mb-6 p-2">
             <img src="https://res.cloudinary.com/dma1c8i6n/image/upload/v1753230758/003-piggy-bank_a18vpu.png" alt="" />
             <span>Stake</span>
+          </NavLink>
+          <NavLink to="/launchpad" onClick={() => setIsNavOpen(false)} className="flex items-center gap-1 bg-white rounded mb-6 p-2">
+            <img src="https://res.cloudinary.com/dma1c8i6n/image/upload/v1753230759/leaf_bu9iiv.png" alt="" /> <span>Launchpad</span>
           </NavLink>
           <NavLink to="/mint" onClick={() => setIsNavOpen(false)} className="flex items-center gap-1 bg-white rounded mb-6 p-2">
             <img src="https://res.cloudinary.com/dma1c8i6n/image/upload/v1753230759/leaf_bu9iiv.png" alt="" /> <span>Mint NFT</span>
