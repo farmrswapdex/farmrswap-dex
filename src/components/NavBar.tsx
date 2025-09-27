@@ -1,12 +1,17 @@
 import { useState } from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink, useLocation } from 'react-router-dom';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 
 const NavBar = () => {
   const [isNavOpen, setIsNavOpen] = useState(false);
+  const location = useLocation();
 
   const toggleNav = () => {
     setIsNavOpen(!isNavOpen);
+  };
+
+  const isSelected = (path: string) => {
+    return location.pathname === path;
   };
 
   return (
@@ -19,25 +24,46 @@ const NavBar = () => {
       </div>
 
       <nav className="hidden md:flex items-center gap-12 text-white">
-        <NavLink to="/swap" className="flex items-center gap-1">
+        <NavLink
+          to="/swap"
+          className={`flex items-center gap-1 px-3 py-2 rounded-lg transition-all duration-200 ${isSelected('/swap')
+            ? 'bg-blue-600 text-white shadow-lg'
+            : 'hover:bg-white/10 text-white/80 hover:text-white'
+            }`}
+        >
           <img src="https://res.cloudinary.com/dma1c8i6n/image/upload/v1753230758/001-up-and-down_rl8pjs.png" alt="" />
           <span className="font-bold">Swap</span>
         </NavLink>
-        <NavLink to="/pools" className="flex items-center gap-1">
+        <NavLink
+          to="/pools"
+          className={`flex items-center gap-1 px-3 py-2 rounded-lg transition-all duration-200 ${isSelected('/pools')
+            ? 'bg-blue-600 text-white shadow-lg'
+            : 'hover:bg-white/10 text-white/80 hover:text-white'
+            }`}
+        >
           <img src="https://res.cloudinary.com/dma1c8i6n/image/upload/v1753230758/002-drops_iwjyhf.png" alt="" />
           <span className="font-bold">Liquidity</span>
         </NavLink>
-        <NavLink to="/farms" className="flex items-center gap-1">
+        <NavLink
+          to="/farms"
+          className={`flex items-center gap-1 px-3 py-2 rounded-lg transition-all duration-200 ${isSelected('/farms')
+            ? 'bg-blue-600 text-white shadow-lg'
+            : 'hover:bg-white/10 text-white/80 hover:text-white'
+            }`}
+        >
           <img src="https://res.cloudinary.com/dma1c8i6n/image/upload/v1753230758/003-piggy-bank_a18vpu.png" alt="" />
           <span className="font-bold">Stake</span>
         </NavLink>
-        <NavLink to="/launchpad" className="flex items-center gap-1">
+        <NavLink
+          to="/launchpad"
+          className={`flex items-center gap-1 px-3 py-2 rounded-lg transition-all duration-200 ${isSelected('/launchpad') || location.pathname.startsWith('/launchpad/')
+            ? 'bg-blue-600 text-white shadow-lg'
+            : 'hover:bg-white/10 text-white/80 hover:text-white'
+            }`}
+        >
           <img src="https://res.cloudinary.com/dma1c8i6n/image/upload/v1753230759/leaf_bu9iiv.png" alt="" />
           <span className="font-bold">Launchpad</span>
         </NavLink>
-        {/* <NavLink to="/mint" className="flex items-center gap-1">
-          <img src="https://res.cloudinary.com/dma1c8i6n/image/upload/v1753230759/leaf_bu9iiv.png" alt="" /> <span className="font-bold">Mint NFT</span>
-        </NavLink> */}
       </nav>
 
       <div className="flex items-center gap-2">
@@ -88,24 +114,51 @@ const NavBar = () => {
 
       <div className={`${isNavOpen ? 'block' : 'hidden'} md:hidden absolute top-full left-0 w-full bg-[rgb(30,29,45)] z-20`}>
         <div className="p-4 text-[#171717] font-semibold">
-          <NavLink to="/swap" onClick={() => setIsNavOpen(false)} className="flex items-center gap-1 bg-white rounded mb-6 p-2">
+          <NavLink
+            to="/swap"
+            onClick={() => setIsNavOpen(false)}
+            className={`flex items-center gap-1 rounded mb-6 p-2 transition-all duration-200 ${isSelected('/swap')
+              ? 'bg-blue-600 text-white shadow-lg'
+              : 'bg-white hover:bg-gray-100'
+              }`}
+          >
             <img src="https://res.cloudinary.com/dma1c8i6n/image/upload/v1753230758/001-up-and-down_rl8pjs.png" alt="" />
             <span>Swap</span>
           </NavLink>
-          <NavLink to="/pools" onClick={() => setIsNavOpen(false)} className="flex items-center gap-1 bg-white rounded mb-6 p-2">
+          <NavLink
+            to="/pools"
+            onClick={() => setIsNavOpen(false)}
+            className={`flex items-center gap-1 rounded mb-6 p-2 transition-all duration-200 ${isSelected('/pools')
+              ? 'bg-blue-600 text-white shadow-lg'
+              : 'bg-white hover:bg-gray-100'
+              }`}
+          >
             <img src="https://res.cloudinary.com/dma1c8i6n/image/upload/v1753230758/002-drops_iwjyhf.png" alt="" />
             <span>Liquidity</span>
           </NavLink>
-          <NavLink to="/farms" onClick={() => setIsNavOpen(false)} className="flex items-center gap-1 bg-white rounded mb-6 p-2">
+          <NavLink
+            to="/farms"
+            onClick={() => setIsNavOpen(false)}
+            className={`flex items-center gap-1 rounded mb-6 p-2 transition-all duration-200 ${isSelected('/farms')
+              ? 'bg-blue-600 text-white shadow-lg'
+              : 'bg-white hover:bg-gray-100'
+              }`}
+          >
             <img src="https://res.cloudinary.com/dma1c8i6n/image/upload/v1753230758/003-piggy-bank_a18vpu.png" alt="" />
             <span>Stake</span>
           </NavLink>
-          <NavLink to="/launchpad" onClick={() => setIsNavOpen(false)} className="flex items-center gap-1 bg-white rounded mb-6 p-2">
-            <img src="https://res.cloudinary.com/dma1c8i6n/image/upload/v1753230759/leaf_bu9iiv.png" alt="" /> <span>Launchpad</span>
+          <NavLink
+            to="/launchpad"
+            onClick={() => setIsNavOpen(false)}
+            className={`flex items-center gap-1 rounded mb-6 p-2 transition-all duration-200 ${isSelected('/launchpad') || location.pathname.startsWith('/launchpad/')
+              ? 'bg-blue-600 text-white shadow-lg'
+              : 'bg-white hover:bg-gray-100'
+              }`}
+          >
+            <img src="https://res.cloudinary.com/dma1c8i6n/image/upload/v1753230759/leaf_bu9iiv.png" alt="" />
+            <span>Launchpad</span>
           </NavLink>
-          <NavLink to="/mint" onClick={() => setIsNavOpen(false)} className="flex items-center gap-1 bg-white rounded mb-6 p-2">
-            <img src="https://res.cloudinary.com/dma1c8i6n/image/upload/v1753230759/leaf_bu9iiv.png" alt="" /> <span>Mint NFT</span>
-          </NavLink>
+
           <div className="flex justify-center mt-4">
             <ConnectButton />
           </div>

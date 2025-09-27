@@ -1,4 +1,13 @@
-const VestingSchedule = ({ vesting }) => {
+interface VestingItem {
+    date: string | number | Date;
+    amount: number | string;
+}
+
+interface VestingScheduleProps {
+    vesting: VestingItem[];
+}
+
+const VestingSchedule: React.FC<VestingScheduleProps> = ({ vesting }) => {
     return (
         <div className="mt-4">
             <h3 className="text-lg font-bold">Vesting Schedule</h3>

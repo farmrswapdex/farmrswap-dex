@@ -21,7 +21,7 @@ const projects = [
 ];
 
 const Claim = () => {
-    const handleClaim = (projectId) => {
+    const handleClaim = (projectId: number) => {
         alert(`Claiming tokens for project ${projectId}`);
     };
 

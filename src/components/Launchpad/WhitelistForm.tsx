@@ -4,7 +4,7 @@ const WhitelistForm = () => {
     const [email, setEmail] = useState('');
     const [message, setMessage] = useState('');
 
-    const handleSubmit = (e) => {
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         alert(`You have applied to the whitelist with email: ${email}`);
     };
