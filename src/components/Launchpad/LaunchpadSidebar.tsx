@@ -7,19 +7,21 @@ const LaunchpadSidebar = () => {
 
   return (
     <div className="fixed top-24 left-4 w-64 bg-gray-800/50 backdrop-blur-lg text-white rounded-lg shadow-xl h-fit">
-      <div className="p-4">
-        <h2 className="text-2xl font-bold">Launchpad</h2>
-      </div>
       <nav>
         <ul>
           <li>
-            <NavLink to="/launchpad" end className={navLinkClasses}>
-              Projects
+            <NavLink to="/dashboard" className={navLinkClasses}>
+              Dashboard
             </NavLink>
           </li>
           <li>
-            <NavLink to="/whitelist" className={navLinkClasses}>
-              Whitelist
+            <NavLink to="/create" className={navLinkClasses}>
+              Create
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to="/launchpad" end className={navLinkClasses}>
+              Projects
             </NavLink>
           </li>
         </ul>
