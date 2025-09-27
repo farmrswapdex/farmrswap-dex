@@ -11,6 +11,7 @@ import { config } from "./lib/wagmi";
 
 import AddLiquidity from "./pages/AddLiquidity";
 import Bridge from "./pages/Bridge";
+import Create from "./pages/Create";
 import Explore from "./pages/Explore";
 import Farms from './pages/Farms';
 import Home from "./pages/Home";
@@ -59,6 +60,7 @@ function App() {
                   <Route path="/mint" element={<NFTPage />} />
                   <Route path="/launchpad" element={<Launchpad />} />
                   <Route path="/launchpad/:id" element={<ProjectDetails />} />
+                  <Route path="/create" element={<Create />} />
                   <Route path="/claim" element={<Claim />} />
                   <Route path="/dashboard" element={<UserDashboard />} />
                   <Route path="/whitelist" element={<Whitelist />} />
