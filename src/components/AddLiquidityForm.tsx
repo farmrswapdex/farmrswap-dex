@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { MaxUint256 } from "ethers";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "react-hot-toast";
@@ -98,14 +99,7 @@ const AddLiquidityForm = ({
       refetchAllowanceA();
       fetchUserTokens(address!);
     }
-  }, [
-    isApprovedA,
-    approvalHashA,
-    address,
-    fetchUserTokens,
-    approvalToastIdA,
-    tokenA.symbol,
-  ]);
+  }, [isApprovedA, approvalHashA, address, fetchUserTokens, approvalToastIdA, tokenA.symbol]);
 
   useEffect(() => {
     if (isApprovedB && approvalHashB) {
@@ -223,6 +217,7 @@ const AddLiquidityForm = ({
         const requiredAmount = parseUnits(amountA, tokenA.decimals);
         setNeedsApprovalA(allowanceA < requiredAmount);
       } catch (e) {
+        toast.error("", e!);
         setNeedsApprovalA(false);
       }
     } else {
@@ -236,6 +231,7 @@ const AddLiquidityForm = ({
         const requiredAmount = parseUnits(amountB, tokenB.decimals);
         setNeedsApprovalB(allowanceB < requiredAmount);
       } catch (e) {
+        toast.error("", e!);
         setNeedsApprovalB(false);
       }
     } else {
@@ -357,9 +353,10 @@ const AddLiquidityForm = ({
         `Approving ${token.symbol}... Please wait for confirmation.`
       );
       setToastId(toastId);
-    } catch (err: any) {
+    } catch (err: unknown) {
       setApproving(false);
-      toast.error(`Approval failed: ${err.message || err.name}`);
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+      toast.error(`Approval failed: ${errorMessage}`);
     }
   };
 
@@ -408,7 +405,7 @@ const AddLiquidityForm = ({
         // For token-token pairs, we need to use the correct order
         const [token0, token1] =
           sortedTokenA.address.toLowerCase() <
-          sortedTokenB.address.toLowerCase()
+            sortedTokenB.address.toLowerCase()
             ? [sortedTokenA, sortedTokenB]
             : [sortedTokenB, sortedTokenA];
 
@@ -439,9 +436,10 @@ const AddLiquidityForm = ({
         "Adding liquidity... Please wait for confirmation."
       );
       setLiquidityToastId(toastId);
-    } catch (err: any) {
+    } catch (err: unknown) {
       setIsAddingLiquidity(false);
-      toast.error(`Failed to add liquidity: ${err.message || err.name}`);
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+      toast.error(`Failed to add liquidity: ${errorMessage}`);
     }
   };
 
@@ -527,6 +525,7 @@ const AddLiquidityForm = ({
 
       return Decimal.min(shareA, shareB).toDecimalPlaces(2).toString();
     } catch (e) {
+      console.log(e);
       return "0";
     }
   }, [

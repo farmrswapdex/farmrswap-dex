@@ -19,6 +19,11 @@ import Pools from "./pages/Pools";
 import RemoveLiquidity from "./pages/RemoveLiquidity";
 import Swap from './pages/Swap';
 import NFTPage from "./pages/NFTPage";
+import Launchpad from "./pages/Launchpad";
+import ProjectDetails from "./pages/ProjectDetails";
+import Claim from "./pages/Claim";
+import UserDashboard from "./pages/UserDashboard";
+import Whitelist from "./pages/Whitelist";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -52,6 +57,11 @@ function App() {
                   <Route path="/add" element={<AddLiquidity />} />
                   <Route path="/remove" element={<RemoveLiquidity />} />
                   <Route path="/mint" element={<NFTPage />} />
+                  <Route path="/launchpad" element={<Launchpad />} />
+                  <Route path="/launchpad/:id" element={<ProjectDetails />} />
+                  <Route path="/claim" element={<Claim />} />
+                  <Route path="/dashboard" element={<UserDashboard />} />
+                  <Route path="/whitelist" element={<Whitelist />} />
                   <Route path="*" element={<NotFound />} />
                 </Route>
               </Routes>
