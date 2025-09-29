@@ -20,7 +20,7 @@ export const TOKENS = {
     FARMR: {
         symbol: 'FARMR',
         name: 'FARMR Token',
-        address: '0x6565ddb196392D387e88E0A85e688d1d750CF4A9',
+        address: '0x8D3815197b07A24D8Df7f50E28cD47Fe2165d65F',
         decimals: 18,
         logoURI: 'https://res.cloudinary.com/dma1c8i6n/image/upload/f_auto,q_auto/farmr_coin_j5gfsd',
         color: ''
