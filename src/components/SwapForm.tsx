@@ -7,12 +7,13 @@ import { erc20Abi, formatUnits, parseUnits } from "viem";
 import {
 	useAccount,
 	useReadContract,
-	useWriteContract,
 	useWaitForTransactionReceipt,
+	useWriteContract,
 } from "wagmi";
 import { RouterContract, Weth9Contract } from "../lib/config";
 import { NATIVE_TOKEN, TOKENS } from "../lib/constants";
 import { formatNumber, parseAmount } from "../lib/quoteCalculator";
+import { getTokenPrices } from "../lib/priceService";
 import { useTokenStore } from "../store/useTokenStore";
 import SettingsModal from "./SettingsModal";
 import TokenModal from "./TokenModal";
@@ -29,7 +30,7 @@ interface Token {
 
 const SwapForm = () => {
 	const { openConnectModal } = useConnectModal();
-	const { address, isConnected } = useAccount();
+	const { address, isConnected, chain } = useAccount();
 	const { writeContractAsync, error } = useWriteContract();
 	const {
 		userTokens,
@@ -38,21 +39,22 @@ const SwapForm = () => {
 	} = useTokenStore();
 
 	// Common state for both forms
-	const [fromToken, setFromToken] = useState<Token | null>(NATIVE_TOKEN);
-	const [toToken, setToToken] = useState<Token | null>(TOKENS.FARMR);
-	const [fromAmount, setFromAmount] = useState("");
-	const [toAmount, setToAmount] = useState("");
+	const [fromToken, setFromToken] = useState<Token>(NATIVE_TOKEN);
+	const [toToken, setToToken] = useState<Token>(TOKENS.FARMR);
+	const [fromAmount, setFromAmount] = useState<string>();
+	const [toAmount, setToAmount] = useState<string>();
+	const [tokenPrices, setTokenPrices] = useState<{ [address: string]: number; }>({});
 
 	// Swap-specific state
 	const [isFlipped, setIsFlipped] = useState(false);
 	const [amountsSwapped, setAmountsSwapped] = useState(false);
 	const [needsApproval, setNeedsApproval] = useState(false);
 	const [isApproving, setIsApproving] = useState(false);
-	const [approvalHash, setApprovalHash] = useState<`0x${string}` | undefined>();
-	const [swapHash, setSwapHash] = useState<`0x${string}` | undefined>();
+	const [approvalHash, setApprovalHash] = useState<`0x${string}`>();
+	const [swapHash, setSwapHash] = useState<`0x${string}`>();
 	const [isSwapping, setIsSwapping] = useState(false);
-	const [approvalToastId, setApprovalToastId] = useState<string | undefined>();
-	const [swapToastId, setSwapToastId] = useState<string | undefined>();
+	const [approvalToastId, setApprovalToastId] = useState<string>();
+	const [swapToastId, setSwapToastId] = useState<string>();
 
 	// Settings
 	const [slippage, setSlippage] = useState(0.5);
@@ -76,6 +78,25 @@ const SwapForm = () => {
 		});
 
 	// Update approval state when confirmation completes
+	useEffect(() => {
+		const fetchPrices = async () => {
+			if (!fromToken || !toToken || !chain) return;
+
+			const addresses = [
+				fromToken.address,
+				toToken.address,
+			];
+
+			// Remove duplicates
+			const uniqueAddresses = [...new Set(addresses)];
+
+			const prices = await getTokenPrices(uniqueAddresses, chain.name);
+			setTokenPrices(prices);
+		};
+
+		fetchPrices();
+	}, [fromToken, toToken, chain]);
+
 	useEffect(() => {
 		if (isApproved && approvalHash) {
 			setIsApproving(false);
@@ -135,11 +156,7 @@ const SwapForm = () => {
 			: (toToken?.address as `0x${string}`),
 	].filter(Boolean);
 
-	const {
-		data: amountsOutData,
-		isLoading: isLoadingAmountsOut,
-		error: amountsOutError,
-	} = useReadContract({
+	const { data: amountsOutData, isLoading: isLoadingAmountsOut, error: amountsOutError, } = useReadContract({
 		address: RouterContract.address,
 		abi: RouterContract.abi,
 		functionName: "getAmountsOut",
@@ -158,11 +175,16 @@ const SwapForm = () => {
 		},
 	});
 
-	const {
-		data: amountsInData,
-		isLoading: isLoadingAmountsIn,
-		error: amountsInError,
-	} = useReadContract({
+	useEffect(() => {
+		if (!isFlipped && fromAmount && parseFloat(fromAmount) > 0) {
+			console.log("Debug: getAmountsOut call args:", {
+				amountIn: parseUnits(fromAmount, fromToken?.decimals || 18).toString(),
+				path: path,
+			});
+		}
+	}, [fromAmount, fromToken, path, isFlipped]);
+
+	const { data: amountsInData, isLoading: isLoadingAmountsIn, error: amountsInError, } = useReadContract({
 		address: RouterContract.address,
 		abi: RouterContract.abi,
 		functionName: "getAmountsIn",
@@ -181,6 +203,15 @@ const SwapForm = () => {
 		},
 	});
 
+	useEffect(() => {
+		if (isFlipped && toAmount && parseFloat(toAmount) > 0) {
+			console.log("Debug: getAmountsIn call args:", {
+				amountOut: parseUnits(toAmount, toToken?.decimals || 18).toString(),
+				path: path,
+			});
+		}
+	}, [toAmount, toToken, path, isFlipped]);
+
 	const isLoading = isLoadingAmountsOut || isLoadingAmountsIn;
 
 	useEffect(() => {
@@ -195,14 +226,18 @@ const SwapForm = () => {
 
 	useEffect(() => {
 		if (!isFlipped && amountsOutData && toToken) {
+			console.log("Debug: getAmountsOut raw output:", amountsOutData);
 			const formattedAmount = formatUnits(amountsOutData[1], toToken.decimals);
+			console.log(`Debug: Setting toAmount (exact input) to: ${formattedAmount}`);
 			setToAmount(formattedAmount);
 		}
 	}, [amountsOutData, isFlipped, toToken]);
 
 	useEffect(() => {
 		if (isFlipped && amountsInData && fromToken) {
+			console.log("Debug: getAmountsIn raw output:", amountsInData);
 			const formattedAmount = formatUnits(amountsInData[0], fromToken.decimals);
+			console.log(`Debug: Setting fromAmount (exact output) to: ${formattedAmount}`);
 			setFromAmount(formattedAmount);
 		}
 	}, [amountsInData, isFlipped, fromToken]);
@@ -323,9 +358,10 @@ const SwapForm = () => {
 				`Approving ${fromToken.symbol}... Please wait for confirmation.`
 			);
 			setApprovalToastId(toastId);
-		} catch (err: any) {
+		} catch (err: unknown) {
 			setIsApproving(false);
-			toast.error(`Approval failed: ${err.message || err.name}`);
+			const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+			toast.error(`Approval failed: ${errorMessage}`);
 		}
 	};
 
@@ -368,7 +404,7 @@ const SwapForm = () => {
 
 				if (fromToken.symbol === "BLOCX") {
 					// swapETHForExactTokens(uint amountOut, address[] path, address to, uint deadline)
-					const functionName: "swapETHForExactTokens" = "swapETHForExactTokens";
+					const functionName = "swapETHForExactTokens";
 					const args: [
 						bigint,
 						readonly `0x${string}`[],
@@ -390,7 +426,7 @@ const SwapForm = () => {
 					});
 				} else if (toToken.symbol === "BLOCX") {
 					// swapTokensForExactETH(uint amountOut, uint amountInMax, address[] path, address to, uint deadline)
-					const functionName: "swapTokensForExactETH" = "swapTokensForExactETH";
+					const functionName = "swapTokensForExactETH";
 					const args: [
 						bigint,
 						bigint,
@@ -412,7 +448,7 @@ const SwapForm = () => {
 					});
 				} else {
 					// swapTokensForExactTokens(uint amountOut, uint amountInMax, address[] path, address to, uint deadline)
-					const functionName: "swapTokensForExactTokens" =
+					const functionName =
 						"swapTokensForExactTokens";
 					const args: [
 						bigint,
@@ -446,7 +482,7 @@ const SwapForm = () => {
 
 				if (fromToken.symbol === "BLOCX") {
 					// swapExactETHForTokens(uint amountOutMin, address[] path, address to, uint deadline)
-					const functionName: "swapExactETHForTokens" = "swapExactETHForTokens";
+					const functionName = "swapExactETHForTokens";
 					const args: [
 						bigint,
 						readonly `0x${string}`[],
@@ -468,7 +504,7 @@ const SwapForm = () => {
 					});
 				} else if (toToken.symbol === "BLOCX") {
 					// swapExactTokensForETH(uint amountIn, uint amountOutMin, address[] path, address to, uint deadline)
-					const functionName: "swapExactTokensForETH" = "swapExactTokensForETH";
+					const functionName = "swapExactTokensForETH";
 					const args: [
 						bigint,
 						bigint,
@@ -490,7 +526,7 @@ const SwapForm = () => {
 					});
 				} else {
 					// swapExactTokensForTokens(uint amountIn, uint amountOutMin, address[] path, address to, uint deadline)
-					const functionName: "swapExactTokensForTokens" =
+					const functionName =
 						"swapExactTokensForTokens";
 					const args: [
 						bigint,
@@ -519,9 +555,10 @@ const SwapForm = () => {
 				"Swapping... Please wait for confirmation."
 			);
 			setSwapToastId(toastId);
-		} catch (err: any) {
+		} catch (err: unknown) {
 			setIsSwapping(false);
-			toast.error(`Swap failed: ${err.message || err.name}`);
+			const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+			toast.error(`Swap failed: ${errorMessage}`);
 		}
 	};
 
@@ -558,11 +595,14 @@ const SwapForm = () => {
 		!isLoading &&
 		!hasInsufficientBalance();
 
+	const fromTokenPrice = fromToken ? tokenPrices[fromToken.address.toLowerCase()] || 0 : 0;
+	const toTokenPrice = toToken ? tokenPrices[toToken.address.toLowerCase()] || 0 : 0;
+
 	const fromAmountInUsd = fromAmount
-		? (parseFloat(fromAmount) * 0.001).toFixed(2)
+		? (parseFloat(fromAmount) * fromTokenPrice).toFixed(2)
 		: "0.00";
 	const toAmountInUsd = toAmount
-		? (parseFloat(toAmount) * 0.001).toFixed(2)
+		? (parseFloat(toAmount) * toTokenPrice).toFixed(2)
 		: "0.00";
 
 	const getButtonText = () => {
@@ -779,8 +819,8 @@ const SwapForm = () => {
 						onClick={handleButtonClick}
 						disabled={isButtonDisabled()}
 						className={`w-full mt-4 py-3 sm:py-4 rounded-full text-lg md:text-xl font-bold shadow-md transition-all duration-200 ${!isButtonDisabled()
-								? "bg-blue-600 text-white hover:bg-blue-700 hover:shadow-lg transform hover:scale-[1.02]"
-								: "bg-gray-300 text-gray-500 cursor-not-allowed"
+							? "bg-blue-600 text-white hover:bg-blue-700 hover:shadow-lg transform hover:scale-[1.02]"
+							: "bg-gray-300 text-gray-500 cursor-not-allowed"
 							}`}
 					>
 						{getButtonText()}

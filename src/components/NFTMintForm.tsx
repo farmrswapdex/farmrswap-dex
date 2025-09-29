@@ -78,9 +78,10 @@ const NFTMintForm = () => {
 				functionName: "approve",
 				args: [NFTMint.address as `0x${string}`, MaxUint256],
 			});
-		} catch (err: any) {
+		} catch (err: unknown) {
 			setIsApproving(false);
-			toast.error(`Approval failed: ${err.message || err.name}`);
+			const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+			toast.error(`Approval failed: ${errorMessage}`);
 		}
 	};
 
@@ -122,7 +123,7 @@ const NFTMintForm = () => {
 		if (isPending) return 'Confirming...';
 		if (isConfirming) return 'Minting...';
 		return `Mint Now`;
-	}
+	};
 
 	return (
 		<>
@@ -193,7 +194,7 @@ const NFTMintForm = () => {
 					<div className="mt-6 text-red-800 bg-red-100 rounded-xl p-4 w-full animate-fade-in">
 						<p className="font-bold text-lg">Error</p>
 						<p className="text-sm">
-							{(error as { shortMessage?: string }).shortMessage || error.message}
+							{(error as { shortMessage?: string; }).shortMessage || error.message}
 						</p>
 					</div>
 				)}

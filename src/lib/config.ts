@@ -2,7 +2,7 @@
 export const OWNER = "0xE6BA1A6f95B5d9994332C454E607fe9122DdA837"
 
 export const FactoryContract = {
-    address: "0x66691c42ff0d5dd87125fd594927Dd31C208c77d",
+    address: "0xe1ab6eb7ccfc9bbA736D938A805E6B08335eB4C9",
     abi:
         [
             {
@@ -362,7 +362,7 @@ export const MulticallContract = {
 } as const
 
 export const RouterContract = {
-    address: "0x4E60a0401EA3EF244b828f5f98dd713Ca6Da26cD",
+    address: "0xdE6e0dCcCc1795961436c5912f0474F8c4ED9523",
     abi: [
         {
             "inputs": [
