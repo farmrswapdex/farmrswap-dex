@@ -9,7 +9,7 @@ const customChain = defineChain({
     nativeCurrency: {
         decimals: 18,
         name: 'BLOCX',
-        symbol: 'BLOCX',
+        symbol: 'BLX',
     },
     rpcUrls: {
         default: {
