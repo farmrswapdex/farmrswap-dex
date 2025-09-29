@@ -22,7 +22,7 @@ const NFTMintForm = () => {
 		});
 
 	const [mintAmount] = useState(1);
-	const payToken = TOKENS.USDC;
+	const payToken = TOKENS.WBLOCX;
 	const [needsApproval, setNeedsApproval] = useState(false);
 	const [isApproving, setIsApproving] = useState(false);
 	const [approvalHash, setApprovalHash] = useState<`0x${string}` | undefined>();

@@ -10,7 +10,7 @@ const Bridge = () => {
 
     return (
         <div className="w-full min-h-screen bg-[#a7d8f5] flex flex-col justify-between">
-            
+
             <div className="flex flex-col items-center justify-center flex-1 w-full px-4 pt-20 pb-8">
                 <div className="w-full max-w-md bg-white rounded-3xl shadow-lg p-8 flex flex-col gap-6">
                     <Tabs.Root defaultValue="deposit" className="flex flex-col gap-6">
@@ -50,10 +50,10 @@ const Bridge = () => {
                                     <span className="font-bold text-[#2d3e3e] text-lg mb-1">You Send</span>
                                     <div className="flex items-center gap-3">
                                         <span className="w-12 h-12 rounded-full flex items-center justify-center bg-white border border-gray-200">
-                                            <img src={TOKENS.USDC.logoURI} alt={TOKENS.USDC.name} className="w-8 h-8" />
+                                            <img src={TOKENS.FARMR.logoURI} alt={TOKENS.FARMR.name} className="w-8 h-8" />
                                             <img src={TOKENS.WBLOCX.logoURI} alt={TOKENS.WBLOCX.name} className="w-4 h-4 absolute ml-6 mt-6" style={{ marginLeft: '-18px', marginTop: '18px' }} />
                                         </span>
-                                        <span className="font-semibold text-[#2d3e3e] text-base">{TOKENS.USDC.symbol}</span>
+                                        <span className="font-semibold text-[#2d3e3e] text-base">{TOKENS.FARMR.symbol}</span>
                                         <div className="flex-1"></div>
                                         <span className="text-3xl font-bold text-[#b0c4d4] select-none">0</span>
                                     </div>
@@ -64,10 +64,10 @@ const Bridge = () => {
                                     <span className="font-bold text-[#2d3e3e] text-lg mb-1">You Receive</span>
                                     <div className="flex items-center gap-3">
                                         <span className="w-12 h-12 rounded-full flex items-center justify-center bg-white border border-gray-200">
-                                            <img src={TOKENS.USDC.logoURI} alt={TOKENS.USDC.name} className="w-8 h-8" />
+                                            <img src={TOKENS.FARMR.logoURI} alt={TOKENS.FARMR.name} className="w-8 h-8" />
                                             <img src={NATIVE_TOKEN.logoURI} alt={NATIVE_TOKEN.name} className="w-4 h-4 absolute ml-6 mt-6" style={{ marginLeft: '-18px', marginTop: '18px' }} />
                                         </span>
-                                        <span className="font-semibold text-[#2d3e3e] text-base">{TOKENS.USDC.symbol}</span>
+                                        <span className="font-semibold text-[#2d3e3e] text-base">{TOKENS.FARMR.symbol}</span>
                                     </div>
                                 </div>
                             </div>

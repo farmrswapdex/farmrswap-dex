@@ -1,6 +1,6 @@
 type Token = { address: string; };
 
-export const sortTokens = (tokenA: Token, tokenB: Token) => {
+export const sortTokens = <T extends Token>(tokenA: T, tokenB: T): [T, T] => {
   // Handle native token (0x0 address) - always put it first
   const isTokenANative = tokenA.address === '0x0000000000000000000000000000000000000000';
   const isTokenBNative = tokenB.address === '0x0000000000000000000000000000000000000000';
