@@ -33,7 +33,6 @@ export const TOKENS = {
         logoURI: 'https://assets.coingecko.com/coins/images/6319/small/USD_Coin_icon.png',
         color: ''
     },
-
 };
 
 export const NATIVE_TOKEN = {

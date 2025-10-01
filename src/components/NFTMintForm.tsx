@@ -112,7 +112,8 @@ const NFTMintForm = () => {
 
 	useEffect(() => {
 		if (error) {
-			toast.error(error.message);
+			console.log(error);
+			toast.error("Error");
 		}
 	}, [error]);
 

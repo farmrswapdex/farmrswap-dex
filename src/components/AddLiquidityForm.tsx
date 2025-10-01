@@ -217,7 +217,8 @@ const AddLiquidityForm = ({
         const requiredAmount = parseUnits(amountA, tokenA.decimals);
         setNeedsApprovalA(allowanceA < requiredAmount);
       } catch (e) {
-        toast.error("", e!);
+        console.log(e);
+        toast.error("Error");
         setNeedsApprovalA(false);
       }
     } else {
@@ -231,7 +232,8 @@ const AddLiquidityForm = ({
         const requiredAmount = parseUnits(amountB, tokenB.decimals);
         setNeedsApprovalB(allowanceB < requiredAmount);
       } catch (e) {
-        toast.error("", e!);
+        console.log(e);
+        toast.error("Error");
         setNeedsApprovalB(false);
       }
     } else {
@@ -356,7 +358,8 @@ const AddLiquidityForm = ({
     } catch (err: unknown) {
       setApproving(false);
       const errorMessage = err instanceof Error ? err.message : 'Unknown error';
-      toast.error(`Approval failed: ${errorMessage}`);
+      console.log(errorMessage);
+      toast.error(`Approval failed`);
     }
   };
 
@@ -439,7 +442,8 @@ const AddLiquidityForm = ({
     } catch (err: unknown) {
       setIsAddingLiquidity(false);
       const errorMessage = err instanceof Error ? err.message : 'Unknown error';
-      toast.error(`Failed to add liquidity: ${errorMessage}`);
+      console.log(errorMessage);
+      toast.error(`Failed to add liquidity`);
     }
   };
 
