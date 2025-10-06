@@ -169,6 +169,7 @@ const SwapForm = () => {
 				!isFlipped &&
 				!!fromToken &&
 				!!toToken &&
+				fromToken.address !== toToken.address &&
 				!!fromAmount &&
 				parseFloat(fromAmount) > 0 &&
 				path.length === 2,
@@ -197,6 +198,7 @@ const SwapForm = () => {
 				isFlipped &&
 				!!fromToken &&
 				!!toToken &&
+				fromToken.address !== toToken.address &&
 				!!toAmount &&
 				parseFloat(toAmount) > 0 &&
 				path.length === 2,
@@ -306,15 +308,15 @@ const SwapForm = () => {
 	const handleTokenSelect = (token: Token, isFromToken: boolean) => {
 		setAmountsSwapped(false);
 		if (isFromToken) {
-			if (toToken?.symbol === token.symbol) {
+			if (toToken?.address === token.address) {
 				const currentFromToken = fromToken;
 				setFromToken(toToken);
-				setToToken(currentFromToken || null);
+				setToToken(currentFromToken);
 			} else {
 				setFromToken(token);
 			}
 		} else {
-			if (fromToken?.symbol === token.symbol) {
+			if (fromToken?.address === token.address) {
 				const currentToToken = toToken;
 				setToToken(fromToken);
 				setFromToken(currentToToken);
@@ -609,6 +611,7 @@ const SwapForm = () => {
 		if (!isConnected) return "Connect Wallet";
 		if (tokensLoading) return "Loading Balances...";
 		if (isLoading) return "Calculating...";
+		if (fromToken.address === toToken.address) return "Tokens cannot be the same";
 		if (hasInsufficientBalance()) return "Insufficient Balance";
 		if (isApproving || isConfirmingApproval)
 			return `Approving ${fromToken?.symbol}...`;
@@ -619,6 +622,7 @@ const SwapForm = () => {
 
 	const isButtonDisabled = () => {
 		if (!isConnected) return false; // Always enabled to connect
+		if (fromToken.address === toToken.address) return true;
 		if (hasInsufficientBalance()) return true; // Disable if insufficient balance
 		if (needsApproval) return isApproving || isConfirmingApproval;
 		return (
