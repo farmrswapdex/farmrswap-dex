@@ -3451,5 +3451,68 @@ export const NFTMint = {
             "type": "function"
         }
     ]
-}
+};
 
+
+// Standard Synthetix StakingRewards ABI
+export const STAKING_REWARDS_ABI = {
+    address: "0x0000000000000000000000000000000000000001",
+    abi: [
+        {
+            inputs: [{ internalType: "address", name: "account", type: "address" }],
+            name: "balanceOf",
+            outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+            stateMutability: "view",
+            type: "function",
+        },
+        {
+            inputs: [{ internalType: "address", name: "account", type: "address" }],
+            name: "earned",
+            outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+            stateMutability: "view",
+            type: "function",
+        },
+        {
+            inputs: [],
+            name: "totalSupply",
+            outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+            stateMutability: "view",
+            type: "function",
+        },
+        {
+            inputs: [],
+            name: "rewardRate",
+            outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+            stateMutability: "view",
+            type: "function",
+        },
+        {
+            inputs: [{ internalType: "uint256", name: "amount", type: "uint256" }],
+            name: "stake",
+            outputs: [],
+            stateMutability: "nonpayable",
+            type: "function",
+        },
+        {
+            inputs: [{ internalType: "uint256", name: "amount", type: "uint256" }],
+            name: "withdraw",
+            outputs: [],
+            stateMutability: "nonpayable",
+            type: "function",
+        },
+        {
+            inputs: [],
+            name: "getReward",
+            outputs: [],
+            stateMutability: "nonpayable",
+            type: "function",
+        },
+        {
+            inputs: [],
+            name: "exit",
+            outputs: [],
+            stateMutability: "nonpayable",
+            type: "function",
+        },
+    ]
+};

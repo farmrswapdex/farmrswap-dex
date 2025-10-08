@@ -75,7 +75,7 @@ const NavBar = () => {
           )}
         </NavLink>
 
-        {/* <NavLink
+        <NavLink
           to="/launchpad"
           className={`relative flex items-center gap-2 px-4 py-2.5 rounded-xl transition-all duration-300 group ${isSelected('/launchpad') || location.pathname.startsWith('/launchpad/')
             ? 'text-white'
@@ -87,7 +87,7 @@ const NavBar = () => {
           {(isSelected('/launchpad') || location.pathname.startsWith('/launchpad/')) && (
             <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-6 h-0.5 bg-gradient-to-r from-blue-400 to-blue-600 rounded-full"></div>
           )}
-        </NavLink> */}
+        </NavLink>
       </nav>
 
       <div className="flex items-center gap-2">
@@ -175,7 +175,7 @@ const NavBar = () => {
               <span className="relative z-10">Stake</span>
             </NavLink>
 
-            {/* <NavLink
+            <NavLink
               to="/launchpad"
               onClick={toggleNav}
               className={`relative flex items-center gap-2 rounded-xl mb-4 p-3 transition-all duration-300 ${isSelected('/launchpad') || location.pathname.startsWith('/launchpad/')
@@ -185,7 +185,7 @@ const NavBar = () => {
             >
               <img src="https://res.cloudinary.com/dma1c8i6n/image/upload/v1753230759/leaf_bu9iiv.png" alt="" className="w-5 h-5 relative z-10" />
               <span className="relative z-10">Launchpad</span>
-            </NavLink> */}
+            </NavLink>
 
             <div className="flex justify-center mt-6">
               <ConnectButton />

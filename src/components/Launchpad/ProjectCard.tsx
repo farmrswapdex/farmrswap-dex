@@ -48,7 +48,7 @@ const ProjectCard = ({ project }: { project: Project; }) => {
                 {/* Action Button */}
                 <Link
                     to={`/launchpad/${project.id}`}
-                    className="inline-flex items-center justify-center w-full px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-medium rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-200 transform hover:scale-105"
+                    className="inline-flex items-center justify-center w-full px-4 py-2 bg-blue-600 text-white font-medium rounded-lg transition-all duration-200 transform hover:scale-105"
                 >
                     View Project
                     <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
