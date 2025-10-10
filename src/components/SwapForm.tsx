@@ -13,7 +13,7 @@ import {
 import { useSearchParams } from "react-router-dom";
 import { RouterContract, Weth9Contract } from "../lib/config";
 import { NATIVE_TOKEN, TOKENS, TOKEN_LIST } from "../lib/constants";
-import { formatNumber, parseAmount } from "../lib/quoteCalculator";
+import { formatNumber, parseAmount, toSignificantFigures } from "../lib/quoteCalculator";
 import { getTokenPrices } from "../lib/priceService";
 import { useTokenStore } from "../store/useTokenStore";
 import SettingsModal from "./SettingsModal";
@@ -283,8 +283,9 @@ const SwapForm = () => {
 		if (!isFlipped && amountsOutData && toToken) {
 			console.log("Debug: getAmountsOut raw output:", amountsOutData);
 			const formattedAmount = formatUnits(amountsOutData[1], toToken.decimals);
-			console.log(`Debug: Setting toAmount (exact input) to: ${formattedAmount}`);
-			setToAmount(formattedAmount);
+			const capped = toSignificantFigures(formattedAmount, 3);
+			console.log(`Debug: Setting toAmount (exact input) to: ${capped}`);
+			setToAmount(capped);
 		}
 	}, [amountsOutData, isFlipped, toToken]);
 
@@ -292,8 +293,9 @@ const SwapForm = () => {
 		if (isFlipped && amountsInData && fromToken) {
 			console.log("Debug: getAmountsIn raw output:", amountsInData);
 			const formattedAmount = formatUnits(amountsInData[0], fromToken.decimals);
-			console.log(`Debug: Setting fromAmount (exact output) to: ${formattedAmount}`);
-			setFromAmount(formattedAmount);
+			const capped = toSignificantFigures(formattedAmount, 3);
+			console.log(`Debug: Setting fromAmount (exact output) to: ${capped}`);
+			setFromAmount(capped);
 		}
 	}, [amountsInData, isFlipped, fromToken]);
 
@@ -351,7 +353,8 @@ const SwapForm = () => {
 
 	const handleFromAmountChange = (value: string) => {
 		const parsed = parseAmount(value, fromToken?.decimals || 18);
-		setFromAmount(parsed);
+		const capped = toSignificantFigures(parsed, 3);
+		setFromAmount(capped);
 		if (isFlipped) {
 			setToAmount("");
 		}
@@ -361,7 +364,8 @@ const SwapForm = () => {
 
 	const handleToAmountChange = (value: string) => {
 		const parsed = parseAmount(value, toToken?.decimals || 18);
-		setToAmount(parsed);
+		const capped = toSignificantFigures(parsed, 3);
+		setToAmount(capped);
 		if (!isFlipped) {
 			setFromAmount("");
 		}

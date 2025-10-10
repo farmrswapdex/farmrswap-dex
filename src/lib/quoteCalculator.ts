@@ -61,6 +61,20 @@ export const formatNumber = (value: string, decimals: number = 6): string => {
     });
 };
 
+// Format number to N significant figures
+export const toSignificantFigures = (value: string, sigFigs: number = 3): string => {
+    if (!value || value === '0' || value === '') return value;
+
+    const num = parseFloat(value);
+    if (isNaN(num) || num === 0) return value;
+
+    // Convert to significant figures
+    const result = num.toPrecision(sigFigs);
+
+    // Remove trailing zeros and unnecessary decimal point
+    return parseFloat(result).toString();
+};
+
 // Parse user input and convert to proper decimal format
 export const parseAmount = (value: string, decimals: number): string => {
     if (!value) return '0';
