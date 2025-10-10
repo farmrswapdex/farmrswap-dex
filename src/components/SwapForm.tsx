@@ -180,11 +180,14 @@ const SwapForm = () => {
 	const fromTokenBalance =
 		userTokens.find((t) => t.address === fromToken?.address)?.balance || "0";
 
+	// Check if this is a WBLOCX -> BLOCX swap (needs approval for WBLOCX contract)
+	const isWblocxToBlocx = fromToken?.symbol === "WBLOCX" && toToken?.symbol === "BLOCX";
+
 	const { data: allowance, refetch: refetchAllowance } = useReadContract({
 		abi: erc20Abi,
 		address: fromToken?.address as `0x${string}` | undefined,
 		functionName: "allowance",
-		args: [address!, RouterContract.address],
+		args: [address!, isWblocxToBlocx ? Weth9Contract.address : RouterContract.address],
 		query: {
 			enabled: !!address && !!fromToken && fromToken.symbol !== "BLOCX",
 		},
@@ -198,6 +201,11 @@ const SwapForm = () => {
 			? Weth9Contract.address
 			: (toToken?.address as `0x${string}`),
 	].filter(Boolean);
+
+	// Check if this is a direct BLOCX <-> WBLOCX swap (1:1 rate, no router needed)
+	const isBlocxWblocxSwap =
+		(fromToken?.symbol === "BLOCX" && toToken?.symbol === "WBLOCX") ||
+		(fromToken?.symbol === "WBLOCX" && toToken?.symbol === "BLOCX");
 
 	const { data: amountsOutData, isLoading: isLoadingAmountsOut, error: amountsOutError, } = useReadContract({
 		address: RouterContract.address,
@@ -213,6 +221,7 @@ const SwapForm = () => {
 				!!fromToken &&
 				!!toToken &&
 				fromToken.address !== toToken.address &&
+				!isBlocxWblocxSwap &&
 				!!fromAmount &&
 				parseFloat(fromAmount) > 0 &&
 				path.length === 2,
@@ -242,6 +251,7 @@ const SwapForm = () => {
 				!!fromToken &&
 				!!toToken &&
 				fromToken.address !== toToken.address &&
+				!isBlocxWblocxSwap &&
 				!!toAmount &&
 				parseFloat(toAmount) > 0 &&
 				path.length === 2,
@@ -287,6 +297,17 @@ const SwapForm = () => {
 		}
 	}, [amountsInData, isFlipped, fromToken]);
 
+	// Handle 1:1 conversion for BLOCX <-> WBLOCX swaps
+	useEffect(() => {
+		if (isBlocxWblocxSwap && fromAmount && !isFlipped) {
+			// For BLOCX <-> WBLOCX, it's always 1:1
+			setToAmount(fromAmount);
+		} else if (isBlocxWblocxSwap && toAmount && isFlipped) {
+			// For exact output, set fromAmount = toAmount
+			setFromAmount(toAmount);
+		}
+	}, [isBlocxWblocxSwap, fromAmount, toAmount, isFlipped]);
+
 	// Check approval needs with refetch after successful approval
 	useEffect(() => {
 		if (
@@ -316,11 +337,11 @@ const SwapForm = () => {
 	}, [isModalOpen]);
 
 	useEffect(() => {
-		// Reset toAmount when there is no quote
-		if (!isLoading && !amountsInData && !amountsOutData) {
+		// Reset toAmount when there is no quote (but not for BLOCX <-> WBLOCX swaps)
+		if (!isLoading && !amountsInData && !amountsOutData && !isBlocxWblocxSwap) {
 			setToAmount("");
 		}
-	}, [fromAmount, isLoading, amountsInData, amountsOutData]);
+	}, [fromAmount, isLoading, amountsInData, amountsOutData, isBlocxWblocxSwap]);
 
 	useEffect(() => {
 		if (error) {
@@ -391,11 +412,13 @@ const SwapForm = () => {
 
 		try {
 			setIsApproving(true);
+			// For WBLOCX -> BLOCX, approve WBLOCX contract. Otherwise approve Router.
+			const spenderAddress = isWblocxToBlocx ? Weth9Contract.address : RouterContract.address;
 			const hash = await writeContractAsync({
 				address: fromToken.address as `0x${string}`,
 				abi: erc20Abi,
 				functionName: "approve",
-				args: [RouterContract.address, MaxUint256],
+				args: [spenderAddress, MaxUint256],
 			});
 
 			setApprovalHash(hash);
@@ -421,22 +444,46 @@ const SwapForm = () => {
 			return;
 		}
 
-		const deadlineTimestamp = BigInt(
-			Math.floor(Date.now() / 1000) + 60 * deadline
-		);
-		const wethAddress = Weth9Contract.address;
-		const swapPath = [
-			fromToken.symbol === "BLOCX" ? wethAddress : fromToken.address,
-			toToken.symbol === "BLOCX" ? wethAddress : toToken.address,
-		].map((a) => a as `0x${string}`);
-
-		let value: bigint | undefined = undefined;
-
 		try {
 			setIsSwapping(true);
 			let hash: `0x${string}`;
 
-			// Type-safe functionName and args
+			// Special case: Direct BLOCX <-> WBLOCX swap using deposit/withdraw
+			const isBlocxToWblocx = fromToken.symbol === "BLOCX" && toToken.symbol === "WBLOCX";
+			const isWblocxToBlocx = fromToken.symbol === "WBLOCX" && toToken.symbol === "BLOCX";
+
+			if (isBlocxToWblocx) {
+				// BLOCX -> WBLOCX: Call deposit() on WBLOCX contract
+				const amountIn = parseUnits(fromAmount, fromToken.decimals);
+				hash = await writeContractAsync({
+					address: Weth9Contract.address,
+					abi: Weth9Contract.abi,
+					functionName: "deposit",
+					value: amountIn,
+				});
+			} else if (isWblocxToBlocx) {
+				// WBLOCX -> BLOCX: Call withdraw() on WBLOCX contract
+				const amountIn = parseUnits(fromAmount, fromToken.decimals);
+				hash = await writeContractAsync({
+					address: Weth9Contract.address,
+					abi: Weth9Contract.abi,
+					functionName: "withdraw",
+					args: [amountIn],
+				});
+			} else {
+				// Regular swap through router
+				const deadlineTimestamp = BigInt(
+					Math.floor(Date.now() / 1000) + 60 * deadline
+				);
+				const wethAddress = Weth9Contract.address;
+				const swapPath = [
+					fromToken.symbol === "BLOCX" ? wethAddress : fromToken.address,
+					toToken.symbol === "BLOCX" ? wethAddress : toToken.address,
+				].map((a) => a as `0x${string}`);
+
+				let value: bigint | undefined = undefined;
+
+				// Type-safe functionName and args
 			if (isFlipped) {
 				// Exact output
 				const amountOut = parseUnits(toAmount, toToken.decimals);
@@ -593,6 +640,7 @@ const SwapForm = () => {
 						args,
 					});
 				}
+			}
 			}
 
 			setSwapHash(hash);
