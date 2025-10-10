@@ -146,23 +146,15 @@ const TokenModal = ({ isOpen, onClose, onTokenSelect }: TokenModalProps) => {
                         className="w-full flex items-center justify-between gap-3 py-3 px-2 rounded-xl hover:bg-[rgb(40,182,226)/.08] transition-colors mb-1 border border-[rgb(40,182,226)] bg-[rgb(40,182,226)/.05]"
                       >
                         <div className="flex items-center gap-3">
-                          <span
-                            className="w-9 h-9 rounded-full flex items-center justify-center"
-                            style={{
-                              backgroundColor:
-                                searchedToken.color || "rgba(255,255,255,0.07)",
+                          <img
+                            src={searchedToken.logoURI}
+                            alt={searchedToken.symbol}
+                            className="w-9 h-9 rounded-full"
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).src =
+                                "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTIiIGZpbGw9IiM2NDc0OEIiLz4KPHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iOCIgY3k9IjgiIHI9IjgiIGZpbGw9InVybCgjcGFpbnQwX2xpbmVhcl8xXzYpIi8+CjxkZWZzPgo8bGluZWFyR3JhZGllbnQgaWQ9InBhaW50MF9saW5lYXJfMV82IiB4MT0iOCIgeTE9IjAiIHgyPSI4IiB5Mj0iMTYiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj4KPHN0b3Agc3RvcC1jb2xvcj0iI0Y3RkFGQSIvPgo8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNGN0ZBRkEiLz4KPC9saW5lYXJHcmFkaWVudD4KPC9kZWZzPgo8L3N2Zz4KPC9zdmc+Cg==";
                             }}
-                          >
-                            <img
-                              src={searchedToken.logoURI}
-                              alt={searchedToken.symbol}
-                              className="w-7 h-7 rounded-full"
-                              onError={(e) => {
-                                (e.target as HTMLImageElement).src =
-                                  "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTIiIGZpbGw9IiM2NDc0OEIiLz4KPHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iOCIgY3k9IjgiIHI9IjgiIGZpbGw9InVybCgjcGFpbnQwX2xpbmVhcl8xXzYpIi8+CjxkZWZzPgo8bGluZWFyR3JhZGllbnQgaWQ9InBhaW50MF9saW5lYXJfMV82IiB4MT0iOCIgeTE9IjAiIHgyPSI4IiB5Mj0iMTYiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj4KPHN0b3Agc3RvcC1jb2xvcj0iI0Y3RkFGQSIvPgo8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNGN0ZBRkEiLz4KPC9saW5lYXJHcmFkaWVudD4KPC9kZWZzPgo8L3N2Zz4KPC9zdmc+Cg==";
-                              }}
-                            />
-                          </span>
+                          />
                           <div className="flex flex-col items-start">
                             <span className="font-semibold text-white text-base leading-tight">
                               {searchedToken.name}
@@ -198,23 +190,15 @@ const TokenModal = ({ isOpen, onClose, onTokenSelect }: TokenModalProps) => {
                     className="w-full flex items-center justify-between gap-3 py-3 px-2 rounded-xl hover:bg-[rgb(40,182,226)/.08] transition-colors mb-1"
                   >
                     <div className="flex items-center gap-3">
-                      <span
-                        className="w-9 h-9 rounded-full flex items-center justify-center"
-                        style={{
-                          backgroundColor:
-                            token.color || "rgba(255,255,255,0.07)",
+                      <img
+                        src={token.logoURI}
+                        alt={token.symbol}
+                        className="w-9 h-9 rounded-full"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src =
+                            "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTIiIGZpbGw9IiM2NDc0OEIiLz4KPHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iOCIgY3k9IjgiIHI9IjgiIGZpbGw9InVybCgjcGFpbnQwX2xpbmVhcl8xXzYpIi8+CjxkZWZzPgo8bGluZWFyR3JhZGllbnQgaWQ9InBhaW50MF9saW5lYXJfMV82IiB4MT0iOCIgeTE9IjAiIHgyPSI4IiB5Mj0iMTYiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj4KPHN0b3Agc3RvcC1jb2xvcj0iI0Y3RkFGQSIvPgo8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNGN0ZBRkEiLz4KPC9saW5lYXJHcmFkaWVudD4KPC9kZWZzPgo8L3N2Zz4KPC9zdmc+Cg==";
                         }}
-                      >
-                        <img
-                          src={token.logoURI}
-                          alt={token.symbol}
-                          className="w-7 h-7 rounded-full"
-                          onError={(e) => {
-                            (e.target as HTMLImageElement).src =
-                              "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTIiIGZpbGw9IiM2NDc0OEIiLz4KPHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iOCIgY3k9IjgiIHI9IjgiIGZpbGw9InVybCgjcGFpbnQwX2xpbmVhcl8xXzYpIi8+CjxkZWZzPgo8bGluZWFyR3JhZGllbnQgaWQ9InBhaW50MF9saW5lYXJfMV82IiB4MT0iOCIgeTE9IjAiIHgyPSI4IiB5Mj0iMTYiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj4KPHN0b3Agc3RvcC1jb2xvcj0iI0Y3RkFGQSIvPgo8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNGN0ZBRkEiLz4KPC9saW5lYXJHcmFkaWVudD4KPC9kZWZzPgo8L3N2Zz4KPC9zdmc+Cg==";
-                          }}
-                        />
-                      </span>
+                      />
                       <div className="flex flex-col items-start">
                         <span className="font-semibold text-white text-base leading-tight">
                           {token.name}
