@@ -14,7 +14,7 @@ export const TOKENS = {
         name: 'Wrapped BLOCX',
         address: '0xEc124821C7A324dfc4BF8D9bd4B6f5522842988E',
         decimals: 18,
-        logoURI: 'https://res.cloudinary.com/dma1c8i6n/image/upload/f_auto,q_auto/blocxcoin_nhozz7',
+        logoURI: 'https://res.cloudinary.com/dma1c8i6n/image/upload/v1760088649/wBLOCX_ldu8l2.png',
         color: '#1E90FF'
     },
     FARMR: {
@@ -22,10 +22,10 @@ export const TOKENS = {
         name: 'FARMR',
         address: '0x8D3815197b07A24D8Df7f50E28cD47Fe2165d65F',
         decimals: 18,
-        logoURI: 'https://res.cloudinary.com/dma1c8i6n/image/upload/f_auto,q_auto/farmr_coin_j5gfsd',
+        logoURI: 'https://res.cloudinary.com/dma1c8i6n/image/upload/v1760088650/farmrcoin_wqedps.png',
         color: ''
     },
-    
+
 };
 
 export const NATIVE_TOKEN = {
@@ -33,7 +33,7 @@ export const NATIVE_TOKEN = {
     name: 'BLOCX',
     address: '0x0000000000000000000000000000000000000000', // Native token address
     decimals: 18,
-    logoURI: 'https://res.cloudinary.com/dma1c8i6n/image/upload/f_auto,q_auto/blocxcoin_nhozz7',
+    logoURI: 'https://res.cloudinary.com/dma1c8i6n/image/upload/v1760088649/BLOCX_fel7s0.png',
     color: '#1E90FF'
 };
 
