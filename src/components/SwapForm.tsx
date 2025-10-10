@@ -10,8 +10,9 @@ import {
 	useWaitForTransactionReceipt,
 	useWriteContract,
 } from "wagmi";
+import { useSearchParams } from "react-router-dom";
 import { RouterContract, Weth9Contract } from "../lib/config";
-import { NATIVE_TOKEN, TOKENS } from "../lib/constants";
+import { NATIVE_TOKEN, TOKENS, TOKEN_LIST } from "../lib/constants";
 import { formatNumber, parseAmount } from "../lib/quoteCalculator";
 import { getTokenPrices } from "../lib/priceService";
 import { useTokenStore } from "../store/useTokenStore";
@@ -37,6 +38,7 @@ const SwapForm = () => {
 		fetchUserTokens,
 		loading: tokensLoading,
 	} = useTokenStore();
+	const [searchParams] = useSearchParams();
 
 	// Common state for both forms
 	const [fromToken, setFromToken] = useState<Token>(NATIVE_TOKEN);
@@ -76,6 +78,47 @@ const SwapForm = () => {
 		useWaitForTransactionReceipt({
 			hash: swapHash,
 		});
+
+	// Handle URL parameters for initial token selection
+	useEffect(() => {
+		const inputCurrency = searchParams.get('inputCurrency');
+		const outputCurrency = searchParams.get('outputCurrency');
+
+		// Helper function to find token by symbol or address
+		const findToken = (currency: string): Token | null => {
+			const currencyUpper = currency.toUpperCase();
+
+			// Check if it's the native token
+			if (currencyUpper === 'BLOCX' || currencyUpper === 'ETH') {
+				return NATIVE_TOKEN;
+			}
+
+			// Check predefined tokens by symbol
+			const allTokens = [NATIVE_TOKEN, ...TOKEN_LIST];
+			const tokenBySymbol = allTokens.find(
+				t => t.symbol.toUpperCase() === currencyUpper
+			);
+			if (tokenBySymbol) return tokenBySymbol;
+
+			// Check by address (case-insensitive)
+			const tokenByAddress = allTokens.find(
+				t => t.address.toLowerCase() === currency.toLowerCase()
+			);
+			if (tokenByAddress) return tokenByAddress;
+
+			return null;
+		};
+
+		if (inputCurrency) {
+			const token = findToken(inputCurrency);
+			if (token) setFromToken(token);
+		}
+
+		if (outputCurrency) {
+			const token = findToken(outputCurrency);
+			if (token) setToToken(token);
+		}
+	}, [searchParams]);
 
 	// Update approval state when confirmation completes
 	useEffect(() => {

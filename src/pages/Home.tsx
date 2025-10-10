@@ -45,7 +45,7 @@ const Home = () => {
                   </g>
                 </svg>
               </a>
-              <Link to="/swap?inputCurrency=ETH&outputCurrency=BOO" className="sc-cfWevs jNnCvO sc-gFVvzn sc-iLyOTd sc-fgzRQT enpjmC gTNPVH ACIug">
+              <Link to="/swap?inputCurrency=BLOCX&outputCurrency=FARMR" className="sc-cfWevs jNnCvO sc-gFVvzn sc-iLyOTd sc-fgzRQT enpjmC gTNPVH ACIug">
                 <p className="bg-[rgb(40,182,226)] text-white px-4 py-1 rounded-full font-semibold">
                   Get FARMR
                 </p>
