@@ -81,7 +81,8 @@ const NFTMintForm = () => {
 		} catch (err: unknown) {
 			setIsApproving(false);
 			const errorMessage = err instanceof Error ? err.message : 'Unknown error';
-			toast.error(`Approval failed: ${errorMessage}`);
+			toast.error(`Approval failed`);
+			console.log(`Approval failed: ${errorMessage}`);
 		}
 	};
 

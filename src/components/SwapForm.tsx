@@ -347,7 +347,8 @@ const SwapForm = () => {
 
 	useEffect(() => {
 		if (error) {
-			toast.error(error.name);
+			toast.error("an error occurred");
+			// toast.error(error.name);
 		}
 	}, [error]);
 
@@ -433,7 +434,8 @@ const SwapForm = () => {
 		} catch (err: unknown) {
 			setIsApproving(false);
 			const errorMessage = err instanceof Error ? err.message : 'Unknown error';
-			toast.error(`Approval failed: ${errorMessage}`);
+			toast.error(`Approval failed`);
+			console.log(`Approval failed: ${errorMessage}`);
 		}
 	};
 
@@ -488,163 +490,163 @@ const SwapForm = () => {
 				let value: bigint | undefined = undefined;
 
 				// Type-safe functionName and args
-			if (isFlipped) {
-				// Exact output
-				const amountOut = parseUnits(toAmount, toToken.decimals);
-				const amountInMax = parseUnits(
-					(parseFloat(fromAmount) * (1 + slippage / 100)).toFixed(
+				if (isFlipped) {
+					// Exact output
+					const amountOut = parseUnits(toAmount, toToken.decimals);
+					const amountInMax = parseUnits(
+						(parseFloat(fromAmount) * (1 + slippage / 100)).toFixed(
+							fromToken.decimals
+						),
 						fromToken.decimals
-					),
-					fromToken.decimals
-				);
+					);
 
-				if (fromToken.symbol === "BLOCX") {
-					// swapETHForExactTokens(uint amountOut, address[] path, address to, uint deadline)
-					const functionName = "swapETHForExactTokens";
-					const args: [
-						bigint,
-						readonly `0x${string}`[],
-						`0x${string}`,
-						bigint
-					] = [
-							amountOut,
-							swapPath,
-							address as `0x${string}`,
-							deadlineTimestamp,
-						];
-					value = amountInMax;
-					hash = await writeContractAsync({
-						address: RouterContract.address,
-						abi: RouterContract.abi,
-						functionName,
-						args,
-						value,
-					});
-				} else if (toToken.symbol === "BLOCX") {
-					// swapTokensForExactETH(uint amountOut, uint amountInMax, address[] path, address to, uint deadline)
-					const functionName = "swapTokensForExactETH";
-					const args: [
-						bigint,
-						bigint,
-						readonly `0x${string}`[],
-						`0x${string}`,
-						bigint
-					] = [
-							amountOut,
-							amountInMax,
-							swapPath,
-							address as `0x${string}`,
-							deadlineTimestamp,
-						];
-					hash = await writeContractAsync({
-						address: RouterContract.address,
-						abi: RouterContract.abi,
-						functionName,
-						args,
-					});
+					if (fromToken.symbol === "BLOCX") {
+						// swapETHForExactTokens(uint amountOut, address[] path, address to, uint deadline)
+						const functionName = "swapETHForExactTokens";
+						const args: [
+							bigint,
+							readonly `0x${string}`[],
+							`0x${string}`,
+							bigint
+						] = [
+								amountOut,
+								swapPath,
+								address as `0x${string}`,
+								deadlineTimestamp,
+							];
+						value = amountInMax;
+						hash = await writeContractAsync({
+							address: RouterContract.address,
+							abi: RouterContract.abi,
+							functionName,
+							args,
+							value,
+						});
+					} else if (toToken.symbol === "BLOCX") {
+						// swapTokensForExactETH(uint amountOut, uint amountInMax, address[] path, address to, uint deadline)
+						const functionName = "swapTokensForExactETH";
+						const args: [
+							bigint,
+							bigint,
+							readonly `0x${string}`[],
+							`0x${string}`,
+							bigint
+						] = [
+								amountOut,
+								amountInMax,
+								swapPath,
+								address as `0x${string}`,
+								deadlineTimestamp,
+							];
+						hash = await writeContractAsync({
+							address: RouterContract.address,
+							abi: RouterContract.abi,
+							functionName,
+							args,
+						});
+					} else {
+						// swapTokensForExactTokens(uint amountOut, uint amountInMax, address[] path, address to, uint deadline)
+						const functionName =
+							"swapTokensForExactTokens";
+						const args: [
+							bigint,
+							bigint,
+							readonly `0x${string}`[],
+							`0x${string}`,
+							bigint
+						] = [
+								amountOut,
+								amountInMax,
+								swapPath,
+								address as `0x${string}`,
+								deadlineTimestamp,
+							];
+						hash = await writeContractAsync({
+							address: RouterContract.address,
+							abi: RouterContract.abi,
+							functionName,
+							args,
+						});
+					}
 				} else {
-					// swapTokensForExactTokens(uint amountOut, uint amountInMax, address[] path, address to, uint deadline)
-					const functionName =
-						"swapTokensForExactTokens";
-					const args: [
-						bigint,
-						bigint,
-						readonly `0x${string}`[],
-						`0x${string}`,
-						bigint
-					] = [
-							amountOut,
-							amountInMax,
-							swapPath,
-							address as `0x${string}`,
-							deadlineTimestamp,
-						];
-					hash = await writeContractAsync({
-						address: RouterContract.address,
-						abi: RouterContract.abi,
-						functionName,
-						args,
-					});
-				}
-			} else {
-				// Exact input
-				const amountIn = parseUnits(fromAmount, fromToken.decimals);
-				const amountOutMin = parseUnits(
-					(parseFloat(toAmount) * (1 - slippage / 100)).toFixed(
+					// Exact input
+					const amountIn = parseUnits(fromAmount, fromToken.decimals);
+					const amountOutMin = parseUnits(
+						(parseFloat(toAmount) * (1 - slippage / 100)).toFixed(
+							toToken.decimals
+						),
 						toToken.decimals
-					),
-					toToken.decimals
-				);
+					);
 
-				if (fromToken.symbol === "BLOCX") {
-					// swapExactETHForTokens(uint amountOutMin, address[] path, address to, uint deadline)
-					const functionName = "swapExactETHForTokens";
-					const args: [
-						bigint,
-						readonly `0x${string}`[],
-						`0x${string}`,
-						bigint
-					] = [
-							amountOutMin,
-							swapPath,
-							address as `0x${string}`,
-							deadlineTimestamp,
-						];
-					value = amountIn;
-					hash = await writeContractAsync({
-						address: RouterContract.address,
-						abi: RouterContract.abi,
-						functionName,
-						args,
-						value,
-					});
-				} else if (toToken.symbol === "BLOCX") {
-					// swapExactTokensForETH(uint amountIn, uint amountOutMin, address[] path, address to, uint deadline)
-					const functionName = "swapExactTokensForETH";
-					const args: [
-						bigint,
-						bigint,
-						readonly `0x${string}`[],
-						`0x${string}`,
-						bigint
-					] = [
-							amountIn,
-							amountOutMin,
-							swapPath,
-							address as `0x${string}`,
-							deadlineTimestamp,
-						];
-					hash = await writeContractAsync({
-						address: RouterContract.address,
-						abi: RouterContract.abi,
-						functionName,
-						args,
-					});
-				} else {
-					// swapExactTokensForTokens(uint amountIn, uint amountOutMin, address[] path, address to, uint deadline)
-					const functionName =
-						"swapExactTokensForTokens";
-					const args: [
-						bigint,
-						bigint,
-						readonly `0x${string}`[],
-						`0x${string}`,
-						bigint
-					] = [
-							amountIn,
-							amountOutMin,
-							swapPath,
-							address as `0x${string}`,
-							deadlineTimestamp,
-						];
-					hash = await writeContractAsync({
-						address: RouterContract.address,
-						abi: RouterContract.abi,
-						functionName,
-						args,
-					});
+					if (fromToken.symbol === "BLOCX") {
+						// swapExactETHForTokens(uint amountOutMin, address[] path, address to, uint deadline)
+						const functionName = "swapExactETHForTokens";
+						const args: [
+							bigint,
+							readonly `0x${string}`[],
+							`0x${string}`,
+							bigint
+						] = [
+								amountOutMin,
+								swapPath,
+								address as `0x${string}`,
+								deadlineTimestamp,
+							];
+						value = amountIn;
+						hash = await writeContractAsync({
+							address: RouterContract.address,
+							abi: RouterContract.abi,
+							functionName,
+							args,
+							value,
+						});
+					} else if (toToken.symbol === "BLOCX") {
+						// swapExactTokensForETH(uint amountIn, uint amountOutMin, address[] path, address to, uint deadline)
+						const functionName = "swapExactTokensForETH";
+						const args: [
+							bigint,
+							bigint,
+							readonly `0x${string}`[],
+							`0x${string}`,
+							bigint
+						] = [
+								amountIn,
+								amountOutMin,
+								swapPath,
+								address as `0x${string}`,
+								deadlineTimestamp,
+							];
+						hash = await writeContractAsync({
+							address: RouterContract.address,
+							abi: RouterContract.abi,
+							functionName,
+							args,
+						});
+					} else {
+						// swapExactTokensForTokens(uint amountIn, uint amountOutMin, address[] path, address to, uint deadline)
+						const functionName =
+							"swapExactTokensForTokens";
+						const args: [
+							bigint,
+							bigint,
+							readonly `0x${string}`[],
+							`0x${string}`,
+							bigint
+						] = [
+								amountIn,
+								amountOutMin,
+								swapPath,
+								address as `0x${string}`,
+								deadlineTimestamp,
+							];
+						hash = await writeContractAsync({
+							address: RouterContract.address,
+							abi: RouterContract.abi,
+							functionName,
+							args,
+						});
+					}
 				}
-			}
 			}
 
 			setSwapHash(hash);
