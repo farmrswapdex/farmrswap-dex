@@ -657,7 +657,8 @@ const SwapForm = () => {
 		} catch (err: unknown) {
 			setIsSwapping(false);
 			const errorMessage = err instanceof Error ? err.message : 'Unknown error';
-			toast.error(`Swap failed: ${errorMessage}`);
+			toast.error(`Swap failed`);
+			console.error(`Swap failed: ${errorMessage}`);
 		}
 	};
 
