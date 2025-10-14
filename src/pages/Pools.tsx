@@ -26,6 +26,7 @@ interface UserPosition {
   tokenB: Token;
   lpBalance: bigint;
   pairAddress: `0x${string}`;
+  poolSharePercentage: number;
 }
 
 const Pools = () => {
@@ -99,19 +100,49 @@ const Pools = () => {
       query: { enabled: isConnected && validPairs.length > 0 },
     });
 
+  // 3. Get total supply for all valid pairs to calculate pool share
+  const { data: totalSuppliesData, isFetched: areTotalSuppliesFetched } =
+    useReadContracts({
+      contracts: validPairs.map((p) => ({
+        abi: PairContract.abi,
+        address: p.pairAddress as `0x${string}`,
+        functionName: "totalSupply",
+      })),
+      query: { enabled: isConnected && validPairs.length > 0 },
+    });
+
   useEffect(() => {
-    if (areLpBalancesFetched && lpBalancesData) {
+    if (
+      areLpBalancesFetched &&
+      lpBalancesData &&
+      areTotalSuppliesFetched &&
+      totalSuppliesData
+    ) {
       const userPositions = validPairs
         .map((p, i) => {
           const [tokenA, tokenB] = sortTokens(p.tokens[0], p.tokens[1]);
+          const lpBalance =
+            lpBalancesData[i].status === "success"
+              ? (lpBalancesData[i].result as bigint)
+              : 0n;
+
+          const totalSupply =
+            totalSuppliesData[i].status === "success"
+              ? (totalSuppliesData[i].result as bigint)
+              : 0n;
+
+          // Calculate pool share percentage
+          const poolSharePercentage =
+            totalSupply > 0n
+              ? (Number(lpBalance) / Number(totalSupply)) * 100
+              : 0;
+
           return {
             tokenA,
             tokenB,
             pairAddress: p.pairAddress as `0x${string}`,
-            lpBalance:
-              lpBalancesData[i].status === "success"
-                ? (lpBalancesData[i].result as bigint)
-                : 0n,
+            lpBalance,
+            poolSharePercentage,
           };
         })
         .filter((p) => p.lpBalance && p.lpBalance > 0n);
@@ -126,6 +157,8 @@ const Pools = () => {
     arePairAddressesFetched,
     areLpBalancesFetched,
     lpBalancesData,
+    areTotalSuppliesFetched,
+    totalSuppliesData,
     validPairs,
   ]);
 
@@ -191,6 +224,9 @@ const Pools = () => {
                   <p className="text-sm text-gray-600">
                     LP Tokens:{" "}
                     {parseFloat(formatUnits(position.lpBalance, 18)).toFixed(6)}
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    Pool Share: {position.poolSharePercentage.toFixed(2)}%
                   </p>
                 </div>
               </div>
