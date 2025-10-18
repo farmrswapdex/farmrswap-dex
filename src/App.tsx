@@ -11,7 +11,7 @@ import { config } from "./lib/wagmi";
 
 import AddLiquidity from "./pages/AddLiquidity";
 import Bridge from "./pages/Bridge";
-// import Create from "./pages/Create";
+import Create from "./pages/Create";
 import Explore from "./pages/Explore";
 import Farms from './pages/Farms';
 import Home from "./pages/Home";
@@ -20,11 +20,11 @@ import Pools from "./pages/Pools";
 import RemoveLiquidity from "./pages/RemoveLiquidity";
 import Swap from './pages/Swap';
 import NFTPage from "./pages/NFTPage";
-// import Launchpad from "./pages/Launchpad";
-// import ProjectDetails from "./pages/ProjectDetails";
-// import Claim from "./pages/Claim";
-// import UserDashboard from "./pages/UserDashboard";
-// import Whitelist from "./pages/Whitelist";
+import Launchpad from "./pages/Launchpad";
+import ProjectDetails from "./pages/ProjectDetails";
+import Claim from "./pages/Claim";
+import UserDashboard from "./pages/UserDashboard";
+import Whitelist from "./pages/Whitelist";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -58,12 +58,6 @@ function App() {
                   <Route path="/add" element={<AddLiquidity />} />
                   <Route path="/remove" element={<RemoveLiquidity />} />
                   <Route path="/mint" element={<NFTPage />} />
-                  {/* <Route path="/launchpad" element={<Launchpad />} />
-                  <Route path="/launchpad/:id" element={<ProjectDetails />} />
-                  <Route path="/create" element={<Create />} />
-                  <Route path="/claim" element={<Claim />} />
-                  <Route path="/dashboard" element={<UserDashboard />} />
-                  <Route path="/whitelist" element={<Whitelist />} /> */}
                   <Route path="*" element={<NotFound />} />
                 </Route>
               </Routes>
