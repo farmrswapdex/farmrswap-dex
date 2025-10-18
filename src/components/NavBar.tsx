@@ -75,19 +75,7 @@ const NavBar = () => {
           )}
         </NavLink>
 
-        <NavLink
-          to="/launchpad"
-          className={`relative flex items-center gap-2 px-4 py-2.5 rounded-xl transition-all duration-300 group ${isSelected('/launchpad') || location.pathname.startsWith('/launchpad/')
-            ? 'text-white'
-            : 'hover:bg-white/10 text-white/70 hover:text-white hover:scale-105'
-            }`}
-        >
-          <img src="https://res.cloudinary.com/dma1c8i6n/image/upload/v1753230759/leaf_bu9iiv.png" alt="" className="w-5 h-5 relative z-10" />
-          <span className="font-semibold relative z-10">Launchpad</span>
-          {(isSelected('/launchpad') || location.pathname.startsWith('/launchpad/')) && (
-            <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-6 h-0.5 bg-gradient-to-r from-blue-400 to-blue-600 rounded-full"></div>
-          )}
-        </NavLink>
+
       </nav>
 
       <div className="flex items-center gap-2">
@@ -173,18 +161,6 @@ const NavBar = () => {
             >
               <img src="https://res.cloudinary.com/dma1c8i6n/image/upload/v1753230758/003-piggy-bank_a18vpu.png" alt="" className="w-5 h-5 relative z-10" />
               <span className="relative z-10">Stake</span>
-            </NavLink>
-
-            <NavLink
-              to="/launchpad"
-              onClick={toggleNav}
-              className={`relative flex items-center gap-2 rounded-xl mb-4 p-3 transition-all duration-300 ${isSelected('/launchpad') || location.pathname.startsWith('/launchpad/')
-                ? 'bg-blue-100 text-blue-700'
-                : 'bg-white hover:bg-gray-50 hover:scale-105 hover:shadow-md'
-                }`}
-            >
-              <img src="https://res.cloudinary.com/dma1c8i6n/image/upload/v1753230759/leaf_bu9iiv.png" alt="" className="w-5 h-5 relative z-10" />
-              <span className="relative z-10">Launchpad</span>
             </NavLink>
 
             <div className="flex justify-center mt-6">
