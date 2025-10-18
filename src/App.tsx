@@ -58,12 +58,6 @@ function App() {
                   <Route path="/add" element={<AddLiquidity />} />
                   <Route path="/remove" element={<RemoveLiquidity />} />
                   <Route path="/mint" element={<NFTPage />} />
-                  <Route path="/launchpad" element={<Launchpad />} />
-                  <Route path="/launchpad/:id" element={<ProjectDetails />} />
-                  <Route path="/create" element={<Create />} />
-                  <Route path="/claim" element={<Claim />} />
-                  <Route path="/dashboard" element={<UserDashboard />} />
-                  <Route path="/whitelist" element={<Whitelist />} />
                   <Route path="*" element={<NotFound />} />
                 </Route>
               </Routes>
