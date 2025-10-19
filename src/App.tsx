@@ -11,20 +11,14 @@ import { config } from "./lib/wagmi";
 
 import AddLiquidity from "./pages/AddLiquidity";
 import Bridge from "./pages/Bridge";
-import Create from "./pages/Create";
 import Explore from "./pages/Explore";
 import Farms from './pages/Farms';
 import Home from "./pages/Home";
+import NFTPage from "./pages/NFTPage";
 import NotFound from './pages/NotFound';
 import Pools from "./pages/Pools";
 import RemoveLiquidity from "./pages/RemoveLiquidity";
 import Swap from './pages/Swap';
-import NFTPage from "./pages/NFTPage";
-import Launchpad from "./pages/Launchpad";
-import ProjectDetails from "./pages/ProjectDetails";
-import Claim from "./pages/Claim";
-import UserDashboard from "./pages/UserDashboard";
-import Whitelist from "./pages/Whitelist";
 
 const queryClient = new QueryClient({
   defaultOptions: {
