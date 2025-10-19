@@ -69,7 +69,7 @@ const NavBar = () => {
             }`}
         >
           <img src="https://res.cloudinary.com/dma1c8i6n/image/upload/v1753230758/003-piggy-bank_a18vpu.png" alt="" className="w-5 h-5 relative z-10" />
-          <span className="font-semibold relative z-10">Stake</span>
+          <span className="font-semibold relative z-10">Farm</span>
           {isSelected('/farms') && (
             <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-6 h-0.5 bg-gradient-to-r from-blue-400 to-blue-600 rounded-full"></div>
           )}
@@ -160,7 +160,7 @@ const NavBar = () => {
                 }`}
             >
               <img src="https://res.cloudinary.com/dma1c8i6n/image/upload/v1753230758/003-piggy-bank_a18vpu.png" alt="" className="w-5 h-5 relative z-10" />
-              <span className="relative z-10">Stake</span>
+              <span className="relative z-10">Farm</span>
             </NavLink>
 
             <div className="flex justify-center mt-6">
