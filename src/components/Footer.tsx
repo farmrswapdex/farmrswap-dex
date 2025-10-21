@@ -42,6 +42,7 @@ const Footer = () => {
                     <Link className="block" to="/swap">Swap</Link>
                     <Link className="block" to="/pools">Liquidity &amp; Pools</Link>
                     <Link className="block" to="/farms">Farms</Link>
+                    <a className="block" href="https://farmrlock.farmrswap.farm/" target="_blank" rel="noreferrer">Locker</a>
                 </div>
                 <div className="text-[rgb(155,155,155)] space-y-2">
                     <span className="text-white font-semibold">Info</span>
