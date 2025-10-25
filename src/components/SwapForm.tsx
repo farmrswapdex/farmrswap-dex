@@ -806,10 +806,22 @@ const SwapForm = () => {
 									<span className="text-sm sm:text-base font-semibold text-gray-600">
 										Sell
 									</span>
-									<div className="text-sm text-gray-500">
+									<div className="flex items-center gap-2 text-sm text-gray-500">
+										<button
+											onClick={() => handleFromAmountChange((parseFloat(fromTokenBalance) * 0.25).toString())}
+											className="text-blue-600 hover:text-blue-800 font-semibold transition-colors"
+										>
+											25%
+										</button>
+										<button
+											onClick={() => handleFromAmountChange((parseFloat(fromTokenBalance) * 0.5).toString())}
+											className="text-blue-600 hover:text-blue-800 font-semibold transition-colors"
+										>
+											50%
+										</button>
 										<button
 											onClick={() => handleFromAmountChange(fromTokenBalance)}
-											className="ml-2 text-blue-600 hover:text-blue-800 font-semibold"
+											className="text-blue-600 hover:text-blue-800 font-semibold transition-colors"
 										>
 											Max
 										</button>
