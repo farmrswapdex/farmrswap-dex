@@ -25,6 +25,34 @@ interface FarmFormProps {
   stakingContractAbi: any[]; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
+// Shorten and humanize wallet/chain errors for toasts
+const friendlyError = (err: unknown): string => {
+  let msg = "Unknown error";
+  if (typeof err === "string") msg = err;
+  else if (err && typeof err === "object" && "message" in err)
+    msg = String((err as { message?: unknown }).message || "");
+
+  const lower = msg.toLowerCase();
+  if (
+    lower.includes("user rejected") ||
+    lower.includes("user denied") ||
+    lower.includes("rejected the request") ||
+    lower.includes("request rejected") ||
+    lower.includes("user rejected the request") ||
+    lower.includes("transaction was rejected")
+  )
+    return "Transaction cancelled.";
+  if (lower.includes("insufficient funds"))
+    return "Insufficient funds for gas or value.";
+  if (lower.includes("execution reverted"))
+    return "Transaction failed: execution reverted.";
+  if (lower.includes("nonce too low")) return "Nonce too low.";
+  if (lower.includes("underpriced")) return "Replacement transaction underpriced.";
+
+  // Trim overly long messages
+  return msg.length > 160 ? msg.slice(0, 160) + "…" : msg || "Transaction failed.";
+};
+
 const FarmForm = ({
   lpToken,
   stakingContractAddress,
@@ -48,6 +76,9 @@ const FarmForm = ({
   const [approvalToastId, setApprovalToastId] = useState<string>();
   const [stakingToastId, setStakingToastId] = useState<string>();
   const [unstakingToastId, setUnstakingToastId] = useState<string>();
+  const [isClaiming, setIsClaiming] = useState(false);
+  const [claimHash, setClaimHash] = useState<`0x${string}`>();
+  const [claimToastId, setClaimToastId] = useState<string>();
 
   // Read staking token address from contract
   const { data: stakingTokenAddress } = useReadContract({
@@ -106,20 +137,38 @@ const FarmForm = ({
     query: { enabled: !!address },
   });
 
-  const { isLoading: isConfirmingApproval, isSuccess: isApproved } =
+  const {
+    isLoading: isConfirmingApproval,
+    isSuccess: isApproved,
+    isError: isApprovalError,
+  } =
     useWaitForTransactionReceipt({
       hash: approvalHash,
     });
 
-  const { isLoading: isConfirmingStaking, isSuccess: isStakingComplete } =
+  const {
+    isLoading: isConfirmingStaking,
+    isSuccess: isStakingComplete,
+    isError: isStakingError,
+  } =
     useWaitForTransactionReceipt({
       hash: stakingHash,
     });
 
-  const { isLoading: isConfirmingUnstaking, isSuccess: isUnstakingComplete } =
+  const {
+    isLoading: isConfirmingUnstaking,
+    isSuccess: isUnstakingComplete,
+    isError: isUnstakingError,
+  } =
     useWaitForTransactionReceipt({
       hash: unstakingHash,
     });
+
+  const {
+    isLoading: isConfirmingClaim,
+    isSuccess: isClaimComplete,
+    isError: isClaimError,
+  } = useWaitForTransactionReceipt({ hash: claimHash });
 
   useEffect(() => {
     if (isApproved && approvalHash) {
@@ -134,6 +183,18 @@ const FarmForm = ({
       fetchUserTokens(address!);
     }
   }, [isApproved, approvalHash, address, fetchUserTokens, approvalToastId]);
+
+  useEffect(() => {
+    if (isApprovalError && approvalHash) {
+      setIsApproving(false);
+      setApprovalHash(undefined);
+      if (approvalToastId) {
+        toast.dismiss(approvalToastId);
+        setApprovalToastId(undefined);
+      }
+      toast.error("Approval failed on-chain.", { duration: 4000 });
+    }
+  }, [isApprovalError, approvalHash, approvalToastId]);
 
   useEffect(() => {
     if (isStakingComplete && stakingHash) {
@@ -158,6 +219,18 @@ const FarmForm = ({
   ]);
 
   useEffect(() => {
+    if (isStakingError && stakingHash) {
+      setIsStaking(false);
+      setStakingHash(undefined);
+      if (stakingToastId) {
+        toast.dismiss(stakingToastId);
+        setStakingToastId(undefined);
+      }
+      toast.error("Staking failed on-chain.", { duration: 4000 });
+    }
+  }, [isStakingError, stakingHash, stakingToastId]);
+
+  useEffect(() => {
     if (isUnstakingComplete && unstakingHash) {
       setIsUnstaking(false);
       setUnstakingHash(undefined);
@@ -178,6 +251,51 @@ const FarmForm = ({
     fetchUserTokens,
     unstakingToastId,
   ]);
+
+  useEffect(() => {
+    if (isUnstakingError && unstakingHash) {
+      setIsUnstaking(false);
+      setUnstakingHash(undefined);
+      if (unstakingToastId) {
+        toast.dismiss(unstakingToastId);
+        setUnstakingToastId(undefined);
+      }
+      toast.error("Withdraw failed on-chain.", { duration: 4000 });
+    }
+  }, [isUnstakingError, unstakingHash, unstakingToastId]);
+
+  useEffect(() => {
+    if (isClaimComplete && claimHash) {
+      setIsClaiming(false);
+      setClaimHash(undefined);
+      if (claimToastId) {
+        toast.dismiss(claimToastId);
+        setClaimToastId(undefined);
+      }
+      toast.success("Rewards claimed!", { duration: 4000 });
+      fetchUserTokens(address!);
+      refetchPendingRewards();
+    }
+  }, [
+    isClaimComplete,
+    claimHash,
+    claimToastId,
+    address,
+    fetchUserTokens,
+    refetchPendingRewards,
+  ]);
+
+  useEffect(() => {
+    if (isClaimError && claimHash) {
+      setIsClaiming(false);
+      setClaimHash(undefined);
+      if (claimToastId) {
+        toast.dismiss(claimToastId);
+        setClaimToastId(undefined);
+      }
+      toast.error("Claim failed on-chain.", { duration: 4000 });
+    }
+  }, [isClaimError, claimHash, claimToastId]);
 
   useEffect(() => {
     if (stakeAmount && allowance !== undefined) {
@@ -223,8 +341,7 @@ const FarmForm = ({
       setApprovalToastId(toastId);
     } catch (err: unknown) {
       setIsApproving(false);
-      const errorMessage = err instanceof Error ? err.message : "Unknown error";
-      toast.error(`Approval failed: ${errorMessage}`);
+      toast.error(`Approval failed: ${friendlyError(err)}`, { duration: 4000 });
     }
   };
 
@@ -247,8 +364,7 @@ const FarmForm = ({
       setStakingToastId(toastId);
     } catch (err: unknown) {
       setIsStaking(false);
-      const errorMessage = err instanceof Error ? err.message : "Unknown error";
-      toast.error(`Staking failed: ${errorMessage}`);
+      toast.error(`Staking failed: ${friendlyError(err)}`, { duration: 4000 });
     }
   };
 
@@ -273,8 +389,7 @@ const FarmForm = ({
       setUnstakingToastId(toastId);
     } catch (err: unknown) {
       setIsUnstaking(false);
-      const errorMessage = err instanceof Error ? err.message : "Unknown error";
-      toast.error(`Unstaking failed: ${errorMessage}`);
+      toast.error(`Withdraw failed: ${friendlyError(err)}`, { duration: 4000 });
     }
   };
 
@@ -282,17 +397,22 @@ const FarmForm = ({
     if (!address) return;
 
     try {
-      await writeContractAsync({
+      setIsClaiming(true);
+      const hash = await writeContractAsync({
         address: stakingContractAddress,
         abi: stakingContractAbi,
         functionName: "getReward",
         args: [],
       });
 
-      toast.loading("Claiming rewards... Please wait for confirmation.");
+      setClaimHash(hash as `0x${string}`);
+      const toastId = toast.loading(
+        "Claiming rewards... Please wait for confirmation."
+      );
+      setClaimToastId(toastId);
     } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : "Unknown error";
-      toast.error(`Claim failed: ${errorMessage}`);
+      setIsClaiming(false);
+      toast.error(`Claim failed: ${friendlyError(err)}`, { duration: 4000 });
     }
   };
 
