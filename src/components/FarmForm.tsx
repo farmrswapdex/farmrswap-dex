@@ -27,30 +27,33 @@ interface FarmFormProps {
 
 // Shorten and humanize wallet/chain errors for toasts
 const friendlyError = (err: unknown): string => {
-  let msg = "Unknown error";
-  if (typeof err === "string") msg = err;
-  else if (err && typeof err === "object" && "message" in err)
-    msg = String((err as { message?: unknown }).message || "");
+  const anyErr = err as any;
+  const short = anyErr?.shortMessage || anyErr?.cause?.shortMessage;
+  const code = anyErr?.code ?? anyErr?.cause?.code;
+  let msg: string =
+    short || anyErr?.cause?.message || anyErr?.message || String(err) || "";
 
-  const lower = msg.toLowerCase();
+  const lower = (msg || "").toLowerCase();
   if (
+    code === 4001 ||
     lower.includes("user rejected") ||
     lower.includes("user denied") ||
+    lower.includes("action rejected") ||
     lower.includes("rejected the request") ||
-    lower.includes("request rejected") ||
-    lower.includes("user rejected the request") ||
-    lower.includes("transaction was rejected")
+    lower.includes("request rejected")
   )
     return "Transaction cancelled.";
   if (lower.includes("insufficient funds"))
-    return "Insufficient funds for gas or value.";
+    return "Insufficient funds for gas/value.";
   if (lower.includes("execution reverted"))
     return "Transaction failed: execution reverted.";
   if (lower.includes("nonce too low")) return "Nonce too low.";
-  if (lower.includes("underpriced")) return "Replacement transaction underpriced.";
+  if (lower.includes("underpriced"))
+    return "Replacement transaction underpriced.";
 
   // Trim overly long messages
-  return msg.length > 160 ? msg.slice(0, 160) + "…" : msg || "Transaction failed.";
+  if (!msg) return "Transaction failed.";
+  return msg.length > 160 ? msg.slice(0, 160) + "…" : msg;
 };
 
 const FarmForm = ({
@@ -141,28 +144,25 @@ const FarmForm = ({
     isLoading: isConfirmingApproval,
     isSuccess: isApproved,
     isError: isApprovalError,
-  } =
-    useWaitForTransactionReceipt({
-      hash: approvalHash,
-    });
+  } = useWaitForTransactionReceipt({
+    hash: approvalHash,
+  });
 
   const {
     isLoading: isConfirmingStaking,
     isSuccess: isStakingComplete,
     isError: isStakingError,
-  } =
-    useWaitForTransactionReceipt({
-      hash: stakingHash,
-    });
+  } = useWaitForTransactionReceipt({
+    hash: stakingHash,
+  });
 
   const {
     isLoading: isConfirmingUnstaking,
     isSuccess: isUnstakingComplete,
     isError: isUnstakingError,
-  } =
-    useWaitForTransactionReceipt({
-      hash: unstakingHash,
-    });
+  } = useWaitForTransactionReceipt({
+    hash: unstakingHash,
+  });
 
   const {
     isLoading: isConfirmingClaim,
@@ -179,7 +179,7 @@ const FarmForm = ({
         setApprovalToastId(undefined);
       }
       refetchAllowance();
-      toast.success("Approval successful!");
+      toast.success("Approval successful!", { duration: 4000 });
       fetchUserTokens(address!);
     }
   }, [isApproved, approvalHash, address, fetchUserTokens, approvalToastId]);
@@ -204,7 +204,7 @@ const FarmForm = ({
         toast.dismiss(stakingToastId);
         setStakingToastId(undefined);
       }
-      toast.success("Staking successful!");
+      toast.success("Staking successful!", { duration: 4000 });
       fetchUserTokens(address!);
       refetchStakedBalance();
       refetchPendingRewards();
@@ -238,7 +238,7 @@ const FarmForm = ({
         toast.dismiss(unstakingToastId);
         setUnstakingToastId(undefined);
       }
-      toast.success("Unstaking successful!");
+      toast.success("Withdraw successful!", { duration: 4000 });
       fetchUserTokens(address!);
       refetchStakedBalance();
       refetchPendingRewards();
@@ -443,8 +443,7 @@ const FarmForm = ({
 
   // Boolean for safe conditional rendering of claim button
   const hasClaimableRewards =
-    pendingRewards !== undefined &&
-    (pendingRewards as unknown as bigint) > 0n;
+    pendingRewards !== undefined && (pendingRewards as unknown as bigint) > 0n;
 
   return (
     <div className="w-full flex flex-col gap-5">
@@ -452,7 +451,7 @@ const FarmForm = ({
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
         <div className="bg-gradient-to-br from-blue-50 to-blue-100/50 p-3 sm:p-4 rounded-xl border border-blue-100">
           <p className="text-xs text-blue-600 mb-1 sm:mb-2 font-medium">
-            Your Staked
+            Your Stake
           </p>
           <p className="text-lg sm:text-xl font-bold text-blue-900 break-words">
             {formattedStakedBalance}
@@ -473,7 +472,9 @@ const FarmForm = ({
       {/* Staking Status Indicator */}
       {stakingStatus !== undefined && (
         <div
-          className={`${stakingStatus ? "hidden sm:flex" : "flex"} p-3 rounded-xl border items-center justify-center gap-2 ${
+          className={`${
+            stakingStatus ? "hidden sm:flex" : "flex"
+          } p-3 rounded-xl border items-center justify-center gap-2 ${
             stakingStatus
               ? "bg-green-50 border-green-200"
               : "bg-yellow-50 border-yellow-200"
@@ -497,7 +498,12 @@ const FarmForm = ({
       {hasClaimableRewards ? (
         <button
           onClick={handleClaimRewards}
-          className="relative overflow-hidden w-full py-4 rounded-xl text-base font-bold text-white bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2"
+          disabled={isClaiming || isConfirmingClaim}
+          className={`relative overflow-hidden w-full py-4 rounded-xl text-base font-bold text-white transition-all flex items-center justify-center gap-2 shadow-md hover:shadow-lg ${
+            isClaiming || isConfirmingClaim
+              ? "bg-gray-300 cursor-not-allowed"
+              : "bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700"
+          }`}
         >
           {/* Animated tomato overlays: drift across with varied timing */}
           <span
@@ -551,7 +557,9 @@ const FarmForm = ({
             🍅
           </span>
 
-          <span className="relative z-10 text-sm sm:text-base">Claim</span>
+          <span className="relative z-10 text-sm sm:text-base">
+            {isClaiming || isConfirmingClaim ? "Claiming..." : "Claim"}
+          </span>
           <span className="relative z-10 text-sm sm:text-base">
             {` ${formattedPendingRewards} FARMR `}
           </span>
