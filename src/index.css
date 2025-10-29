@@ -15,3 +15,26 @@
         border-width: 0;
     }
 }
+
+/* Custom tomato drift animations */
+@layer utilities {
+  /* Drift horizontally across the entire button */
+  @keyframes tomato-drift-ltr {
+    0% { left: -20%; }
+    100% { left: 110%; }
+  }
+  @keyframes tomato-drift-rtl {
+    0% { left: 110%; }
+    100% { left: -20%; }
+  }
+  /* Gentle bobbing for a natural feel */
+  @keyframes tomato-bob {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-3px) rotate(6deg); }
+  }
+  /* Combined runs */
+  .tomato-run-ltr { animation: tomato-drift-ltr 10s linear infinite, tomato-bob 2.2s ease-in-out infinite; }
+  .tomato-run-ltr-slow { animation: tomato-drift-ltr 13s linear infinite, tomato-bob 2.8s ease-in-out infinite; }
+  .tomato-run-rtl { animation: tomato-drift-rtl 11s linear infinite, tomato-bob 2s ease-in-out infinite; }
+  .tomato-run-rtl-slow { animation: tomato-drift-rtl 14s linear infinite, tomato-bob 3.1s ease-in-out infinite; }
+}
