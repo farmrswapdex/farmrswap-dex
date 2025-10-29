@@ -25,7 +25,7 @@ const blocxMainnet = defineChain({
 
 export const config = getDefaultConfig({
     appName: "FarmrSwap",
-    projectId: "8X1df9Wbcqj6A7LWG71Ra5yLYj-1eL7y",
+    projectId: "13e76db15cd90ceba29a7a96ecb52519",
     chains: [blocxMainnet],
     transports: {
         [blocxMainnet.id]: http(),
