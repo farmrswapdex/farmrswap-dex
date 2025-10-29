@@ -279,10 +279,14 @@ const Farms = () => {
             Back to Pools
           </button>
 
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-            <div className="relative bg-gradient-to-r from-[#a7d8f5] to-[#7db9de] p-4 sm:p-6 border-b border-blue-100">
+          <div className="bg-white/30 backdrop-blur-md rounded-3xl shadow-lg border border-white/20 ring-1 ring-white/10 overflow-hidden">
+            <div className="relative bg-white/10 backdrop-blur-lg p-4 sm:p-6 border-b border-white/20">
+              {/* Subtle glass gradient overlay */}
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#7db9de]/30 to-[#a7d8f5]/30 opacity-70"></div>
+              {/* Soft top highlight */}
+              <div className="pointer-events-none absolute -top-8 left-0 right-0 h-16 bg-white/30 blur-2xl opacity-40"></div>
               {/* Mobile APY pill pinned to top-right */}
-              <span className="sm:hidden absolute right-4 top-4 inline-flex items-center px-2 py-0.5 rounded-md bg-white/90 text-green-700 text-[10px] font-semibold shadow-sm">
+              <span className="sm:hidden absolute right-4 top-4 inline-flex items-center px-2 py-0.5 rounded-md bg-white/60 backdrop-blur-sm text-green-700 text-[10px] font-semibold shadow-sm">
                 {selectedPool.apr} APY
               </span>
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -291,12 +295,12 @@ const Farms = () => {
                     <img
                       src={selectedPool.token0.logoURI}
                       alt={selectedPool.token0.symbol}
-                      className="w-8 h-8 sm:w-16 sm:h-16 rounded-full border-3 sm:border-4 border-white shadow-lg"
+                      className="w-8 h-8 sm:w-16 sm:h-16 rounded-full border-3 sm:border-4 border-white/50 shadow-lg"
                     />
                     <img
                       src={selectedPool.token1.logoURI}
                       alt={selectedPool.token1.symbol}
-                      className="w-8 h-8 sm:w-16 sm:h-16 rounded-full border-3 sm:border-4 border-white shadow-lg"
+                      className="w-8 h-8 sm:w-16 sm:h-16 rounded-full border-3 sm:border-4 border-white/50 shadow-lg"
                     />
                   </div>
                   <div className="min-w-0">
@@ -309,7 +313,7 @@ const Farms = () => {
                     </p>
                   </div>
                 </div>
-                <div className="hidden sm:block bg-white/90 backdrop-blur-sm rounded-xl px-4 py-2 shadow-sm">
+                <div className="hidden sm:block bg-white/30 backdrop-blur-md rounded-xl px-4 py-2 shadow-sm border border-white/20">
                   <p className="text-xs text-gray-600 mb-0.5">APY</p>
                   <p className="text-2xl font-bold text-green-600">{selectedPool.apr}</p>
                 </div>
