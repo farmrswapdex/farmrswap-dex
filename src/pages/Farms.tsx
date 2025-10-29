@@ -385,7 +385,7 @@ const Farms = () => {
                         clipRule="evenodd"
                       />
                     </svg>
-                    <span>Secure & Audited Smart Contracts</span>
+                    <span>Non‑custodial • Permissionless • On‑chain rewards</span>
                   </div>
                 </div>
                 <div className="bg-white/95 backdrop-blur-sm rounded-2xl px-8 py-6 text-center shadow-lg border border-white/20">
