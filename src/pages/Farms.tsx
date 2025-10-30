@@ -315,7 +315,9 @@ const Farms = () => {
                 </div>
                 <div className="hidden sm:block bg-white/30 backdrop-blur-md rounded-xl px-4 py-2 shadow-sm border border-white/20">
                   <p className="text-xs text-gray-600 mb-0.5">APY</p>
-                  <p className="text-2xl font-bold text-green-600">{selectedPool.apr}</p>
+                  <p className="text-2xl font-bold text-green-600">
+                    {selectedPool.apr}
+                  </p>
                 </div>
               </div>
             </div>
@@ -368,7 +370,7 @@ const Farms = () => {
               <div className="flex flex-col md:flex-row items-center justify-between gap-6 relative z-10">
                 <div className="flex-1">
                   <h1 className="text-3xl md:text-5xl font-bold text-white mb-4 drop-shadow-sm">
-                    Farm FARMR Rewards
+                    Farm $FARMR Rewards
                   </h1>
                   <p className="text-lg md:text-xl text-white/95 mb-3">
                     Stake your LP tokens and earn 10% APY in FARMR tokens
@@ -385,7 +387,9 @@ const Farms = () => {
                         clipRule="evenodd"
                       />
                     </svg>
-                    <span>Non‑custodial • Permissionless • On‑chain rewards</span>
+                    <span>
+                      Non‑custodial • Permissionless • On‑chain rewards
+                    </span>
                   </div>
                 </div>
                 <div className="bg-white/95 backdrop-blur-sm rounded-2xl px-8 py-6 text-center shadow-lg border border-white/20">
