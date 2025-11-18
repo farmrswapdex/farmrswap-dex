@@ -143,7 +143,7 @@ const Farms = () => {
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-2 flex-wrap">
                 <p className="font-bold text-lg sm:text-xl text-gray-800">
-                  {pool.token0.symbol}/{pool.token1.symbol}
+                  FARMR-WBLOCX LP Farm
                 </p>
                 <span className="px-2 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-lg">
                   {pool.apr} APY
