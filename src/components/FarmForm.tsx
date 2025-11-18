@@ -19,10 +19,15 @@ interface Token {
   color: string;
 }
 
+type RewardFunctionName = "calculateReward" | "pendingRewards";
+
 interface FarmFormProps {
   lpToken: Token;
   stakingContractAddress: Address;
   stakingContractAbi: any[]; // eslint-disable-line @typescript-eslint/no-explicit-any
+  rewardTokenSymbol: string;
+  rewardTokenDecimals: number;
+  rewardFunctionName?: RewardFunctionName;
 }
 
 // Shorten and humanize wallet/chain errors for toasts
@@ -60,6 +65,9 @@ const FarmForm = ({
   lpToken,
   stakingContractAddress,
   stakingContractAbi,
+  rewardTokenSymbol,
+  rewardTokenDecimals,
+  rewardFunctionName,
 }: FarmFormProps) => {
   const { address } = useAccount();
   const { writeContractAsync } = useWriteContract();
@@ -123,11 +131,12 @@ const FarmForm = ({
     });
 
   // Get pending rewards
+  const rewardsFunction = rewardFunctionName ?? "calculateReward";
   const { data: pendingRewards, refetch: refetchPendingRewards } =
     useReadContract({
       abi: stakingContractAbi,
       address: stakingContractAddress,
-      functionName: "calculateReward",
+      functionName: rewardsFunction,
       args: [address!],
       query: { enabled: !!address },
     });
@@ -438,7 +447,10 @@ const FarmForm = ({
     : "0";
 
   const formattedPendingRewards = pendingRewards
-    ? formatNumber(formatUnits(pendingRewards as unknown as bigint, 18), 6)
+    ? formatNumber(
+        formatUnits(pendingRewards as unknown as bigint, rewardTokenDecimals),
+        6
+      )
     : "0";
 
   // Boolean for safe conditional rendering of claim button
@@ -465,7 +477,7 @@ const FarmForm = ({
           <p className="text-lg sm:text-xl font-bold text-green-900 break-words">
             {formattedPendingRewards}
           </p>
-          <p className="text-xs text-green-600 mt-1">FARMR</p>
+          <p className="text-xs text-green-600 mt-1">{rewardTokenSymbol}</p>
         </div>
       </div>
 
@@ -561,7 +573,7 @@ const FarmForm = ({
             {isClaiming || isConfirmingClaim ? "Claiming..." : "Claim"}
           </span>
           <span className="relative z-10 text-sm sm:text-base">
-            {` ${formattedPendingRewards} FARMR `}
+            {formattedPendingRewards} {rewardTokenSymbol}
           </span>
           <span className="relative z-10 text-sm sm:text-base">Rewards</span>
         </button>
@@ -577,7 +589,7 @@ const FarmForm = ({
               : "text-gray-600 hover:text-gray-800 hover:bg-gray-50"
           }`}
         >
-          Stake LP Tokens
+          Stake Tokens
         </button>
         <button
           onClick={() => setActiveTab("unstake")}

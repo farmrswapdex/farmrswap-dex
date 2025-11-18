@@ -4,7 +4,7 @@ import { formatUnits, type Address } from "viem";
 import { useAccount, useReadContract } from "wagmi";
 import { Inbox } from "lucide-react";
 import FarmForm from "../components/FarmForm";
-import { FactoryContract, FarmrLPStaking } from "../lib/config";
+import { FactoryContract, FarmrLPStaking, FarmrStaking } from "../lib/config";
 import { TOKENS } from "../lib/constants";
 import { formatNumber } from "../lib/quoteCalculator";
 import FloatingTomatoes from "../components/FloatingTomatoes";
@@ -18,16 +18,24 @@ interface Token {
   color: string;
 }
 
+type RewardFunctionName = "calculateReward" | "pendingRewards";
+
 interface FarmPool {
   id: string;
   name: string;
+  description: string;
   lpToken: Token;
   token0: Token;
-  token1: Token;
+  token1?: Token;
   stakingContractAddress: `0x${string}`;
   stakingContractAbi: any[]; // eslint-disable-line @typescript-eslint/no-explicit-any
   apr: string;
-  totalStaked: string;
+  rewardTokenSymbol: string;
+  rewardTokenDecimals: number;
+  rewardFunctionName: RewardFunctionName;
+  requiresPair?: boolean;
+  totalStakedData?: bigint;
+  totalTokensStakeCountData?: bigint;
 }
 
 const Farms = () => {
@@ -56,11 +64,26 @@ const Farms = () => {
     functionName: "totalTokensStakeCount",
   });
 
+  // Get total staked (TVL) from the single-token staking contract
+  const { data: farmrStakingTotalStakedData } = useReadContract({
+    abi: FarmrStaking.abi,
+    address: FarmrStaking.address as Address,
+    functionName: "totalSupply",
+  });
+
+  // Get total tokens stake count for the single-token staking contract
+  const { data: farmrStakingTotalTokensStakeCountData } = useReadContract({
+    abi: FarmrStaking.abi,
+    address: FarmrStaking.address as Address,
+    functionName: "totalTokensStakeCount",
+  });
+
   // Define farm pools
   const farmPools: FarmPool[] = [
     {
       id: "farmr-wblocx",
-      name: "FARMR-WBLOCX LP",
+      name: "FARMR-WBLOCX LP Farm",
+      description: "Stake your FARMR-WBLOCX LP tokens to earn FARMR rewards.",
       lpToken: {
         symbol: "FARMR-WBLOCX LP",
         name: "FARMR-WBLOCX Liquidity Pool Token",
@@ -76,7 +99,31 @@ const Farms = () => {
       stakingContractAddress: FarmrLPStaking.address as Address,
       stakingContractAbi: FarmrLPStaking.abi,
       apr: "10%",
-      totalStaked: "0",
+      rewardTokenSymbol: "FARMR",
+      rewardTokenDecimals: TOKENS.FARMR.decimals,
+      rewardFunctionName: "calculateReward",
+      requiresPair: true,
+      totalStakedData: totalStakedData as unknown as bigint | undefined,
+      totalTokensStakeCountData:
+        totalTokensStakeCountData as unknown as bigint | undefined,
+    },
+    {
+      id: "farmr-staking",
+      name: "$FARMR Staking",
+      description:
+        "Stake FARMR tokens directly and earn FARMR at a steady 5% APY.",
+      lpToken: TOKENS.FARMR,
+      token0: TOKENS.FARMR,
+      stakingContractAddress: FarmrStaking.address as Address,
+      stakingContractAbi: FarmrStaking.abi,
+      apr: "5%",
+      rewardTokenSymbol: "FARMR",
+      rewardTokenDecimals: TOKENS.FARMR.decimals,
+      rewardFunctionName: "pendingRewards",
+      totalStakedData:
+        farmrStakingTotalStakedData as unknown as bigint | undefined,
+      totalTokensStakeCountData:
+        farmrStakingTotalTokensStakeCountData as unknown as bigint | undefined,
     },
   ];
 
@@ -94,7 +141,7 @@ const Farms = () => {
     const { data: userEarnedData } = useReadContract({
       abi: pool.stakingContractAbi,
       address: pool.stakingContractAddress,
-      functionName: "calculateReward",
+      functionName: pool.rewardFunctionName,
       args: [address!],
       query: {
         enabled: !!address && !!pool.stakingContractAddress,
@@ -102,16 +149,29 @@ const Farms = () => {
     });
 
     const formattedUserStaked = userStakedData
-      ? formatNumber(formatUnits(userStakedData as unknown as bigint, 18), 6)
+      ? formatNumber(
+          formatUnits(userStakedData as unknown as bigint, pool.lpToken.decimals),
+          6
+        )
       : "0";
 
     const formattedUserEarned = userEarnedData
-      ? formatNumber(formatUnits(userEarnedData as unknown as bigint, 18), 6)
+      ? formatNumber(
+          formatUnits(
+            userEarnedData as unknown as bigint,
+            pool.rewardTokenDecimals
+          ),
+          6
+        )
       : "0";
 
     const pairExists =
+      !pool.requiresPair ||
       pool.lpToken.address !== "0x0000000000000000000000000000000000000000";
     const isDeployed = !!pool.stakingContractAddress;
+    const tokensToDisplay = pool.token1
+      ? [pool.token0, pool.token1]
+      : [pool.token0];
 
     return (
       <div
@@ -127,23 +187,27 @@ const Farms = () => {
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3 sm:gap-4 flex-1 w-full sm:w-auto">
             <div className="relative flex-shrink-0">
-              <div className="flex -space-x-2 sm:-space-x-3">
-                <img
-                  src={pool.token0.logoURI}
-                  alt={pool.token0.symbol}
-                  className="w-10 h-10 sm:w-14 sm:h-14 rounded-full border-3 border-white shadow-md"
-                />
-                <img
-                  src={pool.token1.logoURI}
-                  alt={pool.token1.symbol}
-                  className="w-10 h-10 sm:w-14 sm:h-14 rounded-full border-3 border-white shadow-md"
-                />
+              <div
+                className={`flex ${
+                  tokensToDisplay.length > 1
+                    ? "-space-x-2 sm:-space-x-3"
+                    : "gap-0"
+                }`}
+              >
+                {tokensToDisplay.map((token, index) => (
+                  <img
+                    key={`${pool.id}-${token.symbol}-${index}`}
+                    src={token.logoURI}
+                    alt={token.symbol}
+                    className="w-10 h-10 sm:w-14 sm:h-14 rounded-full border-3 border-white shadow-md"
+                  />
+                ))}
               </div>
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-2 flex-wrap">
                 <p className="font-bold text-lg sm:text-xl text-gray-800">
-                  FARMR-WBLOCX LP Farm
+                  {pool.name}
                 </p>
                 <span className="px-2 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-lg">
                   {pool.apr} APY
@@ -153,13 +217,16 @@ const Farms = () => {
                 <div className="flex items-center gap-1 sm:gap-1.5">
                   <span className="text-gray-500">TVL:</span>
                   <span className="font-bold text-gray-800 truncate">
-                    {totalStakedData
+                    {pool.totalStakedData
                       ? formatNumber(
-                          formatUnits(totalStakedData as unknown as bigint, 18),
+                          formatUnits(
+                            pool.totalStakedData,
+                            pool.lpToken.decimals
+                          ),
                           2
                         )
                       : "0"}{" "}
-                    <span className="hidden sm:inline">FARMR </span>LP
+                    {pool.lpToken.symbol}
                   </span>
                 </div>
                 <div className="flex items-center gap-1 sm:gap-1.5">
@@ -168,16 +235,16 @@ const Farms = () => {
                   </span>
                   <span className="text-gray-500 sm:hidden">All Time:</span>
                   <span className="font-bold text-gray-800 truncate">
-                    {totalTokensStakeCountData
+                    {pool.totalTokensStakeCountData
                       ? formatNumber(
                           formatUnits(
-                            totalTokensStakeCountData as unknown as bigint,
-                            18
+                            pool.totalTokensStakeCountData,
+                            pool.lpToken.decimals
                           ),
                           2
                         )
                       : "0"}{" "}
-                    LP
+                    {pool.lpToken.symbol}
                   </span>
                 </div>
                 {isConnected && isDeployed && (
@@ -188,8 +255,7 @@ const Farms = () => {
                       </span>
                       <span className="text-gray-500 sm:hidden">Staked:</span>
                       <span className="font-bold text-blue-600 truncate">
-                        {formattedUserStaked}{" "}
-                        <span className="hidden sm:inline">FARMR </span>LP
+                        {formattedUserStaked} {pool.lpToken.symbol}
                       </span>
                     </div>
                     <div className="flex items-center gap-1 sm:gap-1.5">
@@ -198,7 +264,7 @@ const Farms = () => {
                       </span>
                       <span className="text-gray-500 sm:hidden">Earned:</span>
                       <span className="font-bold text-green-600 truncate">
-                        {formattedUserEarned} FARMR
+                        {formattedUserEarned} {pool.rewardTokenSymbol}
                       </span>
                     </div>
                   </>
@@ -257,6 +323,9 @@ const Farms = () => {
     }
 
     if (selectedPool) {
+      const selectedTokens = selectedPool.token1
+        ? [selectedPool.token0, selectedPool.token1]
+        : [selectedPool.token0];
       return (
         <div className="w-full max-w-3xl mx-auto">
           <button
@@ -291,25 +360,28 @@ const Farms = () => {
               </span>
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div className="flex items-center gap-3 sm:gap-4 flex-1">
-                  <div className="flex -space-x-2 sm:-space-x-3 flex-shrink-0">
-                    <img
-                      src={selectedPool.token0.logoURI}
-                      alt={selectedPool.token0.symbol}
-                      className="w-8 h-8 sm:w-16 sm:h-16 rounded-full border-3 sm:border-4 border-white/50 shadow-lg"
-                    />
-                    <img
-                      src={selectedPool.token1.logoURI}
-                      alt={selectedPool.token1.symbol}
-                      className="w-8 h-8 sm:w-16 sm:h-16 rounded-full border-3 sm:border-4 border-white/50 shadow-lg"
-                    />
+                  <div
+                    className={`flex ${
+                      selectedTokens.length > 1
+                        ? "-space-x-2 sm:-space-x-3"
+                        : "gap-0"
+                    } flex-shrink-0`}
+                  >
+                    {selectedTokens.map((token, index) => (
+                      <img
+                        key={`${selectedPool.id}-${token.symbol}-${index}`}
+                        src={token.logoURI}
+                        alt={token.symbol}
+                        className="w-8 h-8 sm:w-16 sm:h-16 rounded-full border-3 sm:border-4 border-white/50 shadow-lg"
+                      />
+                    ))}
                   </div>
                   <div className="min-w-0">
                     <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-1">
-                      {selectedPool.token0.symbol}/{selectedPool.token1.symbol}{" "}
-                      Farm
+                      {selectedPool.name}
                     </h2>
                     <p className="text-xs sm:text-sm text-gray-700">
-                      Stake LP tokens to earn FARMR rewards
+                      {selectedPool.description}
                     </p>
                   </div>
                 </div>
@@ -327,6 +399,9 @@ const Farms = () => {
                 lpToken={selectedPool.lpToken}
                 stakingContractAddress={selectedPool.stakingContractAddress}
                 stakingContractAbi={selectedPool.stakingContractAbi}
+                rewardTokenSymbol={selectedPool.rewardTokenSymbol}
+                rewardTokenDecimals={selectedPool.rewardTokenDecimals}
+                rewardFunctionName={selectedPool.rewardFunctionName}
               />
             </div>
           </div>
@@ -373,7 +448,7 @@ const Farms = () => {
                     Farm $FARMR Rewards
                   </h1>
                   <p className="text-lg md:text-xl text-white/95 mb-3">
-                    Stake your LP tokens and earn 10% APY in FARMR tokens
+                    Stake LP or FARMR tokens and earn steady FARMR rewards
                   </p>
                   <div className="flex items-center gap-2 text-sm text-white/80">
                     <svg
