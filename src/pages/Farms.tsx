@@ -82,7 +82,7 @@ const Farms = () => {
   const farmPools: FarmPool[] = [
     {
       id: "farmr-wblocx",
-      name: "FARMR-WBLOCX LP Farm",
+      name: "FARMR-WBLOCX LP",
       description: "Stake your FARMR-WBLOCX LP tokens to earn FARMR rewards.",
       lpToken: {
         symbol: "FARMR-WBLOCX LP",
@@ -98,18 +98,19 @@ const Farms = () => {
       token1: TOKENS.WBLOCX,
       stakingContractAddress: FarmrLPStaking.address as Address,
       stakingContractAbi: FarmrLPStaking.abi,
-      apr: "10%",
+      apr: "8%",
       rewardTokenSymbol: "FARMR",
       rewardTokenDecimals: TOKENS.FARMR.decimals,
       rewardFunctionName: "calculateReward",
       requiresPair: true,
       totalStakedData: totalStakedData as unknown as bigint | undefined,
-      totalTokensStakeCountData:
-        totalTokensStakeCountData as unknown as bigint | undefined,
+      totalTokensStakeCountData: totalTokensStakeCountData as unknown as
+        | bigint
+        | undefined,
     },
     {
       id: "farmr-staking",
-      name: "$FARMR Staking",
+      name: "FARMR Staking",
       description:
         "Stake FARMR tokens directly and earn FARMR at a steady 5% APY.",
       lpToken: TOKENS.FARMR,
@@ -120,8 +121,9 @@ const Farms = () => {
       rewardTokenSymbol: "FARMR",
       rewardTokenDecimals: TOKENS.FARMR.decimals,
       rewardFunctionName: "pendingRewards",
-      totalStakedData:
-        farmrStakingTotalStakedData as unknown as bigint | undefined,
+      totalStakedData: farmrStakingTotalStakedData as unknown as
+        | bigint
+        | undefined,
       totalTokensStakeCountData:
         farmrStakingTotalTokensStakeCountData as unknown as bigint | undefined,
     },
@@ -150,7 +152,10 @@ const Farms = () => {
 
     const formattedUserStaked = userStakedData
       ? formatNumber(
-          formatUnits(userStakedData as unknown as bigint, pool.lpToken.decimals),
+          formatUnits(
+            userStakedData as unknown as bigint,
+            pool.lpToken.decimals
+          ),
           6
         )
       : "0";

@@ -3194,8 +3194,8 @@ export const FarmrLPStaking = {
 };
 
 export const FarmrStaking = {
-    // address: "drywal",
-    address: "0xb391249955ab3B4E4825BD15a0B15BEd216b55DF",
+    // address: "0xb391249955ab3B4E4825BD15a0B15BEd216b55DF",
+    address: "0x89E1A8e5F6Bb5Ce6389310032aaB2D7F41166e6F",
     abi: [
         {
             "inputs": [
